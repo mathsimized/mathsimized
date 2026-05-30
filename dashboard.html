@@ -185,6 +185,14 @@ auth.onAuthStateChanged(async (user) => {
     newsSnap.forEach(doc => recentNews.push({ id: doc.id, ...doc.data() }));
 
     container.innerHTML = `
+      ${!user.emailVerified ? `
+      <div style="background:#664b00;color:#ffd700;padding:12px 20px;border-radius:8px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:1.2rem;">⚠️</span>
+        <span style="flex:1;">Your email is not verified. Please check your inbox (including spam/junk) and click the verification link.</span>
+        <button onclick="resendVerificationEmail().then(()=>alert('Verification email sent!')).catch(e=>alert(e.message))" class="btn btn-sm btn-outline" style="border-color:#ffd700;color:#ffd700;">Resend Verification</button>
+      </div>
+      ` : ''}
+
       <div class="section-title animate-on-scroll visible" style="margin-bottom:32px;">
         <h2>Welcome, ${escapeHtml(username)}</h2>
         <p>Your learning hub — quick access to everything MATHSIMIZED.</p>

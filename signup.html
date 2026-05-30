@@ -203,10 +203,10 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 
   try {
     await signupUser(email, password, username);
-    successEl.textContent = 'Account created! Please check your email to verify your account before logging in.';
+    successEl.textContent = 'Account created! You are now logged in. Please check your email (including spam/junk) and verify your account.';
     successEl.style.display = 'block';
-    btn.textContent = 'Redirecting to login...';
-    setTimeout(() => { window.location.href = './login.html'; }, 1500);
+    btn.textContent = 'Redirecting...';
+    setTimeout(() => { window.location.href = './dashboard.html'; }, 1500);
   } catch (err) {
     console.error('Signup error:', err);
     let msg = err.message || 'Signup failed. Please try again.';
@@ -216,6 +216,8 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
       msg = 'Password must be at least 6 characters.';
     } else if (err.code === 'auth/invalid-email') {
       msg = 'Invalid email address.';
+    } else if (err.code === 'auth/operation-not-allowed') {
+      msg = 'Email/Password sign-in is not enabled in the Firebase Console. Go to Authentication > Sign-in method and enable it.';
     }
     errorEl.textContent = msg;
     errorEl.style.display = 'block';

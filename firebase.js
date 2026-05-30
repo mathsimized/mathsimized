@@ -1,5 +1,5 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyAlyakrlx_kmfod_1pOWC3UHKUPcJSsogg",
+  apiKey: "AIzaSyBwqJ5NLVjW4hyv50lMF9Z5-Sceklczc7M",
   authDomain: "mathsimized-e4ff0.firebaseapp.com",
   projectId: "mathsimized-e4ff0",
   storageBucket: "mathsimized-e4ff0.firebasestorage.app",
@@ -126,7 +126,11 @@ async function signupUser(email, password, username) {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  await cred.user.sendEmailVerification();
+  try {
+    await cred.user.sendEmailVerification();
+  } catch (e) {
+    console.error('Failed to send verification email:', e);
+  }
 
   sendWelcomeEmail(normalizedEmail, normalizedUsername);
   return uid;
@@ -196,6 +200,13 @@ function escapeHtml(text) {
 // ─── Password Reset (Firebase Auth) ───
 async function requestPasswordReset(email) {
   await auth.sendPasswordResetEmail(email);
+}
+
+async function resendVerificationEmail() {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Not logged in');
+  if (user.emailVerified) throw new Error('Email already verified');
+  await user.sendEmailVerification();
 }
 
 // ─── Score Functions ───
@@ -325,6 +336,7 @@ if (typeof firebase !== 'undefined') {
   window.requireAdmin = requireAdmin;
   window.requestPasswordReset = requestPasswordReset;
   window.togglePasswordVisibility = togglePasswordVisibility;
+  window.resendVerificationEmail = resendVerificationEmail;
   window.saveGameScore = saveGameScore;
   window.updateLeaderboardTotal = updateLeaderboardTotal;
   window.getUserTotalScore = getUserTotalScore;
