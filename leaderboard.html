@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard — MATHSIMIZED</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="./firebase.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="./index.html" class="navbar-logo"><img src="./logo.PNG" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./lectures.html">Lectures</a></li>
+      <li><a href="./notes.html">Notes</a></li>
+      <li><a href="./news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="./games.html">Play Games</a>
+          <a href="./leaderboard.html">Leaderboard</a>
+          <a href="./competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="section-padding" style="padding-top:120px;">
+  <div class="container">
+    <div class="section-title animate-on-scroll visible">
+      <h2>🏆 Leaderboard</h2>
+      <p>Top 100 players ranked by total score across all games.</p>
+    </div>
+    <div id="leaderboardContent" class="animate-on-scroll visible">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="./about.html">About</a>
+        <a href="./lectures.html">Lectures</a>
+        <a href="./notes.html">Notes</a>
+        <a href="./contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="./games.html">Play Games</a>
+        <a href="./leaderboard.html">Leaderboard</a>
+        <a href="./competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function timeAgo(timestamp) {
+  if (!timestamp) return 'N/A';
+  const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const now = new Date();
+  const diff = now - d;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return mins + 'm ago';
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return hours + 'h ago';
+  const days = Math.floor(hours / 24);
+  if (days < 30) return days + 'd ago';
+  return d.toLocaleDateString();
+}
+
+const container = document.getElementById('leaderboardContent');
+let currentUserId = auth.currentUser ? auth.currentUser.uid : null;
+
+auth.onAuthStateChanged((user) => {
+  currentUserId = user ? user.uid : null;
+  renderLeaderboard();
+});
+
+let lastEntries = [];
+let lastError = null;
+let usingScoresFallback = false;
+
+// Try leaderboard collection first (efficient, pre-computed totals)
+const leaderboardUnsub = db.collection('leaderboard')
+  .orderBy('totalScore', 'desc')
+  .limit(100)
+  .onSnapshot((snapshot) => {
+    if (!snapshot.empty) {
+      lastEntries = [];
+      snapshot.forEach(doc => lastEntries.push({ id: doc.id, ...doc.data() }));
+      lastError = null;
+      usingScoresFallback = false;
+      renderLeaderboard();
+    } else {
+      // Leaderboard collection is empty — fall back to computing from scores
+      if (!usingScoresFallback) {
+        usingScoresFallback = true;
+        listenScores();
+      }
+    }
+  }, (err) => {
+    console.error('Leaderboard error:', err);
+    lastError = err;
+    renderLeaderboard();
+  });
+
+let scoresUnsub = null;
+
+function listenScores() {
+  if (scoresUnsub) scoresUnsub();
+  scoresUnsub = db.collection('scores').onSnapshot((snap) => {
+    const userTotals = {};
+    snap.forEach(doc => {
+      const d = doc.data();
+      const uid = d.userId;
+      if (!userTotals[uid]) {
+        userTotals[uid] = { id: uid, userId: uid, username: d.username || uid, totalScore: 0, lastUpdated: null };
+      }
+      userTotals[uid].totalScore += d.bestScore || 0;
+      const played = d.lastPlayed;
+      if (played && (!userTotals[uid].lastUpdated || played > userTotals[uid].lastUpdated)) {
+        userTotals[uid].lastUpdated = played;
+      }
+    });
+    lastEntries = Object.values(userTotals)
+      .sort((a, b) => b.totalScore - a.totalScore)
+      .slice(0, 100);
+    lastError = null;
+    renderLeaderboard();
+  }, (err) => {
+    console.error('Scores leaderboard error:', err);
+    lastError = err;
+    renderLeaderboard();
+  });
+}
+
+function renderLeaderboard() {
+  if (lastError) {
+    container.innerHTML = '<div class="empty-state"><h3>Error Loading Leaderboard</h3><p>Please try again later.</p></div>';
+    return;
+  }
+
+  if (lastEntries.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+        <h3>No Scores Yet</h3>
+        <p>Be the first to play and top the leaderboard!</p>
+        <a href="./games.html" class="btn btn-primary" style="margin-top:16px;">Play Games</a>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Total Score</th>
+            <th>Last Active</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lastEntries.map((e, i) => `
+            <tr${e.id === currentUserId ? ' style="background:rgba(108,99,255,0.08);font-weight:600;"' : ''}>
+              <td style="font-size:1.1rem;">
+                ${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i + 1)}
+              </td>
+              <td style="font-weight:600;">${escapeHtml(e.username || 'Unknown')}</td>
+              <td style="color:var(--success);font-weight:700;">${(e.totalScore || 0).toLocaleString()}</td>
+              <td style="color:var(--muted);font-size:0.85rem;">${timeAgo(e.lastUpdated)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-top:12px;">
+      ${currentUserId ? 'Your row is highlighted.' : 'Login to see your rank highlighted.'}
+    </p>
+  `;
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

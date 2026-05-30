@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — MATHSIMIZED</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="./firebase.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="./index.html" class="navbar-logo"><img src="./logo.PNG" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./lectures.html">Lectures</a></li>
+      <li><a href="./notes.html">Notes</a></li>
+      <li><a href="./news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="./games.html">Play Games</a>
+          <a href="./leaderboard.html">Leaderboard</a>
+          <a href="./competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="section-padding" style="padding-top:120px;">
+  <div class="container">
+    <div class="section-title animate-on-scroll visible">
+      <h2>About MATHSIMIZED</h2>
+      <p>The story behind the mission to redefine mathematics education.</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:60px;">
+      <div class="animate-on-scroll">
+        <img src="./khalil.jpg" alt="Khalilullah Khan" style="width:100%;max-width:300px;border-radius:16px;margin-bottom:24px;border:2px solid var(--border);">
+        <h3 style="font-size:1.8rem;margin-bottom:16px;">The Story</h3>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          MATHSIMIZED was born from a personal journey. Khalilullah Khan, a college student from Karachi, Pakistan, 
+          knows firsthand what it feels like to struggle with mathematics. There was a time when Bs were the norm — 
+          not because of a lack of effort, but because the traditional teaching approach never clicked.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          Everything changed when he stopped memorizing and started understanding. By shifting focus to the 
+          <em style="color:var(--text);">why</em> behind every formula, concept, and theorem, mathematics transformed 
+          from a frustrating chore into a fascinating puzzle.
+        </p>
+        <p style="color:var(--muted2);font-size:1.05rem;">
+          The result? A complete turnaround — <strong style="color:var(--text);">198 out of 200 in O-Level Mathematics</strong> and 
+          <strong style="color:var(--text);">790 out of 800 in the SAT Mathematics</strong>. These scores aren't just numbers; 
+          they are proof that the right approach makes all the difference.
+        </p>
+      </div>
+      <div class="animate-on-scroll">
+        <div class="card" style="height:100%;">
+          <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary);">Quick Facts</h3>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <div style="color:var(--primary);font-size:2rem;font-weight:800;">198/200</div>
+              <div style="color:var(--muted2);font-size:0.9rem;">O-Level Mathematics</div>
+            </div>
+            <div>
+              <div style="color:var(--accent);font-size:2rem;font-weight:800;">790/800</div>
+              <div style="color:var(--muted2);font-size:0.9rem;">SAT Mathematics</div>
+            </div>
+            <div>
+              <div style="color:var(--success);font-size:2rem;font-weight:800;">Concept-First</div>
+              <div style="color:var(--muted2);font-size:0.9rem;">Teaching Philosophy</div>
+            </div>
+            <div>
+              <div style="color:var(--text);font-size:2rem;font-weight:800;">Karachi</div>
+              <div style="color:var(--muted2);font-size:0.9rem;">Based in Pakistan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title animate-on-scroll" style="margin-top:60px;">
+      <h2>Teaching Philosophy</h2>
+      <p>Understanding the <em>why</em> is more powerful than memorizing the <em>what</em>.</p>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:60px;">
+      <div class="card animate-on-scroll">
+        <div style="font-size:2rem;margin-bottom:12px;">🧠</div>
+        <h3 style="margin-bottom:8px;font-size:1.2rem;">Concept First</h3>
+        <p style="color:var(--muted2);font-size:0.95rem;">Every topic is broken down to its fundamental principles. Once you understand the core idea, formulas become tools, not obstacles.</p>
+      </div>
+      <div class="card animate-on-scroll">
+        <div style="font-size:2rem;margin-bottom:12px;">🔍</div>
+        <h3 style="margin-bottom:8px;font-size:1.2rem;">Why Over How</h3>
+        <p style="color:var(--muted2);font-size:0.95rem;">Instead of just showing steps, we explain why each step works. This builds deep intuition that stays with you forever.</p>
+      </div>
+      <div class="card animate-on-scroll">
+        <div style="font-size:2rem;margin-bottom:12px;">🎯</div>
+        <h3 style="margin-bottom:8px;font-size:1.2rem;">Practical Mastery</h3>
+        <p style="color:var(--muted2);font-size:0.95rem;">Theory meets practice through carefully designed problems, interactive games, and real-world applications that reinforce understanding.</p>
+      </div>
+    </div>
+
+    <div class="section-title animate-on-scroll">
+      <h2>What Makes Us Different</h2>
+    </div>
+
+    <div class="card animate-on-scroll" style="margin-bottom:40px;">
+      <p style="color:var(--muted2);font-size:1.05rem;line-height:1.8;">
+        Traditional mathematics teaching focuses on rote memorization — here are the formulas, here's how to plug in numbers, 
+        now repeat. MATHSIMIZED takes the opposite approach. We believe that <strong style="color:var(--text);">anyone can excel 
+        at mathematics</strong> when it is taught the right way.
+      </p>
+      <p style="color:var(--muted2);font-size:1.05rem;line-height:1.8;margin-top:16px;">
+        Our resources are designed for students at every level — from O Level/IGCSE through A Level and Further Maths. 
+        Whether you're struggling to grasp basic concepts or aiming for top marks, MATHSIMIZED provides the clarity 
+        and depth you need.
+      </p>
+      <p style="color:var(--muted2);font-size:1.05rem;line-height:1.8;margin-top:16px;">
+        Join us on <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a> and 
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a> for daily learning content, 
+        or reach out at <a href="mailto:mathsimized@gmail.com">mathsimized@gmail.com</a>.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="./about.html">About</a>
+        <a href="./lectures.html">Lectures</a>
+        <a href="./notes.html">Notes</a>
+        <a href="./contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="./games.html">Play Games</a>
+        <a href="./leaderboard.html">Leaderboard</a>
+        <a href="./competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

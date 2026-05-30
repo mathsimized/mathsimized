@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes — MATHSIMIZED</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="./firebase.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="./index.html" class="navbar-logo"><img src="./logo.PNG" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./lectures.html">Lectures</a></li>
+      <li><a href="./notes.html">Notes</a></li>
+      <li><a href="./news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="./games.html">Play Games</a>
+          <a href="./leaderboard.html">Leaderboard</a>
+          <a href="./competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="section-padding" style="padding-top:120px;">
+  <div class="container">
+    <div class="section-title animate-on-scroll visible">
+      <h2>Study Notes</h2>
+      <p>Downloadable PDF notes to reinforce your understanding.</p>
+    </div>
+
+    <div class="tabs" id="notesTabs">
+      <button class="tab-btn active" data-subject="O Level/IGCSE Maths">O Level / IGCSE Maths</button>
+      <button class="tab-btn" data-subject="A Level Maths">A Level Maths</button>
+      <button class="tab-btn" data-subject="O Level/IGCSE Add Maths">O Level / IGCSE Add Maths</button>
+      <button class="tab-btn" data-subject="Further Maths">Further Maths</button>
+    </div>
+
+    <div id="notesContent">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="./about.html">About</a>
+        <a href="./lectures.html">Lectures</a>
+        <a href="./notes.html">Notes</a>
+        <a href="./contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="./games.html">Play Games</a>
+        <a href="./leaderboard.html">Leaderboard</a>
+        <a href="./competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+let allNotes = [];
+let currentSubject = 'O Level/IGCSE Maths';
+
+async function loadNotes() {
+  try {
+    const snapshot = await db.collection('notes').orderBy('createdAt', 'desc').get();
+    allNotes = [];
+    snapshot.forEach(doc => {
+      allNotes.push({ id: doc.id, ...doc.data() });
+    });
+    renderNotes(currentSubject);
+  } catch (err) {
+    console.error('Error loading notes:', err);
+    document.getElementById('notesContent').innerHTML = '<div class="empty-state"><h3>Error Loading Notes</h3><p>Please try again later.</p></div>';
+  }
+}
+
+function renderNotes(subject) {
+  const container = document.getElementById('notesContent');
+  const filtered = allNotes.filter(n => n.subject === subject);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state animate-on-scroll visible">
+        <div style="font-size:3rem;margin-bottom:16px;">📝</div>
+        <h3>Coming Soon</h3>
+        <p>Notes for ${subject} are being prepared. Check back soon!</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `<div class="grid-3" style="margin-top:20px;">${filtered.map((n, idx) => {
+    const noteId = n.id || idx;
+    return `
+    <div class="card animate-on-scroll">
+      <div style="font-size:2.5rem;margin-bottom:12px;">📄</div>
+      <h3 style="font-size:1.1rem;margin-bottom:4px;">${escapeHtml(n.topic)}</h3>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:4px;">${escapeHtml(n.subject)}</p>
+      <div style="display:flex;gap:16px;color:var(--muted2);font-size:0.8rem;margin-bottom:16px;">
+        <span>${formatFileSize(n.fileSize)}</span>
+        <span>${formatDate(n.createdAt)}</span>
+      </div>
+      <button onclick="downloadNote('${noteId}', this)" class="btn btn-accent" style="font-size:0.85rem;padding:8px 20px;">Download</button>
+    </div>
+  `}).join('')}</div>`;
+  window.downloadNote = async function(noteId, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Loading...';
+    try {
+      const chunksSnap = await db.collection('notes').doc(noteId).collection('chunks').orderBy('index').get();
+      let dataUrl = '';
+      chunksSnap.forEach(doc => { dataUrl += doc.data().data; });
+      if (!dataUrl) return;
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'note.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('Download error:', err);
+      alert('Failed to download. Please try again.');
+    }
+    btn.disabled = false;
+    btn.textContent = 'Download';
+  };
+
+  setTimeout(() => {
+    document.querySelectorAll('#notesContent .animate-on-scroll').forEach(el => {
+      el.classList.add('visible');
+    });
+  }, 50);
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+document.getElementById('notesTabs').addEventListener('click', (e) => {
+  if (e.target.classList.contains('tab-btn')) {
+    document.querySelectorAll('#notesTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentSubject = e.target.dataset.subject;
+    renderNotes(currentSubject);
+  }
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+
+loadNotes();
+</script>
+</body>
+</html>
