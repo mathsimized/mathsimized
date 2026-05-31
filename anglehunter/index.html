@@ -248,19 +248,16 @@
         <div class="diff-icon">📐</div>
         <h3>Easy</h3>
         <p>Straight lines, angles at a point, vertically opposite, basic triangles</p>
-        <span class="diff-grade grade-easy">Grade 4–5</span>
       </div>
       <div class="diff-card" onclick="selectDifficulty('medium')">
         <div class="diff-icon">📏</div>
         <h3>Medium</h3>
         <p>Parallel lines, isosceles triangles, alternate, corresponding & co-interior angles</p>
-        <span class="diff-grade grade-medium">Grade 5–6</span>
       </div>
       <div class="diff-card" onclick="selectDifficulty('hard')">
         <div class="diff-icon">⭕</div>
         <h3>Hard</h3>
         <p>Quadrilaterals, regular polygons, all circle theorems</p>
-        <span class="diff-grade grade-hard">Grade 7–9</span>
       </div>
     </div>
   </div>
@@ -462,7 +459,7 @@ function changeDifficulty() {
   document.getElementById('gameShell').classList.add('hidden');
 }
 function renderDiffBadge() {
-  const map = { easy:{text:'Easy · Grade 4–5',cls:'grade-easy'}, medium:{text:'Medium · Grade 5–6',cls:'grade-medium'}, hard:{text:'Hard · Grade 7–9',cls:'grade-hard'} };
+  const map = { easy:{text:'Easy',cls:'grade-easy'}, medium:{text:'Medium',cls:'grade-medium'}, hard:{text:'Hard',cls:'grade-hard'} };
   const d = map[state.difficulty];
   document.getElementById('currentDiffBadge').innerHTML = `<span class="diff-badge ${d.cls}" style="margin-top:0.75rem;">${d.text}</span>`;
   document.getElementById('diffValue').textContent = state.difficulty.charAt(0).toUpperCase()+state.difficulty.slice(1);
