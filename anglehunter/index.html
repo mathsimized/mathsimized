@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Angle Hunter · MATHSIMIZED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBwqJ5NLVjW4hyv50lMF9Z5-Sceklczc7M",
+      authDomain: "mathsimized-e4ff0.firebaseapp.com",
+      projectId: "mathsimized-e4ff0",
+      storageBucket: "mathsimized-e4ff0.firebasestorage.app",
+      messagingSenderId: "665303048442",
+      appId: "1:665303048442:web:27a4e833cf0645e5582943",
+      measurementId: "G-BCEZZMLBHC"
+    });
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+  </script>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2236;
+      --border: rgba(255,255,255,0.07);
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.25);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245,158,11,0.2);
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem;
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(59,130,246,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(245,158,11,0.06) 0%, transparent 60%);
+    }
+
+    /* AUTH */
+    .auth-screen {
+      position: fixed; inset: 0; background: var(--bg);
+      background-image: radial-gradient(ellipse at 20% 0%, rgba(59,130,246,0.08) 0%, transparent 60%);
+      display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem;
+    }
+    .auth-screen.hidden { display: none; }
+    .auth-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem 2rem; width: 100%; max-width: 400px;
+      display: flex; flex-direction: column; gap: 1.5rem; min-height: 500px;
+    }
+    .auth-logo { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.06em; text-align: center; }
+    .auth-logo span { color: var(--primary); }
+    .auth-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; text-align: center; }
+    .auth-sub { font-size: 0.85rem; color: var(--muted2); text-align: center; margin-top: 0.6rem; }
+    .auth-field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .auth-field label { font-size: 0.78rem; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em; }
+    .auth-field input { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 0.75rem 1rem; font-family: inherit; font-size: 0.95rem; width: 100%; }
+    .auth-field input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .auth-btn { width: 100%; padding: 0.9rem; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+    .auth-btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 20px var(--primary-glow); }
+    .auth-btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+    .auth-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .auth-btn-guest { background: var(--surface2); color: var(--muted2); border: 1px solid var(--border); padding: 0.85rem; line-height: 1.4; }
+    .auth-btn-guest:hover { border-color: var(--muted); color: var(--text); }
+    .auth-divider { display: flex; align-items: center; gap: 0.75rem; color: var(--muted); font-size: 0.8rem; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .auth-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 0.6rem 0.9rem; font-size: 0.83rem; color: var(--danger); display: none; }
+
+    /* HEADER */
+    .header { width: 100%; max-width: 1100px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.06em; }
+    .logo span { color: var(--primary); }
+    .header-right { display: flex; align-items: center; gap: 0.75rem; }
+    .hs-badge { display: flex; align-items: center; gap: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 700; }
+    .hs-badge .hs-num { color: var(--accent); }
+    .user-badge { display: flex; align-items: center; gap: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.82rem; font-weight: 700; }
+    .user-badge .uname { color: var(--primary); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .logout-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 4px; transition: color 0.15s; }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* DIFFICULTY SCREEN */
+    .diff-screen { width: 100%; max-width: 700px; display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+    .diff-screen.hidden { display: none; }
+    .diff-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; text-align: center; }
+    .diff-title span { color: var(--primary); }
+    .diff-sub { color: var(--muted2); text-align: center; font-size: 0.95rem; }
+    .diff-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; width: 100%; }
+    .diff-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 1.25rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 0.75rem; }
+    .diff-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 30px var(--primary-glow); }
+    .diff-card .diff-icon { font-size: 2.5rem; }
+    .diff-card h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+    .diff-card p { font-size: 0.82rem; color: var(--muted2); line-height: 1.5; }
+    .diff-grade { font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; display: inline-block; margin-top: 0.25rem; }
+    .grade-easy { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .grade-medium { background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid rgba(245,158,11,0.3); }
+    .grade-hard { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+    /* GAME SHELL */
+    .game-shell { width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 1.25rem; align-items: start; }
+    .game-shell.hidden { display: none; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 1.75rem; }
+    .setup-panel { display: flex; flex-direction: column; gap: 1.25rem; }
+    .panel-eyebrow { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); }
+    .panel-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; line-height: 1.1; }
+    .panel-title span { color: var(--primary); }
+    .panel-sub { color: var(--muted2); font-size: 0.9rem; line-height: 1.6; margin-top: 0.4rem; }
+    .diff-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.82rem; font-weight: 700; margin-top: 0.5rem; }
+    .change-diff-btn { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted2); font-family: inherit; font-size: 0.82rem; font-weight: 700; padding: 0.5rem 0.9rem; cursor: pointer; transition: all 0.15s; width: fit-content; }
+    .change-diff-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* HUD */
+    .hud { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.6rem; }
+    .hud-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 0.8rem 0.6rem; text-align: center; }
+    .hud-label { display: block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.35rem; }
+    .hud-val { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    #timeValue { color: var(--accent); }
+    #scoreValue { color: var(--primary); }
+    .time-low { animation: pulse-ring 0.8s infinite; border-color: var(--danger) !important; }
+    .time-low #timeValue { color: var(--danger) !important; }
+    @keyframes pulse-ring { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4);}50%{box-shadow:0 0 0 6px rgba(239,68,68,0);} }
+
+    /* SUMMARY */
+    .summary-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.3rem; }
+    .summary-title { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.8rem; }
+    .summary-rows { display: grid; gap: 0.5rem; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--muted2); }
+    .summary-row strong { color: var(--text); font-weight: 700; }
+
+    /* GAME PANEL */
+    .game-panel { display: flex; flex-direction: column; gap: 1rem; }
+    .question-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; position: relative; overflow: hidden; min-height: 440px; }
+    .question-card::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, var(--primary-glow), transparent 70%); pointer-events:none; }
+    .game-status { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); }
+    #diagramCanvas { border-radius: 12px; background: var(--surface); max-width: 100%; }
+    .q-text { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; text-align: center; line-height: 1.5; }
+    .q-rule { font-size: 0.8rem; color: var(--muted2); text-align: center; font-style: italic; }
+    .answer-row { display: flex; gap: 0.75rem; align-items: center; }
+    .answer-row input { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 0.75rem 1rem; font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; text-align: center; width: 120px; transition: border-color 0.15s; }
+    .answer-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .answer-row input:disabled { opacity: 0.35; }
+    .deg-label { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--muted); }
+    .submit-btn { padding: 0.75rem 1.25rem; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .submit-btn:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .solver-btn { padding: 0.55rem 1.1rem; background: var(--surface); color: var(--accent); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .solver-btn:hover:not(:disabled) { background: var(--accent-glow); border-color: var(--accent); }
+    .solver-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .feedback { font-size: 0.95rem; font-weight: 700; min-height: 1.4em; transition: color 0.2s; text-align: center; }
+    .feedback.ok { color: var(--success); }
+    .feedback.bad { color: var(--danger); }
+    .feedback.neutral { color: var(--muted2); }
+
+    /* SOLVER PANEL */
+    .solver-panel { background: var(--surface); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; padding: 1.25rem; width: 100%; display: none; flex-direction: column; gap: 0.75rem; }
+    .solver-panel.visible { display: flex; }
+    .solver-panel h4 { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800; color: var(--accent); }
+    .solver-step { font-size: 0.85rem; color: var(--muted2); line-height: 1.6; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+    .solver-step:last-of-type { border-bottom: none; }
+    .solver-step strong { color: var(--text); }
+    .solver-answer { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--success); text-align: center; padding: 0.5rem; background: rgba(16,185,129,0.1); border-radius: 8px; }
+    .screenshot-banner { background: var(--accent-glow); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.82rem; font-weight: 700; color: var(--accent); text-align: center; }
+    .next-btn { padding: 0.75rem; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+    .next-btn:hover { background: #2563eb; transform: translateY(-1px); }
+
+    /* END OVERLAY */
+    .end-overlay { position: absolute; inset: 0; background: rgba(10,14,26,0.93); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; z-index: 10; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.97);}to{opacity:1;transform:scale(1);} }
+    .end-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; }
+    .end-score { font-family: 'Syne', sans-serif; font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+    .end-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: center; padding: 0 1rem; }
+    .new-hs-banner { background: var(--accent-glow); border: 1px solid rgba(245,158,11,0.4); border-radius: 999px; padding: 0.3rem 1rem; font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+    .save-status { font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.8rem; border-radius: 999px; display: inline-block; }
+    .save-status.saved { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .save-status.not-best { background: var(--surface2); color: var(--muted2); border: 1px solid var(--border); }
+    .save-status.guest { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+    .start-btn { width: 100%; padding: 1rem; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 20px var(--primary-glow); }
+    .start-btn:hover:not(:disabled) { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 28px rgba(59,130,246,0.4); }
+    .start-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .helper { font-size: 0.82rem; color: var(--muted); }
+
+    @media (max-width: 820px) { .game-shell { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) { .hud { grid-template-columns: repeat(2,1fr); } .diff-cards { grid-template-columns: 1fr; } body { padding: 1rem 0.75rem 2rem; } .panel { padding: 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <!-- Auth Screen -->
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-box">
+      <div class="auth-logo">MATH<span>SIMIZED</span></div>
+      <div>
+        <h2 class="auth-title">Angle Hunter</h2>
+        <p class="auth-sub">Login to save your scores to the leaderboard</p>
+      </div>
+      <div class="auth-error" id="authError"></div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email" />
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="authPassword" placeholder="Your password" autocomplete="current-password" />
+      </div>
+      <button class="auth-btn auth-btn-primary" id="authLoginBtn" onclick="doLogin()">Login & Play</button>
+      <div style="flex:1;"></div>
+      <div class="auth-divider">or</div>
+      <button class="auth-btn auth-btn-guest" onclick="playAsGuest()">▷ Play as Guest
+        <span style="display:block;font-size:0.72rem;font-weight:500;margin-top:3px;opacity:0.6;">scores won't be saved to leaderboard</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">MATH<span>SIMIZED</span></div>
+    <div class="header-right">
+      <div id="userBadgeArea"></div>
+      <div class="hs-badge">🏆 Best: <span class="hs-num" id="hsBadge">0</span></div>
+    </div>
+  </header>
+
+  <!-- Difficulty Screen -->
+  <div class="diff-screen" id="diffScreen">
+    <div>
+      <h1 class="diff-title">Angle <span>Hunter</span></h1>
+      <p class="diff-sub">Find the missing angle before time runs out. Choose your difficulty to begin.</p>
+    </div>
+    <div class="diff-cards">
+      <div class="diff-card" onclick="selectDifficulty('easy')">
+        <div class="diff-icon">📐</div>
+        <h3>Easy</h3>
+        <p>Straight lines, angles at a point, vertically opposite, basic triangles</p>
+        <span class="diff-grade grade-easy">Grade 4–5</span>
+      </div>
+      <div class="diff-card" onclick="selectDifficulty('medium')">
+        <div class="diff-icon">📏</div>
+        <h3>Medium</h3>
+        <p>Parallel lines, isosceles triangles, alternate, corresponding & co-interior angles</p>
+        <span class="diff-grade grade-medium">Grade 5–6</span>
+      </div>
+      <div class="diff-card" onclick="selectDifficulty('hard')">
+        <div class="diff-icon">⭕</div>
+        <h3>Hard</h3>
+        <p>Quadrilaterals, regular polygons, all circle theorems</p>
+        <span class="diff-grade grade-hard">Grade 7–9</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Shell -->
+  <div class="game-shell hidden" id="gameShell">
+
+    <section class="panel setup-panel">
+      <div>
+        <p class="panel-eyebrow">60 Second Challenge</p>
+        <h1 class="panel-title">Angle<span>Hunter</span></h1>
+        <p class="panel-sub">Find the missing angle in each diagram. Use the Solver if you're stuck — it shows the full solution so you can learn and move on.</p>
+        <div id="currentDiffBadge"></div>
+      </div>
+      <button class="change-diff-btn" id="changeDiffBtn" onclick="changeDifficulty()">⟵ Change Difficulty</button>
+      <div>
+        <button id="startBtn" class="start-btn">▶ Start Game</button>
+        <p id="setupMessage" class="helper" style="margin-top:0.6rem;">Settings lock when the round starts.</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-title">Round Summary</p>
+        <div class="summary-rows">
+          <div class="summary-row"><span>Attempted</span><strong id="attemptedValue">0</strong></div>
+          <div class="summary-row"><span>Accuracy</span><strong id="accuracyValue">0%</strong></div>
+          <div class="summary-row"><span>Best Streak</span><strong id="bestStreakValue">0</strong></div>
+          <div class="summary-row"><span>Solver Used</span><strong id="solverUsedValue">0</strong></div>
+          <div class="summary-row"><span>Difficulty</span><strong id="diffValue">—</strong></div>
+          <div class="summary-row"><span>All-Time Best</span><strong id="allTimeBestValue" style="color:var(--accent)">0</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel game-panel">
+      <div class="hud">
+        <div class="hud-card" id="timeCard"><span class="hud-label">Time</span><span class="hud-val" id="timeValue">60</span></div>
+        <div class="hud-card"><span class="hud-label">Score</span><span class="hud-val" id="scoreValue">0</span></div>
+        <div class="hud-card"><span class="hud-label">Streak</span><span class="hud-val" id="streakValue">0</span></div>
+        <div class="hud-card"><span class="hud-label">Correct</span><span class="hud-val" id="correctValue">0</span></div>
+      </div>
+
+      <div class="question-card" id="questionCard">
+        <p class="game-status" id="gameStatus">Ready when you are.</p>
+        <canvas id="diagramCanvas" width="340" height="220"></canvas>
+        <p class="q-text" id="questionText">Choose difficulty and press Start!</p>
+        <p class="q-rule" id="ruleText"></p>
+        <form id="answerForm" autocomplete="off" onsubmit="handleAnswer(event)">
+          <div class="answer-row">
+            <input type="number" id="answerInput" placeholder="?" disabled />
+            <span class="deg-label">°</span>
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>Submit</button>
+          </div>
+        </form>
+        <button class="solver-btn" id="solverBtn" onclick="showSolver()" disabled>💡 Solver — Show Solution</button>
+        <p id="feedbackText" class="feedback neutral">Choose difficulty and begin.</p>
+        <div class="solver-panel" id="solverPanel">
+          <h4>📚 Step-by-Step Solution</h4>
+          <div id="solverSteps"></div>
+          <div class="solver-answer" id="solverAnswer"></div>
+          <div class="screenshot-banner">📸 Take a screenshot to review this later!</div>
+          <button class="next-btn" onclick="solverNext()">Next Question →</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ─────────────────────────────────────────────
+//  Firebase Auth & Score Saving
+// ─────────────────────────────────────────────
+const GAME_ID   = 'anglehunter';
+const GAME_NAME = 'Angle Hunter';
+const LS_KEY    = 'anglehunter_highscore';
+
+let fbUser = null, fbUsername = '', isGuest = false;
+
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    fbUser = user;
+    await loadUsername();
+    showDiffScreen();
+  } else {
+    document.getElementById('authScreen').classList.remove('hidden');
+  }
+});
+
+async function loadUsername() {
+  try {
+    const doc = await db.collection('users').doc(fbUser.uid).get();
+    fbUsername = doc.exists ? (doc.data().username || fbUser.email) : fbUser.email;
+  } catch { fbUsername = fbUser.email; }
+  renderUserBadge();
+}
+
+function renderUserBadge() {
+  const area = document.getElementById('userBadgeArea');
+  if (isGuest) { area.innerHTML = `<div class="user-badge"><span class="uname">Guest</span></div>`; return; }
+  if (!fbUser) { area.innerHTML = ''; return; }
+  area.innerHTML = `<div class="user-badge"><span>👤</span><span class="uname">${fbUsername}</span><button class="logout-btn" onclick="doLogout()">Logout</button></div>`;
+}
+
+function showDiffScreen() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('diffScreen').classList.remove('hidden');
+  document.getElementById('gameShell').classList.add('hidden');
+  renderUserBadge();
+  renderHighScore();
+}
+
+async function doLogin() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const btn = document.getElementById('authLoginBtn');
+  const errEl = document.getElementById('authError');
+  errEl.style.display = 'none';
+  if (!email || !password) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email, password);
+    fbUser = cred.user; isGuest = false;
+    await loadUsername(); showDiffScreen();
+  } catch (e) {
+    errEl.textContent = (['auth/wrong-password','auth/user-not-found','auth/invalid-credential'].includes(e.code))
+      ? 'Invalid email or password.' : (e.message || 'Login failed.');
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Login & Play';
+  }
+}
+
+document.getElementById('authPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function playAsGuest() { isGuest = true; fbUser = null; showDiffScreen(); }
+
+function doLogout() {
+  auth.signOut(); fbUser = null; fbUsername = ''; isGuest = false;
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('diffScreen').classList.add('hidden');
+  document.getElementById('gameShell').classList.add('hidden');
+  document.getElementById('authEmail').value = '';
+  document.getElementById('authPassword').value = '';
+  document.getElementById('authError').style.display = 'none';
+  const btn = document.getElementById('authLoginBtn');
+  btn.disabled = false; btn.textContent = 'Login & Play';
+}
+
+async function saveScoreToFirebase(score) {
+  if (!fbUser || isGuest) return 'guest';
+  try {
+    const docId = `${fbUser.uid}_${GAME_ID}`;
+    const docRef = db.collection('scores').doc(docId);
+    const snap = await docRef.get();
+    const currentBest = snap.exists ? (snap.data().bestScore || 0) : 0;
+    if (score <= currentBest) return 'not-best';
+    await docRef.set({ userId: fbUser.uid, gameId: GAME_ID, gameName: GAME_NAME, bestScore: score, lastPlayed: firebase.firestore.FieldValue.serverTimestamp() });
+    const allScores = await db.collection('scores').where('userId','==',fbUser.uid).get();
+    let total = 0; allScores.forEach(d => { total += d.data().bestScore || 0; });
+    await db.collection('leaderboard').doc(fbUser.uid).set({ userId: fbUser.uid, username: fbUsername, totalScore: total, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() });
+    return 'saved';
+  } catch (e) { console.error('Score save error:', e); return 'error'; }
+}
+
+// ─────────────────────────────────────────────
+//  High Score
+// ─────────────────────────────────────────────
+function saveHighScore(score) {
+  const cur = Number(localStorage.getItem(LS_KEY)) || 0;
+  if (score > cur) { localStorage.setItem(LS_KEY, score); state.highScore = score; return true; }
+  return false;
+}
+function renderHighScore() {
+  const hs = Number(localStorage.getItem(LS_KEY)) || 0;
+  state.highScore = hs;
+  document.getElementById('hsBadge').textContent = hs;
+  document.getElementById('allTimeBestValue').textContent = hs;
+}
+
+// ─────────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────────
+const state = {
+  isPlaying:false, timer:60, score:0, correct:0, attempted:0,
+  streak:0, bestStreak:0, solverUsed:0, currentQ:null,
+  difficulty:'easy', intervalId:null, highScore:0, solverOpen:false
+};
+const POINTS = { easy:10, medium:15, hard:20 };
+
+// ─────────────────────────────────────────────
+//  Difficulty
+// ─────────────────────────────────────────────
+function selectDifficulty(diff) {
+  state.difficulty = diff;
+  document.getElementById('diffScreen').classList.add('hidden');
+  document.getElementById('gameShell').classList.remove('hidden');
+  renderDiffBadge(); updateHUD(); drawWelcomeDiagram();
+}
+function changeDifficulty() {
+  if (state.isPlaying) return;
+  clearInterval(state.intervalId);
+  document.getElementById('diffScreen').classList.remove('hidden');
+  document.getElementById('gameShell').classList.add('hidden');
+}
+function renderDiffBadge() {
+  const map = { easy:{text:'Easy · Grade 4–5',cls:'grade-easy'}, medium:{text:'Medium · Grade 5–6',cls:'grade-medium'}, hard:{text:'Hard · Grade 7–9',cls:'grade-hard'} };
+  const d = map[state.difficulty];
+  document.getElementById('currentDiffBadge').innerHTML = `<span class="diff-badge ${d.cls}" style="margin-top:0.75rem;">${d.text}</span>`;
+  document.getElementById('diffValue').textContent = state.difficulty.charAt(0).toUpperCase()+state.difficulty.slice(1);
+}
+
+// ─────────────────────────────────────────────
+//  Canvas Drawing
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('diagramCanvas');
+const ctx = canvas.getContext('2d');
+const CL = { line:'#94a3b8', angle:'#f59e0b', unknown:'#3b82f6', text:'#f1f5f9', muted:'#64748b', arcStroke:'#3b82f6', success:'#10b981' };
+
+function clearCanvas() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#111827';
+  if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(0,0,canvas.width,canvas.height,12); ctx.fill(); }
+  else { ctx.fillRect(0,0,canvas.width,canvas.height); }
+}
+function dLine(x1,y1,x2,y2,col=CL.line,w=2){ ctx.beginPath();ctx.strokeStyle=col;ctx.lineWidth=w;ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke(); }
+function dArc(cx,cy,r,a1,a2,col=CL.arcStroke){ ctx.beginPath();ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.arc(cx,cy,r,a1,a2);ctx.stroke(); }
+function dLabel(x,y,t,col=CL.text,sz=14){ ctx.font=`bold ${sz}px 'DM Sans',sans-serif`;ctx.fillStyle=col;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,x,y); }
+function dArrow(x1,y1,x2,y2){ const mx=(x1+x2)/2,my=(y1+y2)/2,a=Math.atan2(y2-y1,x2-x1),s=8; ctx.beginPath();ctx.strokeStyle=CL.muted;ctx.lineWidth=1.5; ctx.moveTo(mx-Math.cos(a-0.4)*s,my-Math.sin(a-0.4)*s);ctx.lineTo(mx,my);ctx.lineTo(mx-Math.cos(a+0.4)*s,my-Math.sin(a+0.4)*s);ctx.stroke(); }
+
+function drawWelcomeDiagram() {
+  clearCanvas();
+  const cx=canvas.width/2, cy=canvas.height/2;
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=2;
+  ctx.moveTo(cx,cy-70);ctx.lineTo(cx+80,cy+50);ctx.lineTo(cx-80,cy+50);ctx.closePath();ctx.stroke();
+  dLabel(cx,cy-85,'?°',CL.unknown,14); dLabel(cx+95,cy+57,'65°',CL.angle,13); dLabel(cx-95,cy+57,'70°',CL.angle,13);
+}
+
+// Easy diagrams
+function drawStraightLine(a) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+10;
+  dLine(30,cy,canvas.width-30,cy);
+  dArc(cx,cy,50,Math.PI,Math.PI*2); dArc(cx,cy,50,0,Math.PI);
+  dLabel(cx-75,cy-35,a+'°',CL.angle); dLabel(cx+75,cy-35,'?°',CL.unknown,16);
+}
+function drawAnglesAtPoint(a1,a2) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+10,r=80;
+  dLine(cx,cy-r,cx,cy+r); dLine(cx-r,cy,cx+r,cy);
+  dLabel(cx+52,cy-28,a1+'°',CL.angle); dLabel(cx+28,cy-58,a2+'°',CL.angle); dLabel(cx-52,cy+28,'?°',CL.unknown,16);
+}
+function drawVertOpp(a) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+10,r=90,ang=0.6;
+  dLine(cx-r*Math.cos(ang),cy-r*Math.sin(ang),cx+r*Math.cos(ang),cy+r*Math.sin(ang));
+  dLine(cx-r*Math.cos(ang+Math.PI/2),cy-r*Math.sin(ang+Math.PI/2),cx+r*Math.cos(ang+Math.PI/2),cy+r*Math.sin(ang+Math.PI/2));
+  dLabel(cx+65,cy-42,a+'°',CL.angle); dLabel(cx-65,cy+42,'?°',CL.unknown,16);
+  dLabel(cx-60,cy-42,(180-a)+'°',CL.muted,11); dLabel(cx+60,cy+38,(180-a)+'°',CL.muted,11);
+}
+function drawSimpleTri(a1,a2) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+15;
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=2;
+  ctx.moveTo(cx,cy-65);ctx.lineTo(cx+85,cy+55);ctx.lineTo(cx-85,cy+55);ctx.closePath();ctx.stroke();
+  dLabel(cx,cy-80,'?°',CL.unknown,16); dLabel(cx+100,cy+62,a1+'°',CL.angle); dLabel(cx-100,cy+62,a2+'°',CL.angle);
+}
+
+// Medium diagrams
+function drawParallel(a, type) {
+  clearCanvas(); const w=canvas.width,h=canvas.height;
+  const y1=h*0.3,y2=h*0.72;
+  dLine(20,y1,w-20,y1); dLine(20,y2,w-20,y2);
+  dArrow(20,y1,w-20,y1); dArrow(20,y2,w-20,y2);
+  const tx1=80,ty1=15,tx2=w-55,ty2=h-15;
+  dLine(tx1,ty1,tx2,ty2);
+  const t1=(y1-ty1)/(ty2-ty1), ix1=tx1+t1*(tx2-tx1);
+  const t2=(y2-ty1)/(ty2-ty1), ix2=tx1+t2*(tx2-tx1);
+  if (type==='corresponding'){ dLabel(ix1+38,y1-22,a+'°',CL.angle); dLabel(ix2+38,y2-22,'?°',CL.unknown,16); }
+  else if (type==='alternate'){ dLabel(ix1-38,y1+22,a+'°',CL.angle); dLabel(ix2+38,y2-22,'?°',CL.unknown,16); }
+  else { dLabel(ix1+38,y1+22,a+'°',CL.angle); dLabel(ix2+38,y2-22,'?°',CL.unknown,16); }
+}
+function drawIsosTri(base) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+10;
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=2;
+  ctx.moveTo(cx,cy-70);ctx.lineTo(cx+85,cy+55);ctx.lineTo(cx-85,cy+55);ctx.closePath();ctx.stroke();
+  const tick=(x1,y1,x2,y2)=>{const mx=(x1+x2)/2,my=(y1+y2)/2,a=Math.atan2(y2-y1,x2-x1)+Math.PI/2;ctx.beginPath();ctx.strokeStyle=CL.muted;ctx.lineWidth=1.5;ctx.moveTo(mx-8*Math.cos(a),my-8*Math.sin(a));ctx.lineTo(mx+8*Math.cos(a),my+8*Math.sin(a));ctx.stroke();};
+  tick(cx,cy-70,cx+85,cy+55); tick(cx,cy-70,cx-85,cy+55);
+  dLabel(cx+100,cy+62,base+'°',CL.angle); dLabel(cx-100,cy+62,base+'°',CL.angle); dLabel(cx,cy-88,'?°',CL.unknown,16);
+}
+function drawExtAngle(a1,a2) {
+  clearCanvas(); const cx=canvas.width/2-20,cy=canvas.height/2+10;
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=2;
+  ctx.moveTo(cx-70,cy+50);ctx.lineTo(cx,cy-60);ctx.lineTo(cx+70,cy+50);ctx.closePath();ctx.stroke();
+  dLine(cx+70,cy+50,cx+130,cy+50);
+  dLabel(cx-85,cy+57,a1+'°',CL.angle); dLabel(cx,cy-76,a2+'°',CL.angle); dLabel(cx+115,cy+35,'?°',CL.unknown,16);
+  dArc(cx+70,cy+50,30,Math.PI,Math.PI*1.6);
+}
+
+// Hard diagrams
+function drawQuad(k1,k2,k3,shape) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+5;
+  let pts;
+  if(shape==='parallelogram') pts=[[cx-80,cy-45],[cx+60,cy-45],[cx+80,cy+45],[cx-60,cy+45]];
+  else if(shape==='trapezium') pts=[[cx-50,cy-45],[cx+50,cy-45],[cx+85,cy+45],[cx-85,cy+45]];
+  else pts=[[cx-75,cy-45],[cx+75,cy-45],[cx+75,cy+45],[cx-75,cy+45]];
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=2;
+  ctx.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<4;i++) ctx.lineTo(pts[i][0],pts[i][1]); ctx.closePath();ctx.stroke();
+  const off=[[-28,-18],[28,-18],[28,18],[-28,18]];
+  const vals=[k1,k2,k3,'?'], cols=[CL.angle,CL.angle,CL.angle,CL.unknown];
+  for(let i=0;i<4;i++) dLabel(pts[i][0]+off[i][0],pts[i][1]+off[i][1], vals[i]==='?'?'?°':vals[i]+'°', cols[i], vals[i]==='?'?16:13);
+}
+function drawPolygon(n) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+5,r=82;
+  const pts=[];
+  for(let i=0;i<n;i++){const a=(i*2*Math.PI/n)-Math.PI/2; pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=2;
+  ctx.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<n;i++) ctx.lineTo(pts[i][0],pts[i][1]); ctx.closePath();ctx.stroke();
+  const p=pts[0],prev=pts[n-1],next=pts[1];
+  const a1=Math.atan2(prev[1]-p[1],prev[0]-p[0]), a2=Math.atan2(next[1]-p[1],next[0]-p[0]);
+  dArc(p[0],p[1],22,a1,a2);
+  dLabel(p[0]+38*Math.cos((a1+a2)/2), p[1]+38*Math.sin((a1+a2)/2),'?°',CL.unknown,14);
+  ctx.font='11px DM Sans';ctx.fillStyle=CL.muted;ctx.textAlign='center';
+  const names={5:'Pentagon',6:'Hexagon',7:'Heptagon',8:'Octagon',9:'Nonagon',10:'Decagon',12:'Dodecagon'};
+  ctx.fillText('Regular '+names[n],cx,cy+r+20);
+}
+function drawCircleThm(type,data) {
+  clearCanvas(); const cx=canvas.width/2,cy=canvas.height/2+5,r=80;
+  ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=1.5;ctx.arc(cx,cy,r,0,2*Math.PI);ctx.stroke();
+  ctx.beginPath();ctx.fillStyle='rgba(59,130,246,0.04)';ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fill();
+  if(type==='semicircle'){
+    const A=[cx-r,cy],B=[cx+r,cy];
+    const ang=(data.pa)*Math.PI/180;
+    const P=[cx+r*Math.cos(ang),cy+r*Math.sin(ang)];
+    dLine(A[0],A[1],B[0],B[1]); dLine(A[0],A[1],P[0],P[1]); dLine(B[0],B[1],P[0],P[1]);
+    dLabel(P[0]+(P[0]>cx?18:-18),P[1]-12,'?°',CL.unknown,15);
+    dLabel(A[0]-12,A[1]+16,data.a+'°',CL.angle,13);
+  } else if(type==='centre'){
+    const aR=0.4,bR=1.4,cR=3.2;
+    const A=[cx+r*Math.cos(aR),cy+r*Math.sin(aR)],B=[cx+r*Math.cos(bR),cy+r*Math.sin(bR)],P=[cx+r*Math.cos(cR),cy+r*Math.sin(cR)];
+    dLine(cx,cy,A[0],A[1]); dLine(cx,cy,B[0],B[1]); dLine(P[0],P[1],A[0],A[1]); dLine(P[0],P[1],B[0],B[1]);
+    ctx.fillStyle='rgba(59,130,246,0.12)'; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,30,aR,bR); ctx.closePath(); ctx.fill();
+    dLabel(cx+48*Math.cos((aR+bR)/2),cy+48*Math.sin((aR+bR)/2),'?°',CL.unknown,15);
+    dLabel(P[0]-22,P[1]+8,data.c+'°',CL.angle,13);
+  } else if(type==='cyclic'){
+    const angs=[0.35,1.75,3.0,4.8];
+    const pts=angs.map(a=>[cx+r*Math.cos(a),cy+r*Math.sin(a)]);
+    ctx.beginPath();ctx.strokeStyle=CL.line;ctx.lineWidth=1.5;
+    ctx.moveTo(pts[0][0],pts[0][1]); pts.forEach(p=>ctx.lineTo(p[0],p[1])); ctx.closePath();ctx.stroke();
+    dLabel(pts[0][0]+16,pts[0][1]-10,data.a+'°',CL.angle,13);
+    dLabel(pts[1][0]-16,pts[1][1]-10,data.b+'°',CL.angle,13);
+    dLabel(pts[2][0]-18,pts[2][1]+12,'?°',CL.unknown,15);
+    dLabel(pts[3][0]+16,pts[3][1]+12,data.d+'°',CL.angle,13);
+  } else if(type==='tangent'){
+    const ang=-Math.PI/4;
+    const P=[cx+r*Math.cos(ang),cy+r*Math.sin(ang)];
+    dLine(cx,cy,P[0],P[1]);
+    const s=70,ta=ang+Math.PI/2;
+    dLine(P[0]-s*Math.cos(ta),P[1]-s*Math.sin(ta),P[0]+s*Math.cos(ta),P[1]+s*Math.sin(ta));
+    const sq=9,ra=Math.atan2(cy-P[1],cx-P[0]);
+    ctx.strokeStyle=CL.muted;ctx.lineWidth=1;
+    ctx.strokeRect(P[0]-sq/2,P[1]-sq/2,sq,sq);
+    dLabel(P[0]-28,P[1]-28,'?°',CL.unknown,15);
+    dLabel(cx+12,cy+14,data.a+'°',CL.angle,13);
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Question Generation
+// ─────────────────────────────────────────────
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+function genQuestion() {
+  if(state.difficulty==='easy') return genEasy();
+  if(state.difficulty==='medium') return genMedium();
+  return genHard();
+}
+
+function genEasy() {
+  const t=rand(0,3);
+  if(t===0){
+    const a=rand(25,155), ans=180-a;
+    drawStraightLine(a);
+    return { question:`Angles on a straight line. One angle is ${a}°. Find the missing angle.`, rule:'Angles on a straight line add up to 180°', answer:ans,
+      steps:[{s:'Rule: Angles on a straight line sum to 180°'},{s:`Missing angle = 180° − ${a}°`},{s:`= <strong>${ans}°</strong>`}] };
+  } else if(t===1){
+    const a=rand(40,120), b=rand(30,Math.min(150,320-a));
+    const ans=360-a-b;
+    drawAnglesAtPoint(a,b);
+    return { question:`Angles at a point are ${a}°, ${b}° and a missing angle. Find the missing angle.`, rule:'Angles at a point add up to 360°', answer:ans,
+      steps:[{s:'Rule: Angles at a point sum to 360°'},{s:`Missing = 360° − ${a}° − ${b}°`},{s:`= <strong>${ans}°</strong>`}] };
+  } else if(t===2){
+    const a=rand(30,150);
+    drawVertOpp(a);
+    return { question:`Two straight lines cross. One angle is ${a}°. Find the vertically opposite angle.`, rule:'Vertically opposite angles are equal', answer:a,
+      steps:[{s:'Rule: Vertically opposite angles are equal'},{s:`Missing angle = <strong>${a}°</strong>`}] };
+  } else {
+    const a=rand(30,75), b=rand(30,180-a-20);
+    const ans=180-a-b;
+    drawSimpleTri(a,b);
+    return { question:`Two angles of a triangle are ${a}° and ${b}°. Find the third angle.`, rule:'Angles in a triangle add up to 180°', answer:ans,
+      steps:[{s:'Rule: Angles in a triangle sum to 180°'},{s:`Missing = 180° − ${a}° − ${b}°`},{s:`= <strong>${ans}°</strong>`}] };
+  }
+}
+
+function genMedium() {
+  const t=rand(0,3);
+  if(t===0){
+    const a=rand(35,145);
+    drawParallel(a,'corresponding');
+    return { question:`AB ∥ CD. The marked angle is ${a}°. Find the corresponding angle.`, rule:'Corresponding angles are equal (F-angles)', answer:a,
+      steps:[{s:'Rule: Corresponding angles between parallel lines are equal (F-angles)'},{s:`Corresponding angle = <strong>${a}°</strong>`}] };
+  } else if(t===1){
+    const a=rand(35,145);
+    drawParallel(a,'alternate');
+    return { question:`AB ∥ CD. The marked angle is ${a}°. Find the alternate angle.`, rule:'Alternate angles are equal (Z-angles)', answer:a,
+      steps:[{s:'Rule: Alternate angles between parallel lines are equal (Z-angles)'},{s:`Alternate angle = <strong>${a}°</strong>`}] };
+  } else if(t===2){
+    const a=rand(35,145), ans=180-a;
+    drawParallel(a,'cointerior');
+    return { question:`AB ∥ CD. One co-interior angle is ${a}°. Find the other co-interior angle.`, rule:'Co-interior angles add up to 180° (C-angles)', answer:ans,
+      steps:[{s:'Rule: Co-interior angles between parallel lines sum to 180° (C-angles)'},{s:`Missing = 180° − ${a}° = <strong>${ans}°</strong>`}] };
+  } else {
+    const v=rand(0,1);
+    if(v===0){
+      const base=rand(25,70), ans=180-2*base;
+      drawIsosTri(base);
+      return { question:`An isosceles triangle has two equal base angles of ${base}°. Find the apex angle.`, rule:'Isosceles: 2 base angles equal. All angles sum to 180°', answer:ans,
+        steps:[{s:'Rule: Angles in a triangle sum to 180°'},{s:`Apex = 180° − ${base}° − ${base}°`},{s:`= <strong>${ans}°</strong>`}] };
+    } else {
+      const a=rand(30,70), b=rand(25,60), ans=a+b;
+      drawExtAngle(a,b);
+      return { question:`Two interior angles of a triangle are ${a}° and ${b}°. Find the exterior angle at the third vertex.`, rule:'Exterior angle = sum of two interior opposite angles', answer:ans,
+        steps:[{s:'Rule: Exterior angle = sum of the two non-adjacent interior angles'},{s:`Exterior = ${a}° + ${b}° = <strong>${ans}°</strong>`}] };
+    }
+  }
+}
+
+function genHard() {
+  const t=rand(0,2);
+  if(t===0){
+    const shapes=['rectangle','parallelogram','trapezium'];
+    const shape=shapes[rand(0,2)];
+    let k1,k2,k3,ans,q,steps;
+    if(shape==='rectangle'){
+      k1=90;k2=90;k3=90;ans=90;
+      q='A rectangle has three angles marked as 90°. Find the fourth angle.';
+      steps=[{s:'Rule: Angles in a quadrilateral sum to 360°'},{s:'360° − 90° − 90° − 90° = <strong>90°</strong>'}];
+    } else if(shape==='parallelogram'){
+      k1=rand(40,80);k2=180-k1;k3=k1;ans=k2;
+      q=`A parallelogram has angles ${k1}°, ${k2}°, ${k3}°. Find the missing angle.`;
+      steps=[{s:'Rule: Opposite angles in a parallelogram are equal; adjacent angles sum to 180°'},{s:`Missing = 180° − ${k1}° = <strong>${ans}°</strong>`}];
+    } else {
+      k1=rand(50,100);k2=rand(50,100);k3=rand(50,100);ans=360-k1-k2-k3;
+      q=`A quadrilateral has angles ${k1}°, ${k2}°, ${k3}°. Find the missing angle.`;
+      steps=[{s:'Rule: Angles in a quadrilateral sum to 360°'},{s:`Missing = 360° − ${k1}° − ${k2}° − ${k3}° = <strong>${ans}°</strong>`}];
+    }
+    drawQuad(k1,k2,k3,shape);
+    return { question:q, rule:'Angles in a quadrilateral sum to 360°', answer:ans, steps };
+  } else if(t===1){
+    const ns=[5,6,7,8,9,10,12], n=ns[rand(0,ns.length-1)];
+    const interior=Math.round((n-2)*180/n), exterior=Math.round(360/n);
+    const askInt=rand(0,1)===0, ans=askInt?interior:exterior;
+    const names={5:'pentagon',6:'hexagon',7:'heptagon',8:'octagon',9:'nonagon',10:'decagon',12:'dodecagon'};
+    drawPolygon(n);
+    return {
+      question: askInt ? `Find the interior angle of a regular ${names[n]}.` : `Find the exterior angle of a regular ${names[n]}.`,
+      rule: askInt ? 'Interior angle = (n−2)×180° ÷ n' : 'Exterior angle = 360° ÷ n',
+      answer: ans,
+      steps: askInt
+        ? [{s:`Formula: Interior angle = (n−2) × 180° ÷ n`},{s:`= (${n}−2) × 180° ÷ ${n} = ${(n-2)*180} ÷ ${n} = <strong>${interior}°</strong>`}]
+        : [{s:`Formula: Exterior angle = 360° ÷ n`},{s:`= 360° ÷ ${n} = <strong>${exterior}°</strong>`}]
+    };
+  } else {
+    const thms=['semicircle','centre','cyclic','tangent'];
+    const thm=thms[rand(0,3)];
+    if(thm==='semicircle'){
+      const a=rand(25,60);
+      drawCircleThm('semicircle',{pa:-55,a});
+      return { question:`A triangle is inscribed in a semicircle with the hypotenuse as the diameter. One base angle is ${a}°. Find the angle at the circumference marked ?.`, rule:'Angle in a semicircle = 90°', answer:90,
+        steps:[{s:'Rule: The angle subtended by a diameter at the circumference is always 90°'},{s:'Missing angle = <strong>90°</strong>'}] };
+    } else if(thm==='centre'){
+      const c=rand(20,50), ans=2*c;
+      drawCircleThm('centre',{c});
+      return { question:`The angle at the circumference is ${c}°. Find the angle at the centre subtended by the same arc.`, rule:'Angle at centre = 2 × angle at circumference', answer:ans,
+        steps:[{s:'Rule: Angle at centre = 2 × angle at circumference'},{s:`= 2 × ${c}° = <strong>${ans}°</strong>`}] };
+    } else if(thm==='cyclic'){
+      const b=rand(60,110), ans=180-b;
+      drawCircleThm('cyclic',{a:rand(60,100),b,d:rand(60,100)});
+      return { question:`ABCD is a cyclic quadrilateral. Angle B = ${b}°. Find angle D (the opposite angle).`, rule:'Opposite angles in a cyclic quadrilateral sum to 180°', answer:ans,
+        steps:[{s:'Rule: Opposite angles in a cyclic quadrilateral sum to 180°'},{s:`Angle D = 180° − ${b}° = <strong>${ans}°</strong>`}] };
+    } else {
+      drawCircleThm('tangent',{a:rand(25,65)});
+      return { question:`A tangent touches a circle at point P. The radius meets the tangent at P. Find the angle between the tangent and the radius (marked ?).`, rule:'Tangent meets radius at 90°', answer:90,
+        steps:[{s:'Rule: A tangent to a circle is perpendicular to the radius at the point of contact'},{s:'The angle = <strong>90°</strong>'}] };
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Game Logic
+// ─────────────────────────────────────────────
+function lockControls(on) {
+  document.getElementById('answerInput').disabled=!on;
+  document.getElementById('submitBtn').disabled=!on;
+  document.getElementById('solverBtn').disabled=!on;
+}
+function setFeedback(msg,type='neutral'){ const e=document.getElementById('feedbackText'); e.textContent=msg; e.className=`feedback ${type}`; }
+function updateHUD(){
+  document.getElementById('timeValue').textContent=state.timer;
+  document.getElementById('scoreValue').textContent=state.score;
+  document.getElementById('streakValue').textContent=state.streak;
+  document.getElementById('correctValue').textContent=state.correct;
+  const tc=document.getElementById('timeCard');
+  if(state.timer<=10&&state.isPlaying) tc.classList.add('time-low'); else tc.classList.remove('time-low');
+  updateSummary();
+}
+function updateSummary(){
+  const acc=state.attempted?Math.round(state.correct/state.attempted*100):0;
+  document.getElementById('attemptedValue').textContent=state.attempted;
+  document.getElementById('accuracyValue').textContent=acc+'%';
+  document.getElementById('bestStreakValue').textContent=state.bestStreak;
+  document.getElementById('solverUsedValue').textContent=state.solverUsed;
+  renderHighScore();
+}
+
+function startGame(){
+  document.getElementById('endOverlay')?.remove();
+  Object.assign(state,{isPlaying:true,timer:60,score:0,correct:0,attempted:0,streak:0,bestStreak:0,solverUsed:0,solverOpen:false});
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('startBtn').textContent='⏱ Running…';
+  document.getElementById('changeDiffBtn').disabled=true;
+  document.getElementById('setupMessage').textContent='Solve as many as you can!';
+  document.getElementById('gameStatus').textContent='Go! Find the missing angles.';
+  document.getElementById('solverPanel').classList.remove('visible');
+  setFeedback('Go!','ok');
+  lockControls(true);
+  updateHUD();
+  nextQuestion();
+  state.intervalId=setInterval(()=>{ state.timer--; updateHUD(); if(state.timer<=0) endGame(); },1000);
+}
+
+function nextQuestion(){
+  state.solverOpen=false;
+  document.getElementById('solverPanel').classList.remove('visible');
+  document.getElementById('answerInput').value='';
+  state.currentQ=genQuestion();
+  document.getElementById('questionText').textContent=state.currentQ.question;
+  document.getElementById('ruleText').textContent='💡 '+state.currentQ.rule;
+  if(state.isPlaying) document.getElementById('answerInput').focus();
+}
+
+function handleAnswer(e){
+  e.preventDefault();
+  if(!state.isPlaying||!state.currentQ||state.solverOpen) return;
+  const raw=document.getElementById('answerInput').value.trim();
+  if(raw===''){setFeedback('Enter an angle!','bad');return;}
+  const sub=Number(raw); state.attempted++;
+  if(sub===state.currentQ.answer){
+    state.correct++;state.streak++;
+    state.bestStreak=Math.max(state.bestStreak,state.streak);
+    const pts=POINTS[state.difficulty]+Math.min(state.streak*2,20);
+    state.score+=pts;
+    setFeedback(`✓ Correct! +${pts}`,'ok');
+    updateHUD(); nextQuestion();
+  } else {
+    state.streak=0;
+    setFeedback(`✗ Answer was ${state.currentQ.answer}°`,'bad');
+    updateHUD();
+  }
+}
+
+function showSolver(){
+  if(!state.isPlaying||!state.currentQ) return;
+  state.solverUsed++; state.solverOpen=true;
+  const panel=document.getElementById('solverPanel');
+  panel.classList.add('visible');
+  document.getElementById('solverSteps').innerHTML=state.currentQ.steps.map(s=>`<div class="solver-step">${s.s}</div>`).join('');
+  document.getElementById('solverAnswer').textContent=`Answer: ${state.currentQ.answer}°`;
+  updateSummary();
+}
+
+function solverNext(){
+  document.getElementById('solverPanel').classList.remove('visible');
+  state.solverOpen=false;
+  nextQuestion();
+}
+
+function endGame(){
+  state.isPlaying=false;
+  clearInterval(state.intervalId);
+  lockControls(false);
+  document.getElementById('timeCard').classList.remove('time-low');
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('startBtn').textContent='▶ Play Again';
+  document.getElementById('changeDiffBtn').disabled=false;
+  document.getElementById('setupMessage').textContent='Settings unlocked.';
+
+  const isNewBest=saveHighScore(state.score);
+  const acc=state.attempted?Math.round(state.correct/state.attempted*100):0;
+
+  const ov=document.createElement('div');
+  ov.className='end-overlay'; ov.id='endOverlay';
+  ov.innerHTML=`
+    <p class="end-label">Round Complete</p>
+    <div class="end-score">${state.score}</div>
+    <p class="end-label">${acc}% accuracy · ${state.correct} correct · ${state.solverUsed} solver${state.solverUsed!==1?'s':''} used</p>
+    ${isNewBest?'<div class="new-hs-banner">🏆 New High Score!</div>':''}
+    <div id="saveStatusBadge"></div>
+  `;
+  document.getElementById('questionCard').appendChild(ov);
+  setFeedback(`Final: ${state.score} pts · ${acc}% accuracy`, isNewBest?'ok':'neutral');
+  updateHUD();
+
+  const badge=document.getElementById('saveStatusBadge');
+  if(isGuest||!fbUser){
+    badge.innerHTML=`<span class="save-status guest">Playing as Guest — scores not saved</span>`;
+  } else {
+    badge.innerHTML=`<span class="save-status not-best" style="opacity:0.6">Saving…</span>`;
+    saveScoreToFirebase(state.score).then(r=>{
+      if(r==='saved') badge.innerHTML=`<span class="save-status saved">✓ Saved to leaderboard!</span>`;
+      else if(r==='not-best') badge.innerHTML=`<span class="save-status not-best">Not your best — leaderboard unchanged</span>`;
+      else badge.innerHTML=`<span class="save-status not-best">Could not save — check connection</span>`;
+    });
+  }
+}
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('answerForm').addEventListener('submit', handleAnswer);
+</script>
+</body>
+</html>
