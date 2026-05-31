@@ -310,7 +310,7 @@
             <button type="submit" class="submit-btn" id="submitBtn" disabled>Submit</button>
           </div>
         </form>
-        <button class="solver-btn" id="solverBtn" onclick="showSolver()" disabled>💡 Solver — Show Solution</button>
+        <button class="solver-btn" id="solverBtn" onclick="showSolver()" disabled style="display:none">💡 Solver — Show Solution</button>
         <p id="feedbackText" class="feedback neutral">Choose difficulty and begin.</p>
         <div class="solver-panel" id="solverPanel">
           <h4>📚 Step-by-Step Solution</h4>
@@ -795,6 +795,7 @@ function nextQuestion(){
   state.solverOpen=false;
   document.getElementById('solverPanel').classList.remove('visible');
   document.getElementById('answerInput').value='';
+  setFeedback('','neutral');
   state.currentQ=genQuestion();
   document.getElementById('questionText').textContent=state.currentQ.question;
   document.getElementById('ruleText').textContent='💡 '+state.currentQ.rule;
@@ -816,8 +817,9 @@ function handleAnswer(e){
     updateHUD(); nextQuestion();
   } else {
     state.streak=0;
-    setFeedback(`✗ Answer was ${state.currentQ.answer}°`,'bad');
+    setFeedback('✗ Incorrect — check the solution below.','bad');
     updateHUD();
+    showSolver();
   }
 }
 
