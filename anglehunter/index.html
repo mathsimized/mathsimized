@@ -267,7 +267,7 @@
 
     <section class="panel setup-panel">
       <div>
-        <p class="panel-eyebrow">60 Second Challenge</p>
+        <p class="panel-eyebrow">3 Minute Challenge</p>
         <h1 class="panel-title">Angle<span>Hunter</span></h1>
         <p class="panel-sub">Find the missing angle in each diagram. Use the Solver if you're stuck — it shows the full solution so you can learn and move on.</p>
         <div id="currentDiffBadge"></div>
@@ -292,7 +292,7 @@
 
     <section class="panel game-panel">
       <div class="hud">
-        <div class="hud-card" id="timeCard"><span class="hud-label">Time</span><span class="hud-val" id="timeValue">60</span></div>
+        <div class="hud-card" id="timeCard"><span class="hud-label">Time</span><span class="hud-val" id="timeValue">180</span></div>
         <div class="hud-card"><span class="hud-label">Score</span><span class="hud-val" id="scoreValue">0</span></div>
         <div class="hud-card"><span class="hud-label">Streak</span><span class="hud-val" id="streakValue">0</span></div>
         <div class="hud-card"><span class="hud-label">Correct</span><span class="hud-val" id="correctValue">0</span></div>
@@ -437,7 +437,7 @@ function renderHighScore() {
 //  State
 // ─────────────────────────────────────────────
 const state = {
-  isPlaying:false, timer:60, score:0, correct:0, attempted:0,
+  isPlaying:false, timer:180, score:0, correct:0, attempted:0,
   streak:0, bestStreak:0, solverUsed:0, currentQ:null,
   difficulty:'easy', intervalId:null, highScore:0, solverOpen:false
 };
@@ -777,7 +777,7 @@ function updateSummary(){
 
 function startGame(){
   document.getElementById('endOverlay')?.remove();
-  Object.assign(state,{isPlaying:true,timer:60,score:0,correct:0,attempted:0,streak:0,bestStreak:0,solverUsed:0,solverOpen:false});
+  Object.assign(state,{isPlaying:true,timer:180,score:0,correct:0,attempted:0,streak:0,bestStreak:0,solverUsed:0,solverOpen:false});
   document.getElementById('startBtn').disabled=true;
   document.getElementById('startBtn').textContent='⏱ Running…';
   document.getElementById('changeDiffBtn').disabled=true;
