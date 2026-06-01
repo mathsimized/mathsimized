@@ -17,7 +17,7 @@
 
 <nav class="navbar">
   <div class="container">
-    <a href="./index.html" class="navbar-logo"><img src="./logo.PNG" alt="MATHSIMIZED" height="32"></a>
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
     <button class="hamburger" onclick="toggleMobileMenu()">
       <span></span><span></span><span></span>
     </button>
@@ -110,6 +110,7 @@
 <script>
 function toggleMobileMenu() {
   document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
 }
 
 let allGames = [];
