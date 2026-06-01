@@ -740,8 +740,9 @@ table tr.highlight td {
     margin-top: 4px;
   }
   .nav-links .dropdown.open .dropdown-menu { display: block; }
-  .nav-auth { flex-direction: column; width: 100%; }
-  .nav-auth .btn-sm { width: 100%; text-align: center; }
+  .nav-auth { display: none; width: 100%; }
+  .nav-auth.open { display: flex; flex-direction: column; }
+  .nav-auth.open .btn-sm { width: 100%; text-align: center; }
 
   .hero h1 { font-size: 2.8rem; }
   .hero .tagline { font-size: 1.2rem; }
