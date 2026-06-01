@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://mathsimized.github.io/mathsimized/</loc><priority>1.0</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/about.html</loc><priority>0.8</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/lectures.html</loc><priority>0.8</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/notes.html</loc><priority>0.8</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/news.html</loc><priority>0.7</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/games.html</loc><priority>0.7</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/leaderboard.html</loc><priority>0.7</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/competitions.html</loc><priority>0.6</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/contact.html</loc><priority>0.6</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/login.html</loc><priority>0.4</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/signup.html</loc><priority>0.4</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/privacy.html</loc><priority>0.3</priority></url>
+  <url><loc>https://mathsimized.github.io/mathsimized/terms.html</loc><priority>0.3</priority></url>
+</urlset>
