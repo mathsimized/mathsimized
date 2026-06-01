@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — MATHSIMIZED</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="./firebase.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./lectures.html">Lectures</a></li>
+      <li><a href="./notes.html">Notes</a></li>
+      <li><a href="./news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="./games.html">Play Games</a>
+          <a href="./leaderboard.html">Leaderboard</a>
+          <a href="./competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="section-padding" style="padding-top:120px;">
+  <div class="container">
+    <div id="dashboardContent">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="./about.html">About</a>
+        <a href="./lectures.html">Lectures</a>
+        <a href="./notes.html">Notes</a>
+        <a href="./contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="./games.html">Play Games</a>
+        <a href="./leaderboard.html">Leaderboard</a>
+        <a href="./competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function updateTotalScoreUI(total) {
+  const el = document.getElementById('totalScoreValue');
+  if (el) el.textContent = total.toLocaleString();
+}
+
+function updateGameScoresUI(scores) {
+  const el = document.getElementById('gameScoresBody');
+  if (!el) return;
+  if (!scores || scores.length === 0) {
+    el.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);">No games played yet.</td></tr>';
+    return;
+  }
+  const sorted = [...scores].sort((a, b) => (b.bestScore || 0) - (a.bestScore || 0));
+  const total = sorted.reduce((sum, s) => sum + (s.bestScore || 0), 0);
+  el.innerHTML = sorted.map(s => `
+    <tr>
+      <td style="font-weight:600;">${escapeHtml(s.gameName || s.gameId)}</td>
+      <td style="color:var(--success);font-weight:700;">${(s.bestScore || 0).toLocaleString()}</td>
+      <td style="color:var(--muted);font-size:0.85rem;">${s.lastPlayed ? formatDate(s.lastPlayed) : 'N/A'}</td>
+    </tr>
+  `).join('') + `
+    <tr style="font-weight:700;background:var(--surface2);">
+      <td>Total</td>
+      <td style="color:var(--primary);">${total.toLocaleString()}</td>
+      <td></td>
+    </tr>
+  `;
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+
+// Auth-gated dashboard
+const container = document.getElementById('dashboardContent');
+
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    container.innerHTML = `
+      <div class="empty-state animate-on-scroll visible">
+        <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+        <h3>Please Login</h3>
+        <p>You need to be logged in to view your dashboard.</p>
+        <a href="./login.html" class="btn btn-primary" style="margin-top:16px;">Login</a>
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    const uid = user.uid;
+    const username = currentUsername || 'User';
+
+    const [lecturesSnap, notesSnap, newsSnap, userDoc] = await Promise.all([
+      db.collection('lectures').get(),
+      db.collection('notes').get(),
+      db.collection('news').orderBy('createdAt', 'desc').limit(3).get(),
+      db.collection('users').doc(uid).get()
+    ]);
+
+    const lectureCount = lecturesSnap.size;
+    const noteCount = notesSnap.size;
+    const userData = userDoc.exists ? userDoc.data() : {};
+    const fullName = userData.fullName || '';
+    const grade = userData.grade || '';
+    const school = userData.school || '';
+    const hasDetails = fullName || grade || school;
+
+    const totalScore = await getUserTotalScore(uid);
+    const userScores = await getUserScores(uid);
+
+    let compSnap;
+    try { compSnap = await db.collection('competition_participants').where('userId', '==', uid).get(); } catch { compSnap = { empty: true }; }
+    const compCount = compSnap.empty ? 0 : compSnap.size;
+
+    let recentNews = [];
+    newsSnap.forEach(doc => recentNews.push({ id: doc.id, ...doc.data() }));
+
+    container.innerHTML = `
+      ${!user.emailVerified ? `
+      <div style="background:#664b00;color:#ffd700;padding:12px 20px;border-radius:8px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:1.2rem;">⚠️</span>
+        <span style="flex:1;">Your email is not verified. Please check your inbox (including spam/junk) and click the verification link.</span>
+        <button onclick="resendVerificationEmail().then(()=>alert('Verification email sent!')).catch(e=>alert(e.message))" class="btn btn-sm btn-outline" style="border-color:#ffd700;color:#ffd700;">Resend Verification</button>
+      </div>
+      ` : ''}
+
+      <div class="section-title animate-on-scroll visible" style="margin-bottom:32px;">
+        <h2>Welcome, ${escapeHtml(username)}</h2>
+        <p>Your learning hub — quick access to everything MATHSIMIZED.</p>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:40px;">
+        <div class="card animate-on-scroll" style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:8px;">📺</div>
+          <h3 style="font-size:1.8rem;color:var(--primary);">${lectureCount}</h3>
+          <p style="color:var(--muted2);font-size:0.9rem;">Lectures</p>
+        </div>
+        <div class="card animate-on-scroll" style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+          <h3 style="font-size:1.8rem;color:var(--accent);">${noteCount}</h3>
+          <p style="color:var(--muted2);font-size:0.9rem;">Notes</p>
+        </div>
+        <div class="card animate-on-scroll" style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:8px;">🏆</div>
+          <h3 id="totalScoreValue" style="font-size:1.8rem;color:var(--success);">${totalScore.toLocaleString()}</h3>
+          <p style="color:var(--muted2);font-size:0.9rem;">Total Score</p>
+        </div>
+        <div class="card animate-on-scroll" style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:8px;">🏅</div>
+          <h3 style="font-size:1.8rem;color:var(--warning);">${compCount > 0 ? 'Yes' : 'No'}</h3>
+          <p style="color:var(--muted2);font-size:0.9rem;">Participated in Competition</p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:40px;">
+        <div class="card animate-on-scroll">
+          <h3 style="margin-bottom:16px;">Personal Details</h3>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <input type="text" id="fullNameInput" placeholder="Full Name (optional)" value="${escapeHtml(fullName)}" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.95rem;width:100%;box-sizing:border-box;">
+            <input type="text" id="gradeInput" placeholder="Grade / Class (optional)" value="${escapeHtml(grade)}" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.95rem;width:100%;box-sizing:border-box;">
+            <input type="text" id="schoolInput" placeholder="School / Institution (optional)" value="${escapeHtml(school)}" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.95rem;width:100%;box-sizing:border-box;">
+            ${hasDetails
+              ? `<button id="profileBtn" onclick="toggleEdit()" class="btn btn-outline" style="align-self:flex-start;font-size:0.85rem;padding:8px 20px;">Edit</button>`
+              : `<button id="profileBtn" onclick="saveProfile()" class="btn btn-primary" style="align-self:flex-start;">Save</button>`
+            }
+            <span id="profileSaved" style="color:var(--success);font-size:0.85rem;display:none;">✓ Saved</span>
+          </div>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3 style="margin-bottom:16px;">Recent News</h3>
+          ${recentNews.length === 0 ? '<p style="color:var(--muted);">No recent news.</p>' :
+            recentNews.map(n => `
+              <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+                <div style="font-weight:600;margin-bottom:4px;">${escapeHtml(n.title)}</div>
+                <div style="color:var(--muted);font-size:0.85rem;">${formatDate(n.createdAt)}</div>
+              </div>
+            `).join('')}
+          <a href="./news.html" class="btn btn-outline" style="margin-top:12px;font-size:0.85rem;padding:8px 20px;">View All News</a>
+        </div>
+      </div>
+
+      <div class="card animate-on-scroll" style="margin-bottom:40px;">
+        <h3 style="margin-bottom:16px;">Game Scores</h3>
+        ${userScores.length === 0
+          ? '<p style="color:var(--muted);">No games played yet. <a href="./games.html">Play a game</a> to see your scores here.</p>'
+          : `
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Game</th>
+                  <th>Best Score</th>
+                  <th>Last Played</th>
+                </tr>
+              </thead>
+              <tbody id="gameScoresBody">
+                ${userScores.sort((a, b) => (b.bestScore || 0) - (a.bestScore || 0)).map(s => `
+                  <tr>
+                    <td style="font-weight:600;">${escapeHtml(s.gameName || s.gameId)}</td>
+                    <td style="color:var(--success);font-weight:700;">${(s.bestScore || 0).toLocaleString()}</td>
+                    <td style="color:var(--muted);font-size:0.85rem;">${s.lastPlayed ? formatDate(s.lastPlayed) : 'N/A'}</td>
+                  </tr>
+                `).join('')}
+                <tr style="font-weight:700;background:var(--surface2);">
+                  <td>Total</td>
+                  <td style="color:var(--primary);">${totalScore.toLocaleString()}</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          `}
+      </div>
+
+      <div class="card animate-on-scroll">
+        <h3 style="margin-bottom:16px;">Quick Links</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <a href="./lectures.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>📺</span> Watch Lectures
+          </a>
+          <a href="./notes.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>📄</span> Download Notes
+          </a>
+          <a href="./games.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>🎮</span> Play Games
+          </a>
+          <a href="./news.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>📰</span> Latest News
+          </a>
+          <a href="./about.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>ℹ️</span> About
+          </a>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      document.querySelectorAll('#dashboardContent .animate-on-scroll').forEach(el => {
+        el.classList.add('visible');
+      });
+    }, 50);
+
+    // Live updates after dashboard loads
+    db.collection('leaderboard').doc(uid).onSnapshot((doc) => {
+      if (doc.exists) {
+        updateTotalScoreUI(doc.data().totalScore || 0);
+      } else {
+        // Leaderboard doc missing — compute from scores
+        db.collection('scores').where('userId', '==', uid).get().then(snap => {
+          let total = 0;
+          snap.forEach(d => total += d.data().bestScore || 0);
+          updateTotalScoreUI(total);
+        });
+      }
+    });
+
+    db.collection('scores').where('userId', '==', uid).onSnapshot((snap) => {
+      const scores = [];
+      snap.forEach(doc => scores.push(doc.data()));
+      updateGameScoresUI(scores);
+    });
+
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    container.innerHTML = '<div class="empty-state"><h3>Error Loading Dashboard</h3><p>Please try again later.</p></div>';
+  }
+});
+
+async function saveProfile() {
+  const uid = auth.currentUser.uid;
+  const fullName = document.getElementById('fullNameInput').value.trim();
+  const grade = document.getElementById('gradeInput').value.trim();
+  const school = document.getElementById('schoolInput').value.trim();
+  try {
+    await db.collection('users').doc(uid).update({ fullName, grade, school });
+    const el = document.getElementById('profileSaved');
+    el.style.display = 'inline';
+    setTimeout(() => { el.style.display = 'none'; }, 1500);
+  } catch (e) {
+    console.error('Error saving profile:', e);
+    alert('Failed to save profile.');
+  }
+}
+
+function toggleEdit() {
+  const btn = document.getElementById('profileBtn');
+  btn.textContent = 'Save';
+  btn.className = 'btn btn-primary';
+  btn.style.alignSelf = 'flex-start';
+  btn.onclick = saveProfile;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — MATHSIMIZED</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="./firebase.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./lectures.html">Lectures</a></li>
+      <li><a href="./notes.html">Notes</a></li>
+      <li><a href="./news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="./games.html">Play Games</a>
+          <a href="./leaderboard.html">Leaderboard</a>
+          <a href="./competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="section-padding" style="padding-top:120px;">
+  <div class="container">
+    <div class="section-title animate-on-scroll visible">
+      <h2>Admin Portal</h2>
+      <p>Manage content across MATHSIMIZED. Only the site owner has access.</p>
+    </div>
+
+    <div id="adminContent" style="display:none;">
+      <div class="tabs" id="adminTabs">
+        <button class="tab-btn active" data-tab="lectures">Lectures</button>
+        <button class="tab-btn" data-tab="notes">Notes</button>
+        <button class="tab-btn" data-tab="games">Games</button>
+        <button class="tab-btn" data-tab="news">News</button>
+        <button class="tab-btn" data-tab="users">Users</button>
+      </div>
+
+      <div id="adminLectures" class="tab-content active">
+        <div class="card" style="max-width:600px;margin:0 auto;">
+          <h3 style="margin-bottom:20px;">Add New Lecture</h3>
+          <form id="lectureForm">
+            <div class="form-group">
+              <label for="lectureSubject">Subject</label>
+              <select id="lectureSubject" class="form-select" required>
+                <option value="">Select subject</option>
+                <option value="O Level/IGCSE Maths">O Level / IGCSE Maths</option>
+                <option value="A Level Maths">A Level Maths</option>
+                <option value="O Level/IGCSE Add Maths">O Level / IGCSE Add Maths</option>
+                <option value="Further Maths">Further Maths</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lectureTopic">Topic Name</label>
+              <input type="text" id="lectureTopic" class="form-input" placeholder="e.g. Introduction to Quadratic Equations" required>
+            </div>
+            <div class="form-group">
+              <label for="lectureUrl">YouTube URL</label>
+              <input type="url" id="lectureUrl" class="form-input" placeholder="https://youtube.com/watch?v=..." required>
+            </div>
+            <div id="lectureStatus"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="lectureSubmitBtn">Add Lecture</button>
+          </form>
+        </div>
+        <div class="card" style="margin-top:24px;padding:24px;">
+          <h3 style="margin-bottom:16px;">Existing Lectures</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Topic</th><th>Subject</th><th></th></tr></thead>
+              <tbody id="lecturesList"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminNotes" class="tab-content">
+        <div class="card" style="max-width:600px;margin:0 auto;">
+          <h3 style="margin-bottom:20px;">Upload New Note</h3>
+          <form id="noteForm">
+            <div class="form-group">
+              <label for="noteSubject">Subject</label>
+              <select id="noteSubject" class="form-select" required>
+                <option value="">Select subject</option>
+                <option value="O Level/IGCSE Maths">O Level / IGCSE Maths</option>
+                <option value="A Level Maths">A Level Maths</option>
+                <option value="O Level/IGCSE Add Maths">O Level / IGCSE Add Maths</option>
+                <option value="Further Maths">Further Maths</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="noteTopic">Topic Name</label>
+              <input type="text" id="noteTopic" class="form-input" placeholder="e.g. Trigonometry Cheat Sheet" required>
+            </div>
+            <div class="form-group">
+              <label for="noteFile">PDF File</label>
+              <input type="file" id="noteFile" class="form-input" accept=".pdf" required>
+            </div>
+            <div id="noteStatus"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="noteSubmitBtn">Upload Note</button>
+          </form>
+        </div>
+        <div class="card" style="margin-top:24px;padding:24px;">
+          <h3 style="margin-bottom:16px;">Existing Notes</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Topic</th><th>Subject</th><th></th></tr></thead>
+              <tbody id="notesList"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminUsers" class="tab-content">
+        <div class="card" style="padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+            <h3>Registered Users</h3>
+            <select id="userSort" class="form-select" style="width:auto;min-width:160px;">
+              <option value="username">Sort by Username</option>
+              <option value="email">Sort by Email</option>
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">Loading users...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminNews" class="tab-content">
+        <div class="card" style="max-width:600px;margin:0 auto;">
+          <h3 style="margin-bottom:20px;">Post News</h3>
+          <form id="newsForm">
+            <div class="form-group">
+              <label for="newsTitle">Title</label>
+              <input type="text" id="newsTitle" class="form-input" placeholder="e.g. New Lecture Series Available" required>
+            </div>
+            <div class="form-group">
+              <label for="newsContent">Content</label>
+              <textarea id="newsContent" placeholder="Write the news content here..." required style="min-height:150px;"></textarea>
+            </div>
+            <div id="newsStatus"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="newsSubmitBtn">Publish News</button>
+          </form>
+        </div>
+        <div class="card" style="margin-top:24px;padding:24px;">
+          <h3 style="margin-bottom:16px;">Existing News</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Title</th><th>Date</th><th></th></tr></thead>
+              <tbody id="newsList"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminGames" class="tab-content">
+        <div class="card" style="max-width:600px;margin:0 auto;">
+          <h3 style="margin-bottom:20px;">Add New Game</h3>
+          <form id="gameForm">
+            <div class="form-group">
+              <label for="gameName">Game Name</label>
+              <input type="text" id="gameName" class="form-input" placeholder="e.g. MathBlitz" required>
+            </div>
+            <div class="form-group">
+              <label for="gameDifficulty">Difficulty</label>
+              <select id="gameDifficulty" class="form-select" required>
+                <option value="">Select difficulty</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="gameDescription">Short Description</label>
+              <input type="text" id="gameDescription" class="form-input" placeholder="e.g. Fast-paced arithmetic challenge" required>
+            </div>
+            <div class="form-group">
+              <label for="gameUrl">Game URL</label>
+              <input type="url" id="gameUrl" class="form-input" placeholder="https://your-game.netlify.app" required>
+            </div>
+            <div id="gameStatus"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="gameSubmitBtn">Add Game</button>
+          </form>
+        </div>
+        <div class="card" style="margin-top:24px;padding:24px;">
+          <h3 style="margin-bottom:16px;">Existing Games</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Name</th><th>Difficulty</th><th></th></tr></thead>
+              <tbody id="gamesList"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminRestricted" class="empty-state animate-on-scroll visible" style="display:none;">
+      <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+      <h3>Access Restricted</h3>
+      <p>This page is only accessible by the site administrator.</p>
+      <a href="./index.html" class="btn btn-outline" style="margin-top:16px;">Go Home</a>
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+auth.onAuthStateChanged((user) => {
+  if (!user || user.email !== ADMIN_EMAIL) {
+    document.getElementById('adminContent').style.display = 'none';
+    document.getElementById('adminRestricted').style.display = 'flex';
+  } else {
+    document.getElementById('adminContent').style.display = 'block';
+    loadLectures();
+  }
+});
+
+document.getElementById('adminTabs').addEventListener('click', (e) => {
+  if (e.target.classList.contains('tab-btn')) {
+    document.querySelectorAll('#adminTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('admin' + e.target.dataset.tab.charAt(0).toUpperCase() + e.target.dataset.tab.slice(1)).classList.add('active');
+  }
+});
+
+// Lecture form
+document.getElementById('lectureForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const subject = document.getElementById('lectureSubject').value;
+  const topic = document.getElementById('lectureTopic').value.trim();
+  const youtubeUrl = document.getElementById('lectureUrl').value.trim();
+  const statusEl = document.getElementById('lectureStatus');
+  const btn = document.getElementById('lectureSubmitBtn');
+
+  statusEl.innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = 'Adding...';
+
+  try {
+    await db.collection('lectures').add({
+      subject,
+      topic,
+      youtubeUrl,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    statusEl.innerHTML = '<span class="form-success">Lecture added successfully!</span>';
+    document.getElementById('lectureForm').reset();
+    loadLectures();
+  } catch (err) {
+    console.error('Error adding lecture:', err);
+    statusEl.innerHTML = '<span class="form-error">Failed to add lecture. Please try again.</span>';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Add Lecture';
+});
+
+// Note form
+document.getElementById('noteForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const subject = document.getElementById('noteSubject').value;
+  const topic = document.getElementById('noteTopic').value.trim();
+  const file = document.getElementById('noteFile').files[0];
+  const statusEl = document.getElementById('noteStatus');
+  const btn = document.getElementById('noteSubmitBtn');
+
+  if (!file || (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf'))) {
+    statusEl.innerHTML = '<span class="form-error">Please select a PDF file.</span>';
+    return;
+  }
+
+  if (file.size > 20 * 1024 * 1024) {
+    statusEl.innerHTML = '<span class="form-error">File too large. Maximum 20 MB.</span>';
+    return;
+  }
+
+  statusEl.innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = 'Reading file...';
+
+  try {
+    const reader = new FileReader();
+    const dataUrl = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.onabort = () => reject(new Error('Read cancelled'));
+      reader.readAsDataURL(file);
+    });
+
+    btn.textContent = 'Saving...';
+
+    const chunkSize = 400 * 1024;
+    const chunks = [];
+    for (let i = 0; i < dataUrl.length; i += chunkSize) {
+      chunks.push(dataUrl.substring(i, i + chunkSize));
+    }
+
+    const noteRef = await db.collection('notes').add({
+      subject,
+      topic,
+      fileSize: file.size,
+      fileName: file.name,
+      chunkCount: chunks.length,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    const batch = db.batch();
+    chunks.forEach((chunk, idx) => {
+      const chunkRef = db.collection('notes').doc(noteRef.id).collection('chunks').doc(String(idx));
+      batch.set(chunkRef, { data: chunk, index: idx });
+    });
+    await batch.commit();
+
+    statusEl.innerHTML = '<span class="form-success">Note uploaded successfully!</span>';
+    document.getElementById('noteForm').reset();
+    loadNotes();
+  } catch (err) {
+    console.error('Error uploading note:', err);
+    statusEl.innerHTML = '<span class="form-error">Failed to upload note: ' + (err.message || err) + '</span>';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Upload Note';
+});
+
+// Game form
+document.getElementById('gameForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('gameName').value.trim();
+  const difficulty = document.getElementById('gameDifficulty').value;
+  const description = document.getElementById('gameDescription').value.trim();
+  const gameUrl = document.getElementById('gameUrl').value.trim();
+  const statusEl = document.getElementById('gameStatus');
+  const btn = document.getElementById('gameSubmitBtn');
+
+  statusEl.innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = 'Adding...';
+
+  try {
+    await db.collection('games').add({
+      name,
+      difficulty,
+      description,
+      gameUrl,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    statusEl.innerHTML = '<span class="form-success">Game added successfully!</span>';
+    document.getElementById('gameForm').reset();
+    loadGames();
+  } catch (err) {
+    console.error('Error adding game:', err);
+    statusEl.innerHTML = '<span class="form-error">Failed to add game. Please try again.</span>';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Add Game';
+});
+
+// News form
+document.getElementById('newsForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('newsTitle').value.trim();
+  const content = document.getElementById('newsContent').value.trim();
+  const statusEl = document.getElementById('newsStatus');
+  const btn = document.getElementById('newsSubmitBtn');
+
+  if (!title || !content) {
+    statusEl.innerHTML = '<span class="form-error">Please fill in all fields.</span>';
+    return;
+  }
+
+  statusEl.innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = 'Publishing...';
+
+  try {
+    await db.collection('news').add({
+      title,
+      content,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    statusEl.innerHTML = '<span class="form-success">News published successfully!</span>';
+    document.getElementById('newsForm').reset();
+    loadNews();
+  } catch (err) {
+    console.error('Error publishing news:', err);
+    statusEl.innerHTML = '<span class="form-error">Failed to publish news. Please try again.</span>';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Publish News';
+});
+
+// Users tab
+let allUsers = [];
+
+async function loadUsers() {
+  try {
+    const snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+    allUsers = [];
+    snapshot.forEach(doc => {
+      allUsers.push({ id: doc.id, ...doc.data() });
+    });
+    renderUsers();
+  } catch (err) {
+    console.error('Error loading users:', err);
+    document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">Error loading users.</td></tr>';
+  }
+}
+
+function renderUsers() {
+  const sort = document.getElementById('userSort').value;
+  let sorted = [...allUsers];
+
+  if (sort === 'username') {
+    sorted.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+  } else if (sort === 'email') {
+    sorted.sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+  } else if (sort === 'newest') {
+    sorted.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+  } else if (sort === 'oldest') {
+    sorted.sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
+  }
+
+  const tbody = document.getElementById('usersTableBody');
+  if (sorted.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No users registered yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = sorted.map(u => `
+    <tr>
+      <td style="font-weight:600;">${escapeHtml(u.username || 'N/A')}</td>
+      <td>${escapeHtml(u.email || 'N/A')}</td>
+      <td style="color:var(--muted);font-size:0.85rem;">${u.createdAt ? formatDate(u.createdAt) : 'N/A'}</td>
+      <td><button onclick="deleteUser('${u.id}')" class="btn btn-sm btn-outline" style="color:var(--danger);border-color:var(--danger);font-size:0.8rem;padding:4px 12px;">Delete</button>
+      <button onclick="resetUserPassword('${u.id}')" class="btn btn-sm btn-outline" style="font-size:0.8rem;padding:4px 12px;margin-left:6px;">Reset Password</button></td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('userSort').addEventListener('change', renderUsers);
+
+// Load existing items
+async function loadLectures() {
+  try {
+    const snap = await db.collection('lectures').orderBy('createdAt', 'desc').get();
+    const tbody = document.getElementById('lecturesList');
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">No lectures yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = snap.docs.map(d => `
+      <tr>
+        <td style="font-weight:600;">${escapeHtml(d.data().topic)}</td>
+        <td>${escapeHtml(d.data().subject)}</td>
+        <td><button onclick="deleteItem('lectures','${d.id}')" class="btn btn-sm btn-outline" style="color:var(--danger);border-color:var(--danger);font-size:0.8rem;padding:4px 12px;">Delete</button></td>
+      </tr>
+    `).join('');
+  } catch (e) { console.error('Error loading lectures:', e); }
+}
+
+async function loadNotes() {
+  try {
+    const snap = await db.collection('notes').orderBy('createdAt', 'desc').get();
+    const tbody = document.getElementById('notesList');
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">No notes yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = snap.docs.map(d => `
+      <tr>
+        <td style="font-weight:600;">${escapeHtml(d.data().topic)}</td>
+        <td>${escapeHtml(d.data().subject)}</td>
+        <td><button onclick="deleteItemWithChunks('${d.id}')" class="btn btn-sm btn-outline" style="color:var(--danger);border-color:var(--danger);font-size:0.8rem;padding:4px 12px;">Delete</button></td>
+      </tr>
+    `).join('');
+  } catch (e) { console.error('Error loading notes:', e); }
+}
+
+async function loadGames() {
+  try {
+    const snap = await db.collection('games').orderBy('createdAt', 'desc').get();
+    const tbody = document.getElementById('gamesList');
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">No games yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = snap.docs.map(d => `
+      <tr>
+        <td style="font-weight:600;">${escapeHtml(d.data().name)}</td>
+        <td>${escapeHtml(d.data().difficulty)}</td>
+        <td><button onclick="deleteItem('games','${d.id}')" class="btn btn-sm btn-outline" style="color:var(--danger);border-color:var(--danger);font-size:0.8rem;padding:4px 12px;">Delete</button></td>
+      </tr>
+    `).join('');
+  } catch (e) { console.error('Error loading games:', e); }
+}
+
+async function loadNews() {
+  try {
+    const snap = await db.collection('news').orderBy('createdAt', 'desc').get();
+    const tbody = document.getElementById('newsList');
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px;">No news yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = snap.docs.map(d => `
+      <tr>
+        <td style="font-weight:600;">${escapeHtml(d.data().title)}</td>
+        <td style="color:var(--muted);font-size:0.85rem;">${d.data().createdAt ? formatDate(d.data().createdAt) : 'N/A'}</td>
+        <td><button onclick="deleteItem('news','${d.id}')" class="btn btn-sm btn-outline" style="color:var(--danger);border-color:var(--danger);font-size:0.8rem;padding:4px 12px;">Delete</button></td>
+      </tr>
+    `).join('');
+  } catch (e) { console.error('Error loading news:', e); }
+}
+
+// Delete helpers
+async function deleteItem(collection, id) {
+  if (!confirm('Delete this item? This cannot be undone.')) return;
+  try {
+    await db.collection(collection).doc(id).delete();
+    if (collection === 'lectures') loadLectures();
+    else if (collection === 'games') loadGames();
+    else if (collection === 'news') loadNews();
+  } catch (e) {
+    console.error('Error deleting:', e);
+    alert('Failed to delete. Please try again.');
+  }
+}
+
+async function deleteItemWithChunks(noteId) {
+  if (!confirm('Delete this note? This cannot be undone.')) return;
+  try {
+    const chunks = await db.collection('notes').doc(noteId).collection('chunks').get();
+    const batch = db.batch();
+    chunks.forEach(c => batch.delete(c.ref));
+    batch.delete(db.collection('notes').doc(noteId));
+    await batch.commit();
+    loadNotes();
+  } catch (e) {
+    console.error('Error deleting note:', e);
+    alert('Failed to delete note. Please try again.');
+  }
+}
+
+async function deleteUser(userId) {
+  if (!confirm('Delete this user? This cannot be undone.')) return;
+  try {
+    await db.collection('users').doc(userId).delete();
+    loadUsers();
+  } catch (e) {
+    console.error('Error deleting user:', e);
+    alert('Failed to delete user. Please try again.');
+  }
+}
+
+async function resetUserPassword(userId) {
+  try {
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
+      alert('User not found.');
+      return;
+    }
+    const email = userDoc.data().email;
+    await auth.sendPasswordResetEmail(email);
+    alert('Password reset email sent to ' + email);
+  } catch (e) {
+    console.error('Error resetting password:', e);
+    alert('Failed to send reset email. Please try again.');
+  }
+}
+
+// Load items when each tab is clicked
+document.getElementById('adminTabs').addEventListener('click', (e) => {
+  if (e.target.dataset.tab === 'users') loadUsers();
+  else if (e.target.dataset.tab === 'lectures') loadLectures();
+  else if (e.target.dataset.tab === 'notes') loadNotes();
+  else if (e.target.dataset.tab === 'games') loadGames();
+  else if (e.target.dataset.tab === 'news') loadNews();
+});
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
