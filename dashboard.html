@@ -502,7 +502,7 @@ async function renderDashboard(user) {
 
   } catch (err) {
     console.error('Dashboard error:', err);
-    container.innerHTML = '<div class="empty-state"><h3>Error Loading Dashboard</h3><p>Please try again later.</p></div>';
+    container.innerHTML = '<div class="empty-state"><h3>Error Loading Dashboard</h3><p style="color:var(--muted2);font-size:0.85rem;margin-top:8px;">' + (err ? (err.message || String(err)) : 'unknown') + '</p></div>';
   }
 }
 
