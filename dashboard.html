@@ -248,9 +248,14 @@ async function renderDashboard(user) {
     const username = currentUsername || 'User';
 
     let satResultsSnap = { empty: true, docs: [] };
-    try { satResultsSnap = await db.collection('sat_results').where('userId', '==', uid).orderBy('timestamp', 'desc').get(); } catch {}
+    try { satResultsSnap = await db.collection('sat_results').where('userId', '==', uid).get(); } catch {}
     const satResults = [];
     (satResultsSnap.docs || []).forEach(doc => satResults.push(doc.data()));
+    satResults.sort((a, b) => {
+      const ta = a.timestamp ? (a.timestamp.toMillis ? a.timestamp.toMillis() : a.timestamp) : 0;
+      const tb = b.timestamp ? (b.timestamp.toMillis ? b.timestamp.toMillis() : b.timestamp) : 0;
+      return tb - ta;
+    });
 
     let lecturesSnap, notesSnap, newsSnap, userDoc;
     try { lecturesSnap = await db.collection('lectures').get(); } catch { lecturesSnap = { size: 0 }; }
