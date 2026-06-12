@@ -230,7 +230,7 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
 // Auth-gated dashboard
 const container = document.getElementById('dashboardContent');
 
-function renderDashboard(user) {
+async function renderDashboard(user) {
   if (!user) {
     container.innerHTML = `
       <div class="empty-state animate-on-scroll visible">
