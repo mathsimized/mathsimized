@@ -252,15 +252,14 @@ async function renderDashboard(user) {
     const satResults = [];
     satResultsSnap.forEach(doc => satResults.push(doc.data()));
 
-    const [lecturesSnap, notesSnap, newsSnap, userDoc] = await Promise.all([
-      db.collection('lectures').get(),
-      db.collection('notes').get(),
-      db.collection('news').orderBy('createdAt', 'desc').limit(3).get(),
-      db.collection('users').doc(uid).get()
-    ]);
+    let lecturesSnap, notesSnap, newsSnap, userDoc;
+    try { lecturesSnap = await db.collection('lectures').get(); } catch { lecturesSnap = { size: 0 }; }
+    try { notesSnap = await db.collection('notes').limit(1).get(); } catch { notesSnap = { size: 0 }; }
+    try { newsSnap = await db.collection('news').orderBy('createdAt', 'desc').limit(3).get(); } catch { newsSnap = { forEach() {} }; }
+    try { userDoc = await db.collection('users').doc(uid).get(); } catch { userDoc = { exists: false, data() { return {} } }; }
 
-    const lectureCount = lecturesSnap.size;
-    const noteCount = notesSnap.size;
+    const lectureCount = lecturesSnap.size || 0;
+    const noteCount = notesSnap.size || 0;
     const userData = userDoc.exists ? userDoc.data() : {};
     const fullName = userData.fullName || '';
     const grade = userData.grade || '';
