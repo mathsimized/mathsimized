@@ -250,7 +250,7 @@ async function renderDashboard(user) {
     let satResultsSnap = { empty: true, docs: [] };
     try { satResultsSnap = await db.collection('sat_results').where('userId', '==', uid).orderBy('timestamp', 'desc').get(); } catch {}
     const satResults = [];
-    satResultsSnap.forEach(doc => satResults.push(doc.data()));
+    (satResultsSnap.docs || []).forEach(doc => satResults.push(doc.data()));
 
     let lecturesSnap, notesSnap, newsSnap, userDoc;
     try { lecturesSnap = await db.collection('lectures').get(); } catch { lecturesSnap = { size: 0 }; }
