@@ -6,8 +6,8 @@
   <title>Dashboard — MATHSIMIZED</title>
   <meta property="og:title" content="Dashboard — MATHSIMIZED">
   <meta property="og:description" content="Your MATHSIMIZED learning dashboard.">
-  <meta property="og:image" content="https://mathsimized.github.io/mathsimized/logo-v2.png">
-  <meta property="og:url" content="https://mathsimized.github.io/mathsimized/dashboard.html">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/dashboard.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MATHSIMIZED">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
@@ -17,6 +17,18 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="./firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .adaptive-badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:0.8rem; font-weight:600; }
+    .adaptive-hard { background:rgba(239,68,68,0.15); color:#ef4444; }
+    .adaptive-easy { background:rgba(16,185,129,0.15); color:#10b981; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .modal-content { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; max-width:600px; width:100%; max-height:80vh; overflow-y:auto; }
+    .modal-content h3 { margin-bottom:16px; }
+    .modal-close { float:right; background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
+    .modal-close:hover { color:var(--text); }
+  </style>
 </head>
 <body>
 
@@ -29,8 +41,21 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./about.html">About</a></li>
-      <li><a href="./lectures.html">Lectures</a></li>
-      <li><a href="./notes.html">Notes</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="./lectures.html">Lectures</a>
+          <a href="./notes.html">Notes</a>
+          <a href="./pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">SAT Prep ▾</a>
+        <div class="dropdown-menu">
+          <a href="./sat-prep/math-hub.html">Math</a>
+          <a href="./sat-prep/english-hub.html">English</a>
+        </div>
+      </li>
       <li><a href="./news.html">News</a></li>
       <li class="dropdown">
         <a href="#">Games ▾</a>
@@ -49,7 +74,52 @@
 <section class="section-padding" style="padding-top:120px;">
   <div class="container">
     <div id="dashboardContent">
-      <div class="spinner"></div>
+      <div class="skeleton-card" style="margin-bottom:24px;">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-line skeleton-line-sm" style="height:16px;margin-bottom:0;"></div>
+      </div>
+      <div class="grid-4" style="gap:20px;margin-bottom:32px;">
+        <div class="skeleton-card" style="text-align:center;padding:32px 20px;">
+          <div class="skeleton" style="width:40px;height:40px;border-radius:12px;margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-lg" style="width:50px;margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="width:60px;margin:0 auto;"></div>
+        </div>
+        <div class="skeleton-card" style="text-align:center;padding:32px 20px;">
+          <div class="skeleton" style="width:40px;height:40px;border-radius:12px;margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-lg" style="width:50px;margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="width:60px;margin:0 auto;"></div>
+        </div>
+        <div class="skeleton-card" style="text-align:center;padding:32px 20px;">
+          <div class="skeleton" style="width:40px;height:40px;border-radius:12px;margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-lg" style="width:50px;margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="width:60px;margin:0 auto;"></div>
+        </div>
+        <div class="skeleton-card" style="text-align:center;padding:32px 20px;">
+          <div class="skeleton" style="width:40px;height:40px;border-radius:12px;margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-lg" style="width:50px;margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="width:60px;margin:0 auto;"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line skeleton-line-sm"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line skeleton-line-sm"></div>
+        </div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line skeleton-line-sm"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -71,7 +141,13 @@
         <a href="./about.html">About</a>
         <a href="./lectures.html">Lectures</a>
         <a href="./notes.html">Notes</a>
+        <a href="./pastpapers.html">Past Papers</a>
         <a href="./contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="./sat-prep/math-hub.html">SAT Math</a>
+        <a href="./sat-prep/english-hub.html">SAT English</a>
       </div>
       <div class="footer-col">
         <h4>Games</h4>
@@ -154,7 +230,7 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
 // Auth-gated dashboard
 const container = document.getElementById('dashboardContent');
 
-auth.onAuthStateChanged(async (user) => {
+function renderDashboard(user) {
   if (!user) {
     container.innerHTML = `
       <div class="empty-state animate-on-scroll visible">
@@ -170,6 +246,11 @@ auth.onAuthStateChanged(async (user) => {
   try {
     const uid = user.uid;
     const username = currentUsername || 'User';
+
+    let satResultsSnap = { empty: true, docs: [] };
+    try { satResultsSnap = await db.collection('sat_results').where('userId', '==', uid).orderBy('timestamp', 'desc').get(); } catch {}
+    const satResults = [];
+    satResultsSnap.forEach(doc => satResults.push(doc.data()));
 
     const [lecturesSnap, notesSnap, newsSnap, userDoc] = await Promise.all([
       db.collection('lectures').get(),
@@ -231,6 +312,13 @@ auth.onAuthStateChanged(async (user) => {
           <h3 style="font-size:1.8rem;color:var(--warning);">${compCount > 0 ? 'Yes' : 'No'}</h3>
           <p style="color:var(--muted2);font-size:0.9rem;">Participated in Competition</p>
         </div>
+      </div>
+
+      <div class="card animate-on-scroll" style="text-align:center;margin-bottom:40px;">
+        <div style="font-size:2rem;margin-bottom:8px;">📊</div>
+        <h3 id="satEstScore" style="font-size:1.8rem;color:var(--accent);">${satResults.length > 0 ? (satResults[0].subject === 'combined' ? (satResults[0].estimatedScore || satResults[0].scaledScore || '—') : (satResults[0].scaledScore || satResults[0].estimatedScore || '—')) : '—'}</h3>
+        <p style="color:var(--muted2);font-size:0.9rem;">${satResults.length > 0 ? ('Est. SAT Score · ' + (satResults[0].testType === 'quick_test' ? 'Quick Test' : 'Full-Length') + (satResults[0].subject === 'combined' ? ' /1600' : ' /800')) : 'Est. SAT Score'}</p>
+        ${satResults.length === 0 ? '<a href="./sat-prep/math-hub.html" class="btn btn-sm btn-accent" style="margin-top:8px;">Take Quick Test</a>' : ''}
       </div>
 
       <div class="grid-2" style="margin-bottom:40px;">
@@ -305,14 +393,86 @@ auth.onAuthStateChanged(async (user) => {
           <a href="./games.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
             <span>🎮</span> Play Games
           </a>
+          <a href="./pastpapers.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>📝</span> Past Papers
+          </a>
           <a href="./news.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
             <span>📰</span> Latest News
           </a>
           <a href="./about.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
             <span>ℹ️</span> About
           </a>
+          <a href="./sat-prep/math-hub.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+            <span>📊</span> SAT Prep
+          </a>
         </div>
       </div>
+
+      ${satResults.length > 0 ? `
+      <div class="card animate-on-scroll" style="margin-bottom:40px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <h3 style="margin:0;">SAT Practice History</h3>
+          <select id="satSortSelect" onchange="renderSATHistory()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;">
+            <option value="date-desc">Date (Newest First)</option>
+            <option value="date-asc">Date (Oldest First)</option>
+            <option value="score-desc">Score (Highest First)</option>
+            <option value="score-asc">Score (Lowest First)</option>
+            <option value="time-asc">Time Taken (Fastest First)</option>
+          </select>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Raw Score</th>
+                <th>Time</th>
+                <th>Adaptive</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="satHistoryBody">
+              (function() {
+                const sorted = [...satResults].sort((a, b) => {
+                  const tA = a.timestamp ? (a.timestamp.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime()) : 0;
+                  const tB = b.timestamp ? (b.timestamp.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime()) : 0;
+                  return tB - tA;
+                });
+                window.__satResultsData = sorted;
+                return sorted.map(r => {
+                  const isQuick = r.testType === 'quick_test';
+                  const date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
+                  const dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                  const score = isQuick ? (r.estimatedScore || '—') : (r.scaledScore || '—');
+                  const scoreDisplay = isQuick ? '~' + score + '/800 est.' : score + '/800';
+                  const raw = (r.totalCorrect || 0) + '/' + (r.totalQuestions || (isQuick ? 10 : 44));
+                  const time = r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—');
+                  const adaptive = isQuick ? '' : (r.adaptivePath === 'hard' ? '<span class="adaptive-badge adaptive-hard">Hard</span>' : (r.adaptivePath === 'easy' ? '<span class="adaptive-badge adaptive-easy">Easy</span>' : '—'));
+                  return '<tr data-sat-result-idx="' + sorted.indexOf(r) + '">' +
+                    '<td style="font-size:0.9rem;">' + dateStr + '</td>' +
+                    '<td><span class="score-badge ' + (isQuick ? 'badge-quick' : 'badge-full') + '" style="font-size:0.75rem;">' + (isQuick ? 'Quick Test' : 'Full-Length') + '</span></td>' +
+                    '<td style="font-weight:700;color:var(--accent);">' + scoreDisplay + '</td>' +
+                    '<td>' + raw + '</td>' +
+                    '<td style="color:var(--muted);font-size:0.85rem;">' + time + '</td>' +
+                    '<td>' + adaptive + '</td>' +
+                    '<td><button class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:4px 12px;" onclick="viewSATDetails(' + sorted.indexOf(r) + ')">View Details</button></td>' +
+                  '</tr>';
+                }).join('');
+              })()}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      ` : `
+      <div class="card animate-on-scroll" style="text-align:center;padding:40px;margin-bottom:40px;">
+        <div style="font-size:3rem;margin-bottom:16px;">📊</div>
+        <h3 style="margin-bottom:8px;">No SAT Practice Tests Taken Yet</h3>
+        <p style="color:var(--muted);margin-bottom:16px;">Start practicing for the SAT Math section with a full-length test or quick score estimator.</p>
+        <a href="./sat-prep/math-hub.html" class="btn btn-primary">Start Practicing</a>
+      </div>
+      `}
     `;
 
     setTimeout(() => {
@@ -345,10 +505,24 @@ auth.onAuthStateChanged(async (user) => {
     console.error('Dashboard error:', err);
     container.innerHTML = '<div class="empty-state"><h3>Error Loading Dashboard</h3><p>Please try again later.</p></div>';
   }
+}
+
+if (window.__testUserMode) {
+  renderDashboard(currentUser);
+}
+auth.onAuthStateChanged(function(user) {
+  if (window.__testUserMode) return;
+  renderDashboard(user);
+});
+window.addEventListener('authStateChanged', function(event) {
+  if (window.__testUserMode) return;
+  renderDashboard(event.detail.user);
 });
 
 async function saveProfile() {
-  const uid = auth.currentUser.uid;
+  const uid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+  if (!uid) return alert('Not logged in');
+
   const fullName = document.getElementById('fullNameInput').value.trim();
   const grade = document.getElementById('gradeInput').value.trim();
   const school = document.getElementById('schoolInput').value.trim();
@@ -369,6 +543,98 @@ function toggleEdit() {
   btn.className = 'btn btn-primary';
   btn.style.alignSelf = 'flex-start';
   btn.onclick = saveProfile;
+}
+
+function formatTime(seconds) {
+  if (!seconds || seconds <= 0) return '—';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return h + 'h ' + m + 'm';
+  if (m > 0) return m + 'm ' + s + 's';
+  return s + 's';
+}
+
+function viewSATDetails(idx) {
+  var data = window.__satResultsData;
+  if (!data || !data[idx]) return;
+  var r = data[idx];
+  var isQuick = r.testType === 'quick_test';
+  var date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
+  var dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  var score = isQuick ? (r.estimatedScore || '—') : (r.scaledScore || '—');
+  var raw = (r.totalCorrect || 0) + '/' + (r.totalQuestions || (isQuick ? 10 : 44));
+  var module1 = r.module1Correct !== undefined ? r.module1Correct : '—';
+  var module2 = r.module2Correct !== undefined ? r.module2Correct : '—';
+  var adaptive = r.adaptivePath || (isQuick ? 'N/A' : '—');
+
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML =
+    '<div class="modal-content">' +
+    '<button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">✕</button>' +
+    '<h3>SAT Practice Test Details</h3>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">' +
+    '<div><strong>Date:</strong> ' + dateStr + '</div>' +
+    '<div><strong>Type:</strong> ' + (isQuick ? 'Quick Score Estimator' : 'Full-Length Practice Test') + '</div>' +
+    '<div><strong>Score:</strong> <span style="color:var(--accent);font-weight:700;">' + score + '/800' + (isQuick ? ' (estimated)' : '') + '</span></div>' +
+    '<div><strong>Raw Score:</strong> ' + raw + '</div>' +
+    (!isQuick ? '<div><strong>Module 1:</strong> ' + module1 + '/22</div>' : '') +
+    (!isQuick ? '<div><strong>Module 2:</strong> ' + module2 + '/22</div>' : '') +
+    '<div><strong>Adaptive Path:</strong> ' + adaptive + '</div>' +
+    '<div><strong>Time Taken:</strong> ' + (r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—')) + '</div>' +
+    '</div>' +
+    '<button class="btn btn-outline" onclick="this.closest(\'.modal-overlay\').remove()">Close</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
+function renderSATHistory() {
+  var select = document.getElementById('satSortSelect');
+  if (!select) return;
+  var sortKey = select.value;
+  var data = window.__satResultsData;
+  if (!data) return;
+
+  var sorted = [].concat(data);
+  if (sortKey === 'date-desc') sorted.sort(function(a,b) { return getTime(a) - getTime(b); }).reverse();
+  else if (sortKey === 'date-asc') sorted.sort(function(a,b) { return getTime(a) - getTime(b); });
+  else if (sortKey === 'score-desc') sorted.sort(function(a,b) { return (getScore(b) || 0) - (getScore(a) || 0); });
+  else if (sortKey === 'score-asc') sorted.sort(function(a,b) { return (getScore(a) || 0) - (getScore(b) || 0); });
+  else if (sortKey === 'time-asc') sorted.sort(function(a,b) { return (getTimeTaken(a) || 999999) - (getTimeTaken(b) || 999999); });
+
+  var tbody = document.getElementById('satHistoryBody');
+  if (!tbody) return;
+
+  tbody.innerHTML = sorted.map(function(r) {
+    var i = data.indexOf(r);
+    var isQuick = r.testType === 'quick_test';
+    var date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
+    var dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    var score = isQuick ? (r.estimatedScore || '—') : (r.scaledScore || '—');
+    var scoreDisplay = isQuick ? '~' + score + '/800 est.' : score + '/800';
+    var raw = (r.totalCorrect || 0) + '/' + (r.totalQuestions || (isQuick ? 10 : 44));
+    var time = r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—');
+    var adaptive = isQuick ? '' : (r.adaptivePath === 'hard' ? '<span class="adaptive-badge adaptive-hard">Hard</span>' : (r.adaptivePath === 'easy' ? '<span class="adaptive-badge adaptive-easy">Easy</span>' : '—'));
+    var typeLabel = isQuick ? 'Quick Test' : 'Full-Length';
+    var typeClass = isQuick ? 'badge-quick' : 'badge-full';
+    return '<tr>' +
+      '<td style="font-size:0.9rem;">' + dateStr + '</td>' +
+      '<td><span class="score-badge ' + typeClass + '" style="font-size:0.75rem;">' + typeLabel + '</span></td>' +
+      '<td style="font-weight:700;color:var(--accent);">' + scoreDisplay + '</td>' +
+      '<td>' + raw + '</td>' +
+      '<td style="color:var(--muted);font-size:0.85rem;">' + time + '</td>' +
+      '<td>' + adaptive + '</td>' +
+      '<td><button class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:4px 12px;" onclick="viewSATDetails(' + i + ')">View Details</button></td>' +
+    '</tr>';
+  }).join('');
+
+  function getTime(r) { return r.timestamp ? (r.timestamp.toMillis ? r.timestamp.toMillis() : new Date(r.timestamp).getTime()) : 0; }
+  function getScore(r) { return r.scaledScore || r.estimatedScore || 0; }
+  function getTimeTaken(r) { return r.timeTakenSeconds || r.timeTaken || 0; }
 }
 </script>
 </body>

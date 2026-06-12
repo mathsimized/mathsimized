@@ -1,37 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="description" content="Check the Mathsimized leaderboard and see top math students. Compete with others, earn points and climb to the top!">
   <meta charset="UTF-8">
+  <link rel='preconnect' href='https://www.gstatic.com'>
+<link rel='preconnect' href='https://firestore.googleapis.com'>
+<link rel='dns-prefetch' href='https://www.gstatic.com'>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard — MATHSIMIZED</title>
   <meta property="og:title" content="Leaderboard — MATHSIMIZED">
   <meta property="og:description" content="Top scores leaderboard — compete with other learners.">
-  <meta property="og:image" content="https://mathsimized.github.io/mathsimized/logo-v2.png">
-  <meta property="og:url" content="https://mathsimized.github.io/mathsimized/leaderboard.html">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/leaderboard.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MATHSIMIZED">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
   <link rel="stylesheet" href="./styles.css">
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" defer></script>
   
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="./firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" defer></script>
+<script src="./firebase.js" defer></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
 <nav class="navbar">
   <div class="container">
-    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
-    <button class="hamburger" onclick="toggleMobileMenu()">
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32" width="auto"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links" id="navLinks">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./about.html">About</a></li>
-      <li><a href="./lectures.html">Lectures</a></li>
-      <li><a href="./notes.html">Notes</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="./lectures.html">Lectures</a>
+          <a href="./notes.html">Notes</a>
+          <a href="./pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">SAT Prep ▾</a>
+        <div class="dropdown-menu">
+          <a href="./sat-prep/math-hub.html">Math</a>
+          <a href="./sat-prep/english-hub.html">English</a>
+        </div>
+      </li>
       <li><a href="./news.html">News</a></li>
       <li class="dropdown">
         <a href="#">Games ▾</a>
@@ -54,7 +73,44 @@
       <p>Top 100 players ranked by total score across all games.</p>
     </div>
     <div id="leaderboardContent" class="animate-on-scroll visible">
-      <div class="spinner"></div>
+      <div class="skeleton-card" style="padding:0;overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:40px 1fr 100px 80px;gap:12px;">
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-sm" style="height:16px;"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+        </div>
+        <div class="skeleton-table-row">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+        </div>
+        <div class="skeleton-table-row">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+        </div>
+        <div class="skeleton-table-row">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+        </div>
+        <div class="skeleton-table-row">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+        </div>
+        <div class="skeleton-table-row">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line" style="height:16px;"></div>
+          <div class="skeleton skeleton-line skeleton-line-xs" style="height:16px;"></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -76,6 +132,7 @@
         <a href="./about.html">About</a>
         <a href="./lectures.html">Lectures</a>
         <a href="./notes.html">Notes</a>
+        <a href="./pastpapers.html">Past Papers</a>
         <a href="./contact.html">Contact</a>
       </div>
       <div class="footer-col">
@@ -130,43 +187,47 @@ function timeAgo(timestamp) {
   return d.toLocaleDateString();
 }
 
-const container = document.getElementById('leaderboardContent');
-let currentUserId = auth.currentUser ? auth.currentUser.uid : null;
-
-auth.onAuthStateChanged((user) => {
-  currentUserId = user ? user.uid : null;
-  renderLeaderboard();
-});
-
 let lastEntries = [];
 let lastError = null;
 let usingScoresFallback = false;
+let scoresUnsub = null;
+let container;
+let leaderboardUnsub;
+let currentUserId = null;
 
-// Try leaderboard collection first (efficient, pre-computed totals)
-const leaderboardUnsub = db.collection('leaderboard')
-  .orderBy('totalScore', 'desc')
-  .limit(100)
-  .onSnapshot((snapshot) => {
-    if (!snapshot.empty) {
-      lastEntries = [];
-      snapshot.forEach(doc => lastEntries.push({ id: doc.id, ...doc.data() }));
-      lastError = null;
-      usingScoresFallback = false;
-      renderLeaderboard();
-    } else {
-      // Leaderboard collection is empty — fall back to computing from scores
-      if (!usingScoresFallback) {
-        usingScoresFallback = true;
-        listenScores();
-      }
-    }
-  }, (err) => {
-    console.error('Leaderboard error:', err);
-    lastError = err;
+document.addEventListener('DOMContentLoaded', () => {
+  container = document.getElementById('leaderboardContent');
+  currentUserId = auth.currentUser ? auth.currentUser.uid : null;
+
+  auth.onAuthStateChanged((user) => {
+    currentUserId = user ? user.uid : null;
     renderLeaderboard();
   });
 
-let scoresUnsub = null;
+  // Try leaderboard collection first (efficient, pre-computed totals)
+  leaderboardUnsub = db.collection('leaderboard')
+    .orderBy('totalScore', 'desc')
+    .limit(100)
+    .onSnapshot((snapshot) => {
+      if (!snapshot.empty) {
+        lastEntries = [];
+        snapshot.forEach(doc => lastEntries.push({ id: doc.id, ...doc.data() }));
+        lastError = null;
+        usingScoresFallback = false;
+        renderLeaderboard();
+      } else {
+        // Leaderboard collection is empty — fall back to computing from scores
+        if (!usingScoresFallback) {
+          usingScoresFallback = true;
+          listenScores();
+        }
+      }
+    }, (err) => {
+      console.error('Leaderboard error:', err);
+      lastError = err;
+      renderLeaderboard();
+    });
+});
 
 function listenScores() {
   if (scoresUnsub) scoresUnsub();

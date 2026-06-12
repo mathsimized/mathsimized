@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Past Papers — MATHSIMIZED</title>
+  <meta property="og:title" content="Past Papers — MATHSIMIZED">
+  <meta property="og:description" content="Download past examination papers for IGCSE and A Level Mathematics.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/pastpapers.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./pastpapers-data.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="./lectures.html">Lectures</a>
+          <a href="./notes.html">Notes</a>
+          <a href="./pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">SAT Prep ▾</a>
+        <div class="dropdown-menu">
+          <a href="./sat-prep/math-hub.html">Math</a>
+          <a href="./sat-prep/english-hub.html">English</a>
+        </div>
+      </li>
+      <li><a href="./news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="./games.html">Play Games</a>
+          <a href="./leaderboard.html">Leaderboard</a>
+          <a href="./competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="section-padding" style="padding-top:120px;">
+  <div class="container">
+    <div class="section-title animate-on-scroll visible">
+      <h2>Past Papers</h2>
+      <p>Browse and download past examination papers by subject, year, and session.</p>
+    </div>
+
+    <div class="tabs" id="subjectTabs"></div>
+
+    <div id="browser">
+      <div class="empty-state animate-on-scroll visible">
+        <div style="font-size:3rem;margin-bottom:16px;">📂</div>
+        <h3>Select a Subject</h3>
+        <p>Choose a subject above to browse past papers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="./about.html">About</a>
+        <a href="./lectures.html">Lectures</a>
+        <a href="./notes.html">Notes</a>
+        <a href="./pastpapers.html">Past Papers</a>
+        <a href="./contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="./games.html">Play Games</a>
+        <a href="./leaderboard.html">Leaderboard</a>
+        <a href="./competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="./privacy.html">Privacy Policy</a>
+        <a href="./terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+
+let currentSubject = null;
+let currentYear = null;
+let currentSession = null;
+
+const subjects = Object.keys(pastPapersData);
+
+function initTabs() {
+  const container = document.getElementById('subjectTabs');
+  container.innerHTML = subjects.map(s => `
+    <button class="tab-btn" data-subject="${s}">${s}</button>
+  `).join('');
+  container.addEventListener('click', (e) => {
+    if (e.target.classList.contains('tab-btn')) {
+      document.querySelectorAll('#subjectTabs .tab-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentSubject = e.target.dataset.subject;
+      currentYear = null;
+      currentSession = null;
+      showYears(currentSubject);
+    }
+  });
+  if (subjects.length > 0) {
+    document.querySelector('#subjectTabs .tab-btn').classList.add('active');
+    currentSubject = subjects[0];
+    showYears(currentSubject);
+  }
+}
+
+function showYears(subject) {
+  const browser = document.getElementById('browser');
+  const years = Object.keys(pastPapersData[subject]).sort().reverse();
+  browser.innerHTML = `
+    <h3 style="margin-bottom:20px;text-align:center;">Select Year</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">${years.map(y => `
+      <button class="btn ${currentYear === y ? 'btn-primary' : 'btn-outline'}" onclick="selectYear('${y}')">${y}</button>
+    `).join('')}</div>
+    <div id="sessionArea" style="margin-top:32px;"></div>
+    <div id="filesArea" style="margin-top:32px;"></div>
+  `;
+}
+
+function selectYear(year) {
+  currentYear = year;
+  currentSession = null;
+  document.querySelectorAll('#browser .btn').forEach(b => {
+    b.classList.remove('btn-primary');
+    b.classList.add('btn-outline');
+  });
+  const buttons = document.querySelectorAll('#browser .btn');
+  for (const btn of buttons) {
+    if (btn.textContent.trim() === year) {
+      btn.classList.remove('btn-outline');
+      btn.classList.add('btn-primary');
+      break;
+    }
+  }
+  showSessions(currentSubject, year);
+}
+
+function showSessions(subject, year) {
+  const sessionArea = document.getElementById('sessionArea');
+  const sessions = Object.keys(pastPapersData[subject][year]);
+  const fileCount = sessions.reduce((sum, s) => sum + pastPapersData[subject][year][s].length, 0);
+  sessionArea.innerHTML = `
+    <h3 style="margin-bottom:16px;text-align:center;">    ${year} — Sessions</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">${sessions.map(s => `
+      <button class="btn btn-outline" onclick="selectSession('${s}')" style="font-size:0.85rem;padding:8px 18px;">${s}</button>
+    `).join('')}</div>
+    <div id="filesArea" style="margin-top:32px;"></div>
+  `;
+}
+
+function selectSession(session) {
+  currentSession = session;
+  document.querySelectorAll('#sessionArea .btn').forEach(b => {
+    b.classList.remove('btn-primary');
+    b.classList.add('btn-outline');
+  });
+  for (const btn of document.querySelectorAll('#sessionArea .btn')) {
+    if (btn.textContent.trim() === session) {
+      btn.classList.remove('btn-outline');
+      btn.classList.add('btn-primary');
+      break;
+    }
+  }
+  showFiles(currentSubject, currentYear, session);
+}
+
+function showFiles(subject, year, session) {
+  const filesArea = document.getElementById('filesArea');
+  const files = pastPapersData[subject][year][session];
+  if (!files || files.length === 0) {
+    filesArea.innerHTML = '<div class="empty-state"><p>No papers found.</p></div>';
+    return;
+  }
+  filesArea.innerHTML = `
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th style="width:120px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>${files.map(f => `
+          <tr>
+            <td style="font-size:0.9rem;">${escapeHtml(f.name)}</td>
+            <td><a href="${f.path}" target="_blank" class="btn btn-accent" style="font-size:0.8rem;padding:6px 16px;">Download</a></td>
+          </tr>
+        `).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  observer.observe(el);
+});
+
+initTabs();
+</script>
+</body>
+</html>

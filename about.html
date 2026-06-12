@@ -1,37 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="description" content="Learn about Mathsimized and our mission to make mathematics simple and understandable for every student through concept-first teaching.">
   <meta charset="UTF-8">
+  <link rel='preconnect' href='https://www.gstatic.com'>
+<link rel='preconnect' href='https://firestore.googleapis.com'>
+<link rel='dns-prefetch' href='https://www.gstatic.com'>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — MATHSIMIZED</title>
   <meta property="og:title" content="About — MATHSIMIZED">
   <meta property="og:description" content="Learn about MATHSIMIZED and Khalilullah Khan.">
-  <meta property="og:image" content="https://mathsimized.github.io/mathsimized/logo-v2.png">
-  <meta property="og:url" content="https://mathsimized.github.io/mathsimized/about.html">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/about.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MATHSIMIZED">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
   <link rel="stylesheet" href="./styles.css">
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" defer></script>
   
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="./firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" defer></script>
+<script src="./firebase.js" defer></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
 <nav class="navbar">
   <div class="container">
-    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
-    <button class="hamburger" onclick="toggleMobileMenu()">
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32" width="auto"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links" id="navLinks">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./about.html">About</a></li>
-      <li><a href="./lectures.html">Lectures</a></li>
-      <li><a href="./notes.html">Notes</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="./lectures.html">Lectures</a>
+          <a href="./notes.html">Notes</a>
+          <a href="./pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">SAT Prep ▾</a>
+        <div class="dropdown-menu">
+          <a href="./sat-prep/math-hub.html">Math</a>
+          <a href="./sat-prep/english-hub.html">English</a>
+        </div>
+      </li>
       <li><a href="./news.html">News</a></li>
       <li class="dropdown">
         <a href="#">Games ▾</a>
@@ -56,22 +75,43 @@
 
     <div class="grid-2" style="margin-bottom:60px;">
       <div class="animate-on-scroll">
-        <img src="./khalil.jpg" alt="Khalilullah Khan" style="width:100%;max-width:300px;border-radius:16px;margin-bottom:24px;border:2px solid var(--border);">
+        <img src="./khalil.jpg" alt="Khalilullah Khan" width="300" height="400" style="width:100%;max-width:300px;border-radius:16px;margin-bottom:24px;border:2px solid var(--border);">
         <h3 style="font-size:1.8rem;margin-bottom:16px;">The Story</h3>
         <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
-          MATHSIMIZED was born from a personal journey. Khalilullah Khan, a college student from Karachi, Pakistan, 
-          knows firsthand what it feels like to struggle with mathematics. There was a time when Bs were the norm — 
-          not because of a lack of effort, but because the traditional teaching approach never clicked.
+          MATHSIMIZED wasn't built in a classroom. It was built through years of highs, lows, and hard lessons.
         </p>
         <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
-          Everything changed when he stopped memorizing and started understanding. By shifting focus to the 
-          <em style="color:var(--text);">why</em> behind every formula, concept, and theorem, mathematics transformed 
-          from a frustrating chore into a fascinating puzzle.
+          Mathematics and I go way back. I loved it as a kid, not because I was always good at it, but because there was something about numbers that just felt right. But love alone doesn't get you marks. In grades 7 and 8, I was scraping by with 60s and 70s in a syllabus that should have been easy. Looking back, I wasn't trying hard enough and I knew it.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          Then came grade 9. Something shifted. I started actually engaging with the subject instead of just showing up, and I scored the highest in my class, 97. And that's where I made my first big mistake. I got comfortable. Spent most of grade 9 and 10 coasting, enjoying life, telling myself I'd figure it out later. By grade 10 I was back in the 70s and 80s, barely.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          Grade 11 was a wake up call. I knew this was it, O Levels, the real thing, no more later. So I got to work. Not just studying, but obsessing. I solved every single O Level past paper across all variants, all years. Then completed all IGCSE papers. Then Edexcel too, because I didn't want to leave a single stone unturned. My goal wasn't just to pass or even get a distinction. I wanted to top the world.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          I got so deep into practice that 2-hour papers started taking me 20 to 30 minutes. When exam day came I was so confident I finished in 45 minutes and sat back. And that confidence, that same feeling that had tripped me up before, cost me again. Two marks. One silly mistake. 198 out of 200 instead of the perfect score I had worked so hard for.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          I won't lie. I was devastated. This was my one shot and I felt like I had let myself down again.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          But then something happened that reminded me why you should never count yourself out. A paper I was set to sit got cancelled. Then another one I was worried about, also cancelled. Suddenly I had another chance at the distinction I thought I'd lost. The universe has a strange way of giving you back what you almost gave up on.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          Around the same time I sat the SAT. Felt that familiar feeling again. I knew I could get full marks. One question off. 790 out of 800.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          Close. Always close. But never quite perfect.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          And honestly, I've made peace with that. Because those two missed marks, those cancelled papers, those years of coasting and then grinding, they taught me more than a perfect score ever could. They taught me that overconfidence is just as dangerous as not trying. That you can be talented and still lose to yourself. And that the right moment has a way of finding you if you don't give up.
+        </p>
+        <p style="color:var(--muted2);margin-bottom:16px;font-size:1.05rem;">
+          When my friends started telling me, Khalil, you should teach, you actually make this stuff make sense, I almost didn't listen. I thought, who am I to teach when I didn't even get the scores I wanted? But then I realized that's exactly why I should. Not despite my mistakes, but because of them.
         </p>
         <p style="color:var(--muted2);font-size:1.05rem;">
-          The result? A complete turnaround — <strong style="color:var(--text);">198 out of 200 in O-Level Mathematics</strong> and 
-          <strong style="color:var(--text);">790 out of 800 in the SAT Mathematics</strong>. These scores aren't just numbers; 
-          they are proof that the right approach makes all the difference.
+          MATHSIMIZED exists for every student who loves something but keeps falling short of it. The goal here was never to show you a perfect score and tell you to copy the formula. It's to show you the real path, the one with the setbacks, the overconfidence, the grind, and the comeback, and prove that the right approach changes everything.
         </p>
       </div>
       <div class="animate-on-scroll">
@@ -164,6 +204,7 @@
         <a href="./about.html">About</a>
         <a href="./lectures.html">Lectures</a>
         <a href="./notes.html">Notes</a>
+        <a href="./pastpapers.html">Past Papers</a>
         <a href="./contact.html">Contact</a>
       </div>
       <div class="footer-col">

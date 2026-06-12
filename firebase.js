@@ -1,6 +1,6 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBwqJ5NLVjW4hyv50lMF9Z5-Sceklczc7M",
-  authDomain: "mathsimized-e4ff0.firebaseapp.com",
+  authDomain: "mathsimized.com",
   projectId: "mathsimized-e4ff0",
   storageBucket: "mathsimized-e4ff0.firebasestorage.app",
   messagingSenderId: "665303048442",
@@ -47,38 +47,85 @@ async function sendWelcomeEmail(email, username) {
   }
 }
 
+// ─── Test User Mode ───
+// Append ?testuser=1 to any URL to bypass Firebase auth and use a mock user for testing.
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var testFlag = params.get('testuser') || localStorage.getItem('sat_testuser');
+  if (testFlag === '1' || testFlag === 'true') {
+    localStorage.setItem('sat_testuser', '1');
+    window.__testUserMode = true;
+    var banner = document.createElement('div');
+    banner.id = 'testUserBanner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#f59e0b;color:#000;text-align:center;padding:6px 12px;font-size:13px;font-weight:600;font-family:sans-serif;';
+    banner.innerHTML = '🧪 Test Mode — logged in as TestUser <button onclick="exitTestMode()" style="margin-left:12px;padding:2px 10px;border:none;border-radius:4px;background:#000;color:#f59e0b;cursor:pointer;font-size:12px;">Exit</button>';
+    document.documentElement.style.paddingTop = '32px';
+    document.addEventListener('DOMContentLoaded', function() {
+      if (document.getElementById('testUserBanner')) return;
+      document.body.prepend(banner);
+    });
+  }
+})();
+
+function exitTestMode() {
+  localStorage.removeItem('sat_testuser');
+  window.__testUserMode = false;
+  currentUser = null;
+  currentUsername = null;
+  updateNavbarUI();
+  window.dispatchEvent(new CustomEvent('authStateChanged', {
+    detail: { user: null, username: null }
+  }));
+  var b = document.getElementById('testUserBanner');
+  if (b) b.remove();
+  document.documentElement.style.paddingTop = '';
+}
+
 // Auth state
 let currentUser = null;
 let currentUsername = null;
 
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    try {
-      const doc = await db.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        currentUsername = doc.data().username;
-      } else {
-        // Fallback: old accounts have random doc IDs, look up by email
-        const snap = await db.collection('users').where('email', '==', user.email).get();
-        currentUsername = snap.empty ? null : snap.docs[0].data().username;
+function initAuth() {
+  if (window.__testUserMode) {
+    currentUser = { uid: 'test_user_001', email: 'testuser@mathsimized.com', isAdmin: false };
+    currentUsername = 'TestUser';
+    updateNavbarUI();
+    window.dispatchEvent(new CustomEvent('authStateChanged', {
+      detail: { user: currentUser, username: currentUsername }
+    }));
+    return;
+  }
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      try {
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          currentUsername = doc.data().username;
+        } else {
+          const snap = await db.collection('users').where('email', '==', user.email).get();
+          currentUsername = snap.empty ? null : snap.docs[0].data().username;
+        }
+      } catch (e) {
+        currentUsername = null;
       }
-    } catch (e) {
+      currentUser = {
+        uid: user.uid,
+        email: user.email,
+        isAdmin: user.email === ADMIN_EMAIL
+      };
+    } else {
+      currentUser = null;
       currentUsername = null;
     }
-    currentUser = {
-      uid: user.uid,
-      email: user.email,
-      isAdmin: user.email === ADMIN_EMAIL
-    };
-  } else {
-    currentUser = null;
-    currentUsername = null;
-  }
-  updateNavbarUI();
-  window.dispatchEvent(new CustomEvent('authStateChanged', {
-    detail: { user: currentUser, username: currentUsername }
-  }));
-});
+    updateNavbarUI();
+    window.dispatchEvent(new CustomEvent('authStateChanged', {
+      detail: { user: currentUser, username: currentUsername }
+    }));
+  });
+}
+
+initAuth();
 
 document.addEventListener('click', (e) => {
   const dropdown = e.target.closest('.dropdown > a');
@@ -142,6 +189,11 @@ async function loginUser(email, password) {
 }
 
 async function logoutUser() {
+  if (window.__testUserMode) {
+    exitTestMode();
+    window.location.href = './';
+    return;
+  }
   await auth.signOut();
   window.location.href = './';
 }
@@ -198,8 +250,12 @@ function escapeHtml(text) {
 }
 
 // ─── Password Reset (Firebase Auth) ───
-async function requestPasswordReset(email) {
-  await auth.sendPasswordResetEmail(email);
+async function requestPasswordReset(email, continueUrl) {
+  const actionCodeSettings = continueUrl ? {
+    url: continueUrl,
+    handleCodeInApp: true
+  } : undefined;
+  await auth.sendPasswordResetEmail(email, actionCodeSettings);
 }
 
 async function resendVerificationEmail() {

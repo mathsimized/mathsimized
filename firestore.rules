@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Admin full access
+    match /{document=**} {
+      allow read, write: if request.auth != null 
+        && request.auth.token.email == "mathsimized@gmail.com";
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // ALL PUBLIC COLLECTIONS - no auth needed to read
+    match /games/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null 
+        && request.auth.token.email == "mathsimized@gmail.com";
+    }
+    match /news/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "mathsimized@gmail.com";
+    }
+    match /lectures/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "mathsimized@gmail.com";
+    }
+    match /notes/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "mathsimized@gmail.com";
+    }
+    match /leaderboard/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null 
+        && request.auth.uid == docId;
+    }
+    match /scores/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null 
+        && docId.startsWith(request.auth.uid + '_');
+    }
+    match /chatRooms/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    match /contact/{document} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+    match /presence/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    match /password_resets/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    match /competition_participants/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    match /test_collection/{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

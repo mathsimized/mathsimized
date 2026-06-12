@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://mathsimized.github.io/mathsimized/sitemap.xml
+Sitemap: https://mathsimized.com/sitemap.xml

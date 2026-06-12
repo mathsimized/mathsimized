@@ -13,7 +13,7 @@
   --danger: #ef4444;
   --text: #f1f5f9;
   --muted: #64748b;
-  --muted2: #94a3b8;
+  --muted2: #bbbbbb;
 }
 
 * {
@@ -696,6 +696,69 @@ table tr.highlight td {
 
 .empty-state p {
   font-size: 1rem;
+}
+
+/* ===== SKELETON LOADERS ===== */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+  user-select: none;
+  pointer-events: none;
+  color: transparent !important;
+}
+.skeleton-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+}
+.skeleton-line {
+  height: 14px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+.skeleton-line-sm { width: 60%; }
+.skeleton-line-xs { width: 35%; }
+.skeleton-line-lg { height: 20px; }
+.skeleton-title {
+  height: 24px;
+  width: 50%;
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
+.skeleton-thumb {
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px 80px;
+  gap: 12px;
+  padding: 14px 16px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+@media (max-width: 768px) {
+  .skeleton-grid { grid-template-columns: 1fr; }
+  .skeleton-table-row { grid-template-columns: 30px 1fr 70px 50px; }
 }
 
 .spinner {

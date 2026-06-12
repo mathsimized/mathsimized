@@ -1,37 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="description" content="Mathsimized - Master Mathematics with expert guidance. Concept-first teaching with lectures, notes, games and competitions.">
   <meta charset="UTF-8">
+  <link rel='preconnect' href='https://www.gstatic.com'>
+<link rel='preconnect' href='https://firestore.googleapis.com'>
+<link rel='dns-prefetch' href='https://www.gstatic.com'>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MATHSIMIZED — Redefining the Limit</title>
   <meta property="og:title" content="MATHSIMIZED — Redefining the Limit">
   <meta property="og:description" content="Master Mathematics with Expert Guidance — Free lectures, notes, and games.">
-  <meta property="og:image" content="https://mathsimized.github.io/mathsimized/logo-v2.png">
-  <meta property="og:url" content="https://mathsimized.github.io/mathsimized/index.html">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/index.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MATHSIMIZED">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
   <link rel="stylesheet" href="./styles.css">
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" defer></script>
   
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="./firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" defer></script>
+<script src="./firebase.js" defer></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
 <nav class="navbar">
   <div class="container">
-    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32"></a>
-    <button class="hamburger" onclick="toggleMobileMenu()">
+    <a href="./index.html" class="navbar-logo"><img src="./logo-v2.png" alt="MATHSIMIZED" height="32" width="auto"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links" id="navLinks">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./about.html">About</a></li>
-      <li><a href="./lectures.html">Lectures</a></li>
-      <li><a href="./notes.html">Notes</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="./lectures.html">Lectures</a>
+          <a href="./notes.html">Notes</a>
+          <a href="./pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">SAT Prep ▾</a>
+        <div class="dropdown-menu">
+          <a href="./sat-prep/math-hub.html">Math</a>
+          <a href="./sat-prep/english-hub.html">English</a>
+        </div>
+      </li>
       <li><a href="./news.html">News</a></li>
       <li class="dropdown">
         <a href="#">Games ▾</a>
@@ -55,7 +74,7 @@
     <p class="subtitle">Master Mathematics with Expert Guidance — Concept-first teaching that makes you understand the <em>why</em>, not just the how.</p>
     <div class="hero-buttons">
       <a href="#" onclick="handleGetStarted(event)" class="btn btn-primary">Get Started</a>
-      <a href="./about.html" class="btn btn-outline">Learn More</a>
+      <a href="./about.html" class="btn btn-outline">Learn More About Mathsimized</a>
     </div>
   </div>
 </section>
@@ -153,6 +172,7 @@
         <a href="./about.html">About</a>
         <a href="./lectures.html">Lectures</a>
         <a href="./notes.html">Notes</a>
+        <a href="./pastpapers.html">Past Papers</a>
         <a href="./contact.html">Contact</a>
       </div>
       <div class="footer-col">
