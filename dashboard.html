@@ -254,7 +254,7 @@ async function renderDashboard(user) {
 
     let lecturesSnap, notesSnap, newsSnap, userDoc;
     try { lecturesSnap = await db.collection('lectures').get(); } catch { lecturesSnap = { size: 0 }; }
-    try { notesSnap = await db.collection('notes').limit(1).get(); } catch { notesSnap = { size: 0 }; }
+    try { notesSnap = await db.collection('notes').get(); } catch { notesSnap = { size: 0 }; }
     try { newsSnap = await db.collection('news').orderBy('createdAt', 'desc').limit(3).get(); } catch { newsSnap = { forEach() {} }; }
     try { userDoc = await db.collection('users').doc(uid).get(); } catch { userDoc = { exists: false, data() { return {} } }; }
 
