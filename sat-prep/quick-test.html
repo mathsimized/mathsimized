@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAT Quick Score Estimator — MATHSIMIZED</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="js/sat_english_questions.js"></script>
+<script src="js/testmode.js"></script>
+<script src="../firebase.js"></script>
+<script src="js/sat_questions.js"></script>
+<script src="js/sat_test_engine.js"></script>
+<!-- Desmos graphing calculator via iframe embed -->
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #1a1a2e; }
+.test-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+.test-header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: #1a2236; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 100; gap: 12px; }
+.header-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.header-center { display: flex; align-items: center; gap: 8px; }
+.header-right { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
+.section-title-text { font-size: 14px; font-weight: 600; white-space: nowrap; }
+#timerDisplay { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 60px; text-align: center; }
+.timer-low { color: #e74c3c !important; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+#timerToggle { font-size: 12px; }
+.header-btn { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+.header-btn:hover { background: rgba(255,255,255,0.1); }
+.calc-btn { background: #1a5cff; border-color: #1a5cff; color: #fff; }
+.calc-btn:hover { background: #1549cc; }
+.ref-btn { border-color: #8ab4f8; color: #8ab4f8; }
+.more-menu-container { position: relative; }
+.more-dropdown { position: absolute; top: 100%; right: 0; background: #fff; color: #1a1a2e; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); min-width: 180px; z-index: 200; margin-top: 4px; overflow: hidden; }
+.more-dropdown div { padding: 12px 16px; cursor: pointer; font-size: 14px; }
+.more-dropdown div:hover { background: #f0f2f5; }
+.test-body { display: flex; flex: 1; margin-top: 56px; margin-bottom: 56px; overflow: hidden; }
+.stimulus-panel { flex: 1; overflow-y: auto; padding: 24px; background: #fff; min-width: 0; }
+.stimulus-panel p { font-size: 15px; line-height: 1.6; color: #333; }
+.resize-handle { width: 8px; cursor: col-resize; background: #e0e0e0; flex-shrink: 0; position: relative; }
+.resize-handle::after { content: ''; position: absolute; left: 3px; top: 50%; width: 2px; height: 40px; background: #bbb; border-radius: 1px; transform: translateY(-50%); }
+.resize-handle:hover { background: #ccc; }
+.resize-handle:hover::after { background: #999; }
+.question-panel { flex: 1; overflow-y: auto; padding: 24px; background: #f8f9fa; min-width: 0; }
+.question-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.q-number-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #1a5cff; color: #fff; font-weight: 700; font-size: 14px; }
+.mark-review-btn { background: transparent; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.mark-review-btn:hover { background: #f0f2f5; }
+.mark-review-btn.marked { background: #fff3cd; border-color: #ffc107; color: #856404; }
+.abc-toggle { background: transparent; border: 1px solid #ccc; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+.abc-toggle.active { background: #1a5cff; color: #fff; border-color: #1a5cff; }
+.question-text { font-size: 16px; line-height: 1.6; margin-bottom: 20px; color: #1a1a2e; }
+.choices-container { display: flex; flex-direction: column; gap: 8px; }
+.choice { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #fff; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.choice:hover { border-color: #1a5cff; }
+.choice.selected { border-color: #1a5cff; background: #e8f0ff; }
+.choice.eliminated { opacity: 0.4; text-decoration: line-through; pointer-events: none; }
+.choice.eliminated .choice-text { text-decoration: line-through; }
+.choice-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #f0f2f5; color: #555; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+.choice.selected .choice-badge { background: #1a5cff; color: #fff; }
+.choice-text { flex: 1; font-size: 15px; }
+.eliminator-btn { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px 8px; color: #999; border-radius: 4px; flex-shrink: 0; }
+.eliminator-btn:hover { background: #f0f2f5; color: #555; }
+.free-response-area { background: #fff; border: 2px solid #e0e0e0; border-radius: 8px; padding: 16px; }
+.fr-input { width: 100%; padding: 10px; font-size: 18px; border: 1px solid #ccc; border-radius: 6px; outline: none; text-align: center; font-family: monospace; }
+.fr-input:focus { border-color: #1a5cff; box-shadow: 0 0 0 2px rgba(26,92,255,0.2); }
+.answer-preview { margin-top: 8px; font-size: 13px; color: #666; text-align: center; }
+.answer-preview span { font-weight: 600; color: #1a1a2e; }
+.fr-keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.fr-keypad button { padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+.fr-keypad button:hover { background: #f0f2f5; }
+.fr-keypad button:active { background: #e0e0e0; }
+.test-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 56px; background: #1a2236; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 100; }
+.student-name { font-size: 13px; opacity: 0.8; width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.footer-center { flex: 1; text-align: center; }
+.question-menu-btn { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
+.question-menu-btn:hover { background: rgba(255,255,255,0.1); }
+.footer-right { display: flex; gap: 8px; width: 120px; justify-content: flex-end; }
+.nav-btn { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+.nav-btn:hover { background: rgba(255,255,255,0.1); }
+.nav-btn.primary { background: #1a5cff; border-color: #1a5cff; }
+.nav-btn.primary:hover { background: #1549cc; }
+.question-menu { position: fixed; bottom: 56px; left: 50%; transform: translateX(-50%); background: #fff; color: #1a1a2e; border-radius: 12px 12px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); width: 480px; max-width: 95vw; z-index: 150; display: none; }
+.question-menu.show { display: block; }
+.qm-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e0e0e0; font-weight: 600; font-size: 15px; }
+.qm-header button { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px; }
+.qm-legend { display: flex; gap: 16px; padding: 10px 20px; font-size: 12px; color: #666; border-bottom: 1px solid #e0e0e0; }
+.qm-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 16px 20px; }
+.qm-item { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; font-size: 14px; font-weight: 500; background: #fff; }
+.qm-item:hover { border-color: #1a5cff; }
+.qm-item.current { border-color: #1a5cff; background: #e8f0ff; font-weight: 700; }
+.qm-item.answered { background: #1a5cff; color: #fff; border-color: #1a5cff; }
+.qm-item.current.answered { background: #1a5cff; color: #fff; }
+.qm-item.marked { border-color: #ffc107; }
+.qm-item.answered.marked { border-color: #fff; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
+.overlay.show { display: flex; }
+.modal { background: #fff; border-radius: 12px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
+.modal h2 { font-size: 20px; margin-bottom: 16px; }
+.modal p { font-size: 14px; line-height: 1.6; color: #444; }
+.modal-close { background: #1a5cff; color: #fff; border: none; border-radius: 6px; padding: 8px 24px; font-size: 14px; cursor: pointer; margin-top: 16px; }
+.modal-close:hover { background: #1549cc; }
+.reference-panel { position: fixed; top: 80px; right: 16px; width: 360px; max-height: calc(100vh - 160px); background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 90; display: none; flex-direction: column; overflow: hidden; }
+.reference-panel.show { display: flex; }
+.reference-panel.minimized { height: auto; }
+.reference-panel.minimized .ref-content { display: none; }
+.ref-drag-handle { padding: 8px; text-align: center; cursor: move; color: #999; font-size: 14px; user-select: none; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+.ref-drag-handle .ref-actions { display: flex; gap: 4px; }
+.ref-drag-handle button { background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; color: #666; border-radius: 4px; }
+.ref-drag-handle button:hover { background: #e0e0e0; }
+.ref-content { padding: 16px; overflow-y: auto; font-size: 13px; line-height: 1.5; }
+.ref-content .formula { margin: 12px 0; padding: 10px; background: #f8f9fa; border-radius: 6px; text-align: center; font-family: 'Times New Roman', serif; font-size: 15px; }
+.ref-content .formula-label { font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px; }
+.ref-content svg { display: block; margin: 8px auto; }
+.calculator-panel { position: fixed; top: 80px; right: 16px; width: 400px; max-height: calc(100vh - 160px); background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 90; display: none; flex-direction: column; overflow: hidden; }
+.calculator-panel.show { display: flex; }
+.calc-drag-handle { padding: 8px; text-align: center; cursor: move; color: #999; font-size: 14px; user-select: none; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+.calc-drag-handle button { background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; color: #666; border-radius: 4px; }
+.calc-drag-handle button:hover { background: #e0e0e0; }
+.calc-tabs { display: flex; border-bottom: 1px solid #ddd; }
+.calc-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 13px; background: #f8f9fa; border: none; border-bottom: 2px solid transparent; }
+.calc-tab.active { background: #fff; border-bottom-color: #1a5cff; font-weight: 600; color: #1a5cff; }
+.calc-tab:hover { background: #f0f2f5; }
+.calc-tab-content { display: none; flex: 1; overflow: hidden; }
+.calc-tab-content.active { display: flex; flex-direction: column; }
+.calc-tab-content iframe { width: 100%; height: 400px; border: 0; background: #fff; }
+.results-overlay { display: none; position: fixed; inset: 0; background: #1a2236; z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+.results-overlay.show { display: flex; }
+.results-card { background: #fff; border-radius: 16px; padding: 48px; text-align: center; max-width: 500px; width: 90%; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
+.results-card h2 { font-size: 1.5rem; color: #1a1a2e; margin-bottom: 8px; }
+.results-card .big-score { font-size: 4rem; font-weight: 800; color: #1a5cff; margin: 16px 0; letter-spacing: -2px; }
+.results-card .score-sub { font-size: 14px; color: #666; margin-bottom: 8px; }
+.results-card .raw-score { font-size: 1.1rem; color: #333; margin: 12px 0; font-weight: 600; }
+.results-card .detail-line { font-size: 13px; color: #777; margin: 4px 0; }
+.results-card .detail-line strong { color: #333; }
+.results-card .results-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.results-card .btn-primary { background: #1a5cff; color: #fff; border: none; border-radius: 8px; padding: 14px 48px; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; }
+.results-card .btn-primary:hover { background: #1549cc; }
+.results-card .btn-ghost { background: transparent; color: #1a5cff; border: 1px solid #1a5cff; border-radius: 8px; padding: 10px 32px; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-block; }
+.results-card .btn-ghost:hover { background: #e8f0ff; }
+.results-card .signin-prompt { font-size: 13px; color: #888; margin-top: 12px; }
+.results-card .signin-prompt a { color: #1a5cff; text-decoration: none; font-weight: 600; }
+.results-card .signin-prompt a:hover { text-decoration: underline; }
+.transition-overlay { display:none; position:fixed; inset:0; background:linear-gradient(135deg, #1a2236 0%, #2a3a5e 100%); z-index:500; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px; }
+.transition-overlay.show { display:flex; }
+.transition-overlay h2 { color:#fff; font-size:2rem; margin-bottom:12px; }
+.transition-overlay p { color:rgba(255,255,255,0.7); font-size:1.1rem; margin-bottom:8px; max-width:500px; }
+.transition-overlay .section-summary { color:rgba(255,255,255,0.5); font-size:0.95rem; margin-bottom:32px; }
+.transition-overlay .continue-btn { background:#1a5cff; color:#fff; border:none; border-radius:10px; padding:16px 48px; font-size:1.1rem; cursor:pointer; transition:background 0.2s; }
+.transition-overlay .continue-btn:hover { background:#1549cc; }
+.lr-highlight { position:fixed; pointer-events:none; background:rgba(255,255,0,0.3); height:1.6em; z-index:999; border-radius:2px; display:none; transition:top 0.08s ease; border:1px solid rgba(255,200,0,0.4); }
+@media (max-width: 768px) {
+  .test-body { flex-direction: column; }
+  .resize-handle { display: none; }
+  .stimulus-panel, .question-panel { flex: none; height: 50%; }
+  .header-left .section-title-text { font-size: 12px; }
+  .header-btn { font-size: 11px; padding: 4px 8px; }
+  .reference-panel, .calculator-panel { right: 8px; left: 8px; width: auto; top: auto; bottom: 60px; max-height: 60vh; border-radius: 12px 12px 0 0; }
+  .question-menu { width: 100%; max-width: 100%; border-radius: 0; bottom: 56px; }
+  .modal { padding: 20px; }
+  .results-card { padding: 32px 24px; }
+  .results-card .big-score { font-size: 3rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="test-container" id="testContainer">
+  <div class="test-header" id="testHeader">
+    <div class="header-left">
+      <span class="section-title-text" id="sectionTitle">SAT Math — Quick Score Estimator</span>
+      <button class="header-btn" onclick="showInfo()">Info</button>
+    </div>
+    <div class="header-center">
+      <span id="timerDisplay">15:00</span>
+      <button id="timerToggle" onclick="toggleTimerVisibility()" class="header-btn">Hide</button>
+    </div>
+    <div class="header-right">
+      <button class="header-btn calc-btn" onclick="toggleCalculator()" id="calcToggle" style="display:none;">Calculator</button>
+      <button class="header-btn ref-btn" onclick="toggleReference()" id="refToggle" style="display:none;">Reference</button>
+      <div class="more-menu-container">
+        <button class="header-btn" onclick="toggleMoreMenu()">More ▾</button>
+        <div class="more-dropdown" id="moreDropdown" style="display:none;">
+          <div onclick="showHelp()">Help</div>
+          <div onclick="showShortcuts()">Shortcuts</div>
+          <div onclick="toggleLineReader()">Line Reader</div>
+          <div onclick="saveAndExit()">Save and Exit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-body" id="testBody">
+    <div class="stimulus-panel" id="stimulusPanel">
+      <p id="stimulusContent">Refer to the question on the right.</p>
+    </div>
+    <div class="resize-handle" id="resizeHandle"></div>
+    <div class="question-panel" id="questionPanel">
+      <div class="question-header">
+        <span class="q-number-badge" id="qNumberBadge">1</span>
+        <button class="mark-review-btn" id="markReviewBtn" onclick="toggleMarkReview()">📑 Mark for Review</button>
+        <button class="abc-toggle" id="abcToggle" onclick="toggleEliminatorMode()">ABC</button>
+      </div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices-container" id="choicesContainer"></div>
+      <div class="free-response-area" id="freeResponseArea" style="display:none;">
+        <input type="text" id="frInput" class="fr-input" placeholder="Enter your answer" readonly>
+        <div class="answer-preview">Answer Preview: <span id="frPreview">—</span></div>
+        <div class="fr-keypad" id="frKeypad">
+          <button onclick="frKeyPress('1')">1</button>
+          <button onclick="frKeyPress('2')">2</button>
+          <button onclick="frKeyPress('3')">3</button>
+          <button onclick="frKeyPress('+')">+</button>
+          <button onclick="frKeyPress('4')">4</button>
+          <button onclick="frKeyPress('5')">5</button>
+          <button onclick="frKeyPress('6')">6</button>
+          <button onclick="frKeyPress('-')">−</button>
+          <button onclick="frKeyPress('7')">7</button>
+          <button onclick="frKeyPress('8')">8</button>
+          <button onclick="frKeyPress('9')">9</button>
+          <button onclick="frKeyPress('/')">/</button>
+          <button onclick="frKeyPress('0')">0</button>
+          <button onclick="frKeyPress('.')">.</button>
+          <button onclick="frBackspace()">⌫</button>
+          <button onclick="frClear()">Clear</button>
+        </div>
+        <div style="display:flex;gap:4px;margin-top:4px;">
+          <button onclick="frKeyPress('(')">(</button>
+          <button onclick="frKeyPress(')')">)</button>
+          <button onclick="frKeyPress('√')">√</button>
+          <button onclick="frKeyPress('^')">^</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-footer" id="testFooter">
+    <span class="student-name" id="studentName">Guest</span>
+    <div class="footer-center">
+      <button class="question-menu-btn" onclick="toggleQuestionMenu()">Question <span id="currentQNum">1</span> of <span id="totalQNum">10</span> ∧</button>
+    </div>
+    <div class="footer-right">
+      <button class="nav-btn" onclick="prevQuestion()">Back</button>
+      <button class="nav-btn primary" onclick="nextQuestion()">Next</button>
+    </div>
+  </div>
+</div>
+
+<div class="question-menu" id="questionMenu">
+  <div class="qm-header">
+    <span id="qmTitle">Quick Score Estimator: Math Questions</span>
+    <span id="qmTitleEnglish" style="display:none;">Quick Score Estimator: English Questions</span>
+    <button onclick="toggleQuestionMenu()">✕</button>
+  </div>
+  <div class="qm-legend">
+    <span>📍 Current</span>
+    <span>◻ Unanswered</span>
+    <span>🔖 For Review</span>
+  </div>
+  <div class="qm-grid" id="qmGrid"></div>
+</div>
+
+<div class="reference-panel" id="referencePanel">
+  <div class="ref-drag-handle" id="refDragHandle">
+    <span>⋮⋮⋮ Reference</span>
+    <div class="ref-actions">
+      <button onclick="toggleRefMinimize()" id="refMinimizeBtn">↙</button>
+      <button onclick="toggleReference()">✕</button>
+    </div>
+  </div>
+  <div class="ref-content" id="refContent">
+    <div class="formula-label">Circle</div>
+    <div class="formula">A = πr², C = 2πr</div>
+    <svg width="80" height="40" viewBox="0 0 80 40"><circle cx="40" cy="20" r="16" fill="none" stroke="#333" stroke-width="1.5"/><line x1="40" y1="20" x2="56" y2="20" stroke="#999" stroke-width="1" stroke-dasharray="2"/><text x="48" y="18" font-size="8" fill="#999">r</text></svg>
+    <div class="formula-label">Rectangle</div>
+    <div class="formula">A = lw</div>
+    <svg width="80" height="48" viewBox="0 0 80 48"><rect x="10" y="8" width="60" height="32" fill="none" stroke="#333" stroke-width="1.5"/><text x="28" y="27" font-size="9" fill="#999">l</text><text x="55" y="16" font-size="9" fill="#999">w</text></svg>
+    <div class="formula-label">Triangle</div>
+    <div class="formula">A = ½bh</div>
+    <svg width="80" height="48" viewBox="0 0 80 48"><polygon points="40,5 10,43 70,43" fill="none" stroke="#333" stroke-width="1.5"/><line x1="40" y1="43" x2="40" y2="5" stroke="#999" stroke-width="1" stroke-dasharray="2"/></svg>
+    <div class="formula-label">Right Triangle (Pythagorean Theorem)</div>
+    <div class="formula">c² = a² + b²</div>
+    <svg width="80" height="56" viewBox="0 0 80 56"><polygon points="10,48 10,8 60,48" fill="none" stroke="#333" stroke-width="1.5"/><text x="12" y="20" font-size="9" fill="#999">a</text><text x="50" y="45" font-size="9" fill="#999">b</text><text x="30" y="30" font-size="9" fill="#999">c</text></svg>
+    <div class="formula-label">30-60-90 Triangle</div>
+    <div class="formula">x, x√3, 2x</div>
+    <svg width="80" height="52" viewBox="0 0 80 52"><polygon points="10,44 10,10 56,44" fill="none" stroke="#333" stroke-width="1.5"/><text x="4" y="33" font-size="8" fill="#333">x√3</text><text x="32" y="47" font-size="8" fill="#333">x</text><text x="30" y="22" font-size="8" fill="#333">2x</text></svg>
+    <div class="formula-label">45-45-90 Triangle</div>
+    <div class="formula">s, s, s√2</div>
+    <svg width="80" height="52" viewBox="0 0 80 52"><polygon points="10,44 10,10 56,44" fill="none" stroke="#333" stroke-width="1.5"/><text x="4" y="33" font-size="8" fill="#333">s</text><text x="32" y="47" font-size="8" fill="#333">s</text><text x="30" y="22" font-size="8" fill="#333">s√2</text></svg>
+    <div class="formula-label">Rectangular Prism</div>
+    <div class="formula">V = lwh</div>
+    <svg width="80" height="52" viewBox="0 0 80 52"><polygon points="30,10 60,10 70,25 40,25" fill="none" stroke="#333" stroke-width="1"/><polygon points="20,18 50,18 60,33 30,33" fill="none" stroke="#333" stroke-width="1"/><polygon points="50,18 60,10 70,25 60,33" fill="none" stroke="#333" stroke-width="1"/><text x="10" y="32" font-size="8" fill="#999">l</text><text x="52" y="42" font-size="8" fill="#999">w</text></svg>
+    <div class="formula-label">Cylinder</div>
+    <div class="formula">V = πr²h</div>
+    <svg width="80" height="56" viewBox="0 0 80 56"><ellipse cx="40" cy="16" rx="28" ry="8" fill="none" stroke="#333" stroke-width="1.5"/><line x1="68" y1="16" x2="68" y2="44" stroke="#333" stroke-width="1.5"/><line x1="12" y1="16" x2="12" y2="44" stroke="#333" stroke-width="1.5"/><ellipse cx="40" cy="44" rx="28" ry="8" fill="none" stroke="#333" stroke-width="1.5"/></svg>
+    <div class="formula-label">Sphere</div>
+    <div class="formula">V = (4/3)πr³</div>
+    <svg width="80" height="48" viewBox="0 0 80 48"><ellipse cx="40" cy="24" rx="20" ry="20" fill="none" stroke="#333" stroke-width="1.5"/><ellipse cx="40" cy="24" rx="20" ry="8" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="2"/></svg>
+    <div class="formula-label">Cone</div>
+    <div class="formula">V = (1/3)πr²h</div>
+    <svg width="80" height="56" viewBox="0 0 80 56"><polygon points="40,6 12,44 68,44" fill="none" stroke="#333" stroke-width="1.5"/><ellipse cx="40" cy="44" rx="28" ry="6" fill="none" stroke="#333" stroke-width="1.5"/></svg>
+    <div class="formula-label">Pyramid</div>
+    <div class="formula">V = (1/3)lwh</div>
+    <svg width="80" height="56" viewBox="0 0 80 56"><polygon points="40,6 10,40 70,40" fill="none" stroke="#333" stroke-width="1.5"/><line x1="40" y1="6" x2="40" y2="46" stroke="#999" stroke-width="1" stroke-dasharray="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333" stroke-width="1"/><line x1="10" y1="40" x2="10" y2="46" stroke="#999" stroke-width="1"/><line x1="70" y1="40" x2="70" y2="46" stroke="#999" stroke-width="1"/><line x1="10" y1="46" x2="70" y2="46" stroke="#999" stroke-width="1"/></svg>
+    <p style="margin-top:12px;font-size:12px;color:#666;">The number of degrees of arc in a circle is 360.<br>The number of radians of arc in a circle is 2π.<br>The sum of the measures in degrees of the angles of a triangle is 180.</p>
+  </div>
+</div>
+
+<div class="calculator-panel" id="calculatorPanel">
+  <div class="calc-drag-handle" id="calcDragHandle">
+    <span>⋮⋮⋮ Calculator</span>
+    <button onclick="toggleCalculator()">✕</button>
+  </div>
+  <div class="calc-tabs">
+    <button class="calc-tab active" onclick="switchCalcTab('graphing')" id="calcTabGraphing">Graphing</button>
+    <button class="calc-tab" onclick="switchCalcTab('scientific')" id="calcTabScientific">Scientific</button>
+  </div>
+  <div class="calc-tab-content active" id="calcGraphingContent">
+    <iframe src="https://www.desmos.com/calculator" width="100%" height="400" style="border:0;background:#fff;" allowfullscreen></iframe>
+  </div>
+  <div class="calc-tab-content" id="calcScientificContent">
+    <iframe src="https://www.desmos.com/scientific" width="100%" height="400" style="border:0;background:#fff;" allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="transition-overlay" id="transitionOverlay">
+  <h2>English Section Complete!</h2>
+  <p>Great work on the Reading &amp; Writing section.</p>
+  <div class="section-summary" id="transitionSummary">You'll now move on to the Math section.</div>
+  <button class="continue-btn" onclick="startMathSection()">Continue to Math Section →</button>
+</div>
+
+<div class="results-overlay" id="resultsOverlay">
+  <div class="results-card">
+    <h2>Your SAT Score Estimate</h2>
+    <div id="resultScoresRow" style="display:flex;gap:16px;justify-content:center;margin:16px 0;flex-wrap:wrap;">
+      <div style="flex:1;min-width:120px;padding:12px;background:#f0f4ff;border-radius:10px;">
+        <div style="font-size:0.75rem;color:#666;text-transform:uppercase;letter-spacing:0.5px;">English</div>
+        <div style="font-size:2rem;font-weight:800;color:#1a5cff;" id="resultEnglishScore">—</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:1.5rem;color:#999;font-weight:300;">+</div>
+      <div style="flex:1;min-width:120px;padding:12px;background:#fff4e6;border-radius:10px;">
+        <div style="font-size:0.75rem;color:#666;text-transform:uppercase;letter-spacing:0.5px;">Math</div>
+        <div style="font-size:2rem;font-weight:800;color:#e67e22;" id="resultMathScore">—</div>
+      </div>
+    </div>
+    <div class="big-score" id="resultTotalScore">= — / 1600</div>
+    <div class="score-sub">Estimated Total SAT Score</div>
+    <div class="raw-score" id="resultRaw">— correct</div>
+    <div class="detail-line">Time taken: <strong id="resultTime">—</strong></div>
+    <div class="detail-line">Date: <strong id="resultDate">—</strong></div>
+    <div class="results-actions">
+      <a id="returnHubLink" href="math-hub.html" class="btn-primary" style="width:100%;">Return to Hub</a>
+      <a class="btn-ghost" id="viewDetailedBtn" href="javascript:void(0)" style="width:100%;">View Detailed Results</a>
+      <div class="signin-prompt" id="signinPrompt" style="display:none;border-top:1px solid #eee;padding-top:16px;margin-top:8px;">
+        <p style="font-size:14px;color:#333;margin-bottom:8px;font-weight:600;">📊 Want to track your progress?</p>
+        <p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.5;">Create a free account to save your score history, see your improvement over time, and unlock personalized study recommendations tailored to your performance.</p>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <a href="../signup.html" class="btn-primary" style="font-size:14px;padding:12px 28px;text-decoration:none;">Create Free Account</a>
+          <a href="../login.html" class="btn-ghost" style="font-size:14px;padding:12px 28px;text-decoration:none;">Sign In</a>
+        </div>
+        <p style="font-size:12px;color:#999;margin-top:10px;">Already have 150+ students tracking their scores!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="infoOverlay" onclick="closeInfo(event)">
+  <div class="modal">
+    <h2>About This Quick Test</h2>
+    <p id="infoDesc">Get a quick estimate of your SAT score with 10 carefully selected questions.</p>
+    <p style="margin-top:12px;">• <strong>Section 1:</strong> 5 Reading &amp; Writing questions (12.5 min)</p>
+    <p>• <strong>Section 2:</strong> 5 Math questions (2.5 min — calculator allowed)</p>
+    <p>• Total time: 15 minutes for both sections</p>
+    <p>• Calculator and reference sheet available during Math section</p>
+    <p>• At the end, you'll receive an estimated score out of 1600</p>
+    <p>• Line reader available in "More" menu for distraction-free reading</p>
+    <button class="modal-close" onclick="closeInfo()">Got it</button>
+  </div>
+</div>
+
+<div class="overlay" id="helpOverlay" onclick="closeHelp(event)">
+  <div class="modal">
+    <h2>Help</h2>
+    <p id="helpDesc">This is the SAT Quick Score Estimator interface.</p>
+    <p>• <strong>Two sections:</strong> English first (5 questions), then Math (5 questions)</p>
+    <p>• Use the navigation buttons at the bottom to move between questions</p>
+    <p>• Mark questions for review using the 📑 button</p>
+    <p>• Calculator &amp; reference sheet appear in the Math section only</p>
+    <p>• Use Line Reader (in "More" menu) to highlight one line at a time</p>
+    <p>• When you finish the last question, click Next to see your results</p>
+    <button class="modal-close" onclick="closeHelp()">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="shortcutsOverlay" onclick="closeShortcuts(event)">
+  <div class="modal">
+    <h2>Keyboard Shortcuts</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr><td style="padding:6px 12px;border:1px solid #ddd;"><kbd>←</kbd> / <kbd>→</kbd></td><td style="padding:6px 12px;border:1px solid #ddd;">Previous / Next question</td></tr>
+      <tr><td style="padding:6px 12px;border:1px solid #ddd;"><kbd>1</kbd>-<kbd>4</kbd></td><td style="padding:6px 12px;border:1px solid #ddd;">Select answer choice A-D</td></tr>
+      <tr><td style="padding:6px 12px;border:1px solid #ddd;"><kbd>M</kbd></td><td style="padding:6px 12px;border:1px solid #ddd;">Mark for review</td></tr>
+      <tr><td style="padding:6px 12px;border:1px solid #ddd;"><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td style="padding:6px 12px;border:1px solid #ddd;">Toggle eliminator mode</td></tr>
+      <tr><td style="padding:6px 12px;border:1px solid #ddd;"><kbd>Esc</kbd></td><td style="padding:6px 12px;border:1px solid #ddd;">Close modals / panels</td></tr>
+    </table>
+    <button class="modal-close" onclick="closeShortcuts()">Close</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  let currentQ = 0;
+  let totalQuestions = 10;
+  let timerHidden = false;
+  let eliminatorMode = false;
+  let lineReaderActive = false;
+  let testFinished = false;
+  let timeTaken = 0;
+
+  const stateEl = document.getElementById('timerDisplay');
+  const qNumBadge = document.getElementById('qNumberBadge');
+  const qText = document.getElementById('questionText');
+  const choicesContainer = document.getElementById('choicesContainer');
+  const frArea = document.getElementById('freeResponseArea');
+  const frInput = document.getElementById('frInput');
+  const frPreview = document.getElementById('frPreview');
+  const markBtn = document.getElementById('markReviewBtn');
+  const abcToggleBtn = document.getElementById('abcToggle');
+  const stimContent = document.getElementById('stimulusContent');
+  const currentQNum = document.getElementById('currentQNum');
+  const totalQNum = document.getElementById('totalQNum');
+  const sectionTitle = document.getElementById('sectionTitle');
+  const qmGrid = document.getElementById('qmGrid');
+  const qmTitle = document.getElementById('qmTitle');
+  const studentName = document.getElementById('studentName');
+  const resultsOverlay = document.getElementById('resultsOverlay');
+
+  function initTest() {
+    var saved = false;
+    try {
+      saved = sessionStorage.getItem('sat_test_state') !== null;
+    } catch(e) {}
+
+    if (saved) {
+      SATTestEngine.loadFromSession();
+      if (SATTestEngine.currentSection === 'math') {
+        sectionTitle.textContent = 'SAT Quick Score — Math Section';
+        document.getElementById('calcToggle').style.display = 'inline-block';
+        document.getElementById('refToggle').style.display = 'inline-block';
+      } else {
+        document.getElementById('calcToggle').style.display = 'none';
+        document.getElementById('refToggle').style.display = 'none';
+      }
+    } else {
+      SATTestEngine.initQuickTest('combined');
+      sectionTitle.textContent = 'SAT Quick Score — English Section';
+      document.getElementById('calcToggle').style.display = 'none';
+      document.getElementById('refToggle').style.display = 'none';
+    }
+
+    totalQuestions = getQuestions().length;
+    totalQNum.textContent = totalQuestions;
+
+    if (typeof currentUser !== 'undefined' && currentUser && currentUser.email) {
+      studentName.textContent = currentUser.email.split('@')[0];
+    }
+
+    window.addEventListener('authStateChanged', function(e) {
+      if (e.detail && e.detail.user && e.detail.user.email) {
+        studentName.textContent = e.detail.user.email.split('@')[0];
+      }
+    });
+
+    updateUI();
+    setupListeners();
+    setupResizeHandle();
+    setupDragPanel('referencePanel', 'refDragHandle');
+    setupDragPanel('calculatorPanel', 'calcDragHandle');
+
+    document.addEventListener('keydown', handleKeydown);
+  }
+
+  function setupListeners() {
+    document.addEventListener('sat:timerUpdate', function(e) {
+      const detail = e.detail;
+      if (!timerHidden) {
+        stateEl.textContent = detail.formatted;
+      }
+      if (detail.timeRemaining <= 60) {
+        stateEl.classList.add('timer-low');
+        if (detail.timeRemaining === 60) {
+          showTimerWarning();
+        }
+      } else {
+        stateEl.classList.remove('timer-low');
+      }
+    });
+
+    document.addEventListener('sat:timerExpired', function(e) {
+      stateEl.textContent = '00:00';
+      if (SATTestEngine.currentSection === 'english') {
+        showTransitionScreen();
+      }
+    });
+
+    document.addEventListener('sat:questionChange', function() {
+      updateUI();
+    });
+
+    document.addEventListener('sat:testComplete', function(e) {
+      if (!testFinished) showResults();
+    });
+  }
+
+  function getQuestions() {
+    return SATTestEngine.getCurrentQuestions() || [];
+  }
+
+  function updateUI() {
+    if (testFinished) return;
+    const questions = getQuestions();
+    if (!questions || questions.length === 0) return;
+
+    totalQuestions = questions.length;
+    totalQNum.textContent = totalQuestions;
+
+    const idx = SATTestEngine.currentQuestion;
+    currentQ = idx;
+    const q = questions[idx];
+    if (!q) return;
+
+    qNumBadge.textContent = idx + 1;
+    currentQNum.textContent = idx + 1;
+    qText.innerHTML = q.question;
+
+    if (q.stimulus) {
+      stimContent.innerHTML = q.stimulus;
+    } else {
+      stimContent.textContent = 'Refer to the question on the right.';
+    }
+
+    const state = SATTestEngine.getQuestionState(q.id);
+    markBtn.classList.toggle('marked', state.marked);
+    markBtn.textContent = state.marked ? '🔖 Marked' : '📑 Mark for Review';
+
+    if (q.type === 'multiple_choice' && q.choices) {
+      frArea.style.display = 'none';
+      choicesContainer.style.display = 'flex';
+      renderChoices(q, state);
+    } else if (q.type === 'free_response') {
+      choicesContainer.style.display = 'none';
+      frArea.style.display = 'block';
+      frInput.value = state.answer || '';
+      frPreview.textContent = state.answer || '—';
+    }
+
+    updateQuestionMenu();
+  }
+
+  function renderChoices(q, state) {
+    choicesContainer.innerHTML = '';
+    const choiceKeys = Object.keys(q.choices);
+    choiceKeys.forEach(function(key) {
+      const div = document.createElement('div');
+      div.className = 'choice';
+      div.dataset.choice = key;
+      if (state.answer === key) div.classList.add('selected');
+      if (state.eliminated && state.eliminated[key]) div.classList.add('eliminated');
+
+      const badge = document.createElement('div');
+      badge.className = 'choice-badge';
+      badge.textContent = key;
+
+      const text = document.createElement('div');
+      text.className = 'choice-text';
+      text.innerHTML = q.choices[key];
+
+      const elimBtn = document.createElement('button');
+      elimBtn.className = 'eliminator-btn';
+      elimBtn.textContent = (state.eliminated && state.eliminated[key]) ? '⊖' : '⊕';
+      elimBtn.onclick = function(e) {
+        e.stopPropagation();
+        toggleEliminator(key);
+      };
+
+      div.appendChild(badge);
+      div.appendChild(text);
+      div.appendChild(elimBtn);
+
+      div.onclick = function() {
+        selectChoice(key);
+      };
+
+      choicesContainer.appendChild(div);
+    });
+  }
+
+  function selectChoice(choice) {
+    const q = getCurrentQuestion();
+    if (!q) return;
+    SATTestEngine.answerQuestion(q.id, choice);
+    updateUI();
+  }
+
+  function getCurrentQuestion() {
+    const questions = getQuestions();
+    return questions[currentQ] || null;
+  }
+
+  function toggleMarkReview() {
+    const q = getCurrentQuestion();
+    if (!q) return;
+    SATTestEngine.toggleMarkForReview(q.id);
+    updateUI();
+  }
+
+  function toggleEliminator(choice) {
+    const q = getCurrentQuestion();
+    if (!q) return;
+    SATTestEngine.toggleEliminateChoice(q.id, choice);
+    updateUI();
+  }
+
+  function toggleEliminatorMode() {
+    eliminatorMode = !eliminatorMode;
+    abcToggleBtn.classList.toggle('active', eliminatorMode);
+  }
+
+  function frKeyPress(val) {
+    const q = getCurrentQuestion();
+    if (!q) return;
+    let current = frInput.value;
+    if (val === '−') val = '-';
+    const newVal = current + val;
+    if (isValidFrInput(newVal)) {
+      frInput.value = newVal;
+      frPreview.textContent = newVal || '—';
+      SATTestEngine.answerQuestion(q.id, newVal);
+    }
+  }
+
+  function frBackspace() {
+    const q = getCurrentQuestion();
+    if (!q) return;
+    frInput.value = frInput.value.slice(0, -1);
+    frPreview.textContent = frInput.value || '—';
+    SATTestEngine.answerQuestion(q.id, frInput.value);
+  }
+
+  function frClear() {
+    const q = getCurrentQuestion();
+    if (!q) return;
+    frInput.value = '';
+    frPreview.textContent = '—';
+    SATTestEngine.answerQuestion(q.id, '');
+  }
+
+  function isValidFrInput(val) {
+    if (val.length > 20) return false;
+    if (/[^0-9.\/\-^√() ]/.test(val)) return false;
+    return true;
+  }
+
+  function prevQuestion() {
+    if (currentQ > 0) {
+      SATTestEngine.goToQuestion(currentQ - 1);
+      updateUI();
+    }
+  }
+
+  function nextQuestion() {
+    const questions = getQuestions();
+    if (currentQ < questions.length - 1) {
+      SATTestEngine.goToQuestion(currentQ + 1);
+      updateUI();
+    } else if (questions.length > 0) {
+      submitTest();
+    }
+  }
+
+  function submitTest() {
+    if (testFinished) return;
+    if (SATTestEngine.currentSection === 'english') {
+      showTransitionScreen();
+    } else {
+      SATTestEngine.finishQuickTest();
+    }
+  }
+
+  function showTransitionScreen() {
+    SATTestEngine.stopTimer();
+    var remaining = SATTestEngine.timeRemaining;
+    var mins = Math.floor(remaining / 60);
+    var secs = remaining % 60;
+    document.getElementById('transitionSummary').textContent =
+      'You got ' + SATTestEngine.getSectionCorrect('english') + '/5 correct in English. \u2022 ' +
+      mins + ':' + String(secs).padStart(2, '0') + ' remaining for Math.';
+    document.getElementById('transitionOverlay').classList.add('show');
+  }
+
+  window.startMathSection = function() {
+    document.getElementById('transitionOverlay').classList.remove('show');
+    SATTestEngine.switchToSection('math');
+    sectionTitle.textContent = 'SAT Quick Score \u2014 Math Section';
+    document.getElementById('calcToggle').style.display = 'inline-block';
+    document.getElementById('refToggle').style.display = 'inline-block';
+    totalQuestions = getQuestions().length;
+    totalQNum.textContent = totalQuestions;
+    SATTestEngine.startTimer(SATTestEngine.timeRemaining);
+    updateUI();
+  };
+
+  function showResults() {
+    if (testFinished) return;
+    testFinished = true;
+
+    SATTestEngine.stopTimer();
+    timeTaken = 900 - SATTestEngine.timeRemaining;
+
+    const results = SATTestEngine.getResults();
+
+    document.getElementById('resultEnglishScore').textContent = results.englishScaled;
+    document.getElementById('resultMathScore').textContent = results.mathScaled;
+    document.getElementById('resultTotalScore').innerHTML = '= ' + results.scaledScore + ' / 1600';
+    document.getElementById('resultRaw').textContent =
+      results.totalCorrect + ' / ' + results.totalQuestions + ' correct (English: ' + results.englishCorrect + '/' + results.englishTotal + ' \u00B7 Math: ' + results.mathCorrect + '/' + results.mathTotal + ')';
+
+    var minutes = Math.floor(timeTaken / 60);
+    var seconds = timeTaken % 60;
+    document.getElementById('resultTime').textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
+    var now = new Date();
+    document.getElementById('resultDate').textContent = now.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    var detailBtn = document.getElementById('viewDetailedBtn');
+    var params = new URLSearchParams();
+    params.set('type', 'quick');
+    params.set('subject', 'combined');
+    params.set('total', results.totalCorrect);
+    params.set('outOf', results.totalQuestions);
+    params.set('score', results.scaledScore);
+    params.set('englishScore', results.englishScaled);
+    params.set('mathScore', results.mathScaled);
+    params.set('time', timeTaken);
+    params.set('answers', encodeURIComponent(JSON.stringify(results.answers)));
+    detailBtn.href = 'results.html?' + params.toString();
+
+    if (typeof currentUser !== 'undefined' && currentUser) {
+      saveResultsToFirebase(results);
+    } else {
+      document.getElementById('signinPrompt').style.display = 'block';
+    }
+
+    SATTestEngine.clearSession();
+    resultsOverlay.classList.add('show');
+  }
+
+  function saveResultsToFirebase(results) {
+    if (typeof currentUser === 'undefined' || !currentUser || !db) return;
+    try {
+      db.collection('sat_results').add({
+        userId: currentUser.uid,
+        email: currentUser.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        testType: 'quick_test',
+        subject: 'combined',
+        totalCorrect: results.totalCorrect,
+        totalQuestions: results.totalQuestions,
+        estimatedScore: results.scaledScore,
+        englishCorrect: results.englishCorrect,
+        englishTotal: results.englishTotal,
+        englishScore: results.englishScaled,
+        mathCorrect: results.mathCorrect,
+        mathTotal: results.mathTotal,
+        mathScore: results.mathScaled,
+        timeTakenSeconds: timeTaken,
+        answers: results.answers
+      }).catch(function(err) {
+        console.warn('Failed to save results:', err);
+      });
+    } catch (e) {
+      console.warn('Firebase save error:', e);
+    }
+  }
+
+  function toggleTimerVisibility() {
+    timerHidden = !timerHidden;
+    const btn = document.getElementById('timerToggle');
+    if (timerHidden) {
+      stateEl.textContent = '\u2014\u2014:\u2014\u2014';
+      btn.textContent = 'Show';
+    } else {
+      stateEl.textContent = SATTestEngine.getFormattedTime();
+      btn.textContent = 'Hide';
+    }
+  }
+
+  function showTimerWarning() {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:64px;left:50%;transform:translateX(-50%);background:#e74c3c;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;z-index:300;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+    toast.textContent = '1 minute remaining';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 4000);
+  }
+
+  function showInfo() { document.getElementById('infoOverlay').classList.add('show'); }
+  function closeInfo(e) { if (!e || e.target === document.getElementById('infoOverlay')) document.getElementById('infoOverlay').classList.remove('show'); }
+
+  function toggleCalculator() { document.getElementById('calculatorPanel').classList.toggle('show'); }
+  function toggleReference() { document.getElementById('referencePanel').classList.toggle('show'); }
+
+  function toggleRefMinimize() {
+    document.getElementById('referencePanel').classList.toggle('minimized');
+    document.getElementById('refMinimizeBtn').textContent =
+      document.getElementById('referencePanel').classList.contains('minimized') ? '\u2197' : '\u2199';
+  }
+
+  function switchCalcTab(tab) {
+    document.querySelectorAll('.calc-tab').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.calc-tab-content').forEach(function(el) { el.classList.remove('active'); });
+    document.getElementById('calcTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    document.getElementById('calc' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Content').classList.add('active');
+  }
+
+  function toggleMoreMenu() {
+    var dd = document.getElementById('moreDropdown');
+    dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function showHelp() { closeMoreMenu(); document.getElementById('helpOverlay').classList.add('show'); }
+  function closeHelp(e) { if (!e || e.target === document.getElementById('helpOverlay')) document.getElementById('helpOverlay').classList.remove('show'); }
+  function showShortcuts() { closeMoreMenu(); document.getElementById('shortcutsOverlay').classList.add('show'); }
+  function closeShortcuts(e) { if (!e || e.target === document.getElementById('shortcutsOverlay')) document.getElementById('shortcutsOverlay').classList.remove('show'); }
+
+  var lrHighlight = null;
+
+  function toggleLineReader() {
+    lineReaderActive = !lineReaderActive;
+    closeMoreMenu();
+
+    if (!lrHighlight) {
+      lrHighlight = document.createElement('div');
+      lrHighlight.className = 'lr-highlight';
+      document.body.appendChild(lrHighlight);
+    }
+
+    if (lineReaderActive) {
+      document.body.style.cursor = 'crosshair';
+      document.getElementById('stimulusPanel').classList.add('lr-target');
+    } else {
+      document.body.style.cursor = '';
+      lrHighlight.style.display = 'none';
+      document.getElementById('stimulusPanel').classList.remove('lr-target');
+    }
+  }
+
+  document.addEventListener('mousemove', function(e) {
+    if (!lineReaderActive || !lrHighlight) return;
+    var target = e.target.closest('.lr-target');
+    if (target) {
+      var lines = target.querySelectorAll('p, div, span, li');
+      for (var i = 0; i < lines.length; i++) {
+        var rect = lines[i].getBoundingClientRect();
+        if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          var lineH = rect.height;
+          var lineTop = rect.top;
+          lrHighlight.style.display = 'block';
+          lrHighlight.style.left = rect.left + 'px';
+          lrHighlight.style.top = lineTop + 'px';
+          lrHighlight.style.width = rect.width + 'px';
+          lrHighlight.style.height = lineH + 'px';
+          return;
+        }
+      }
+    }
+    lrHighlight.style.display = 'none';
+  });
+
+  function saveAndExit() {
+    SATTestEngine.saveToSession();
+    closeMoreMenu();
+    window.location.href = 'math-hub.html';
+  }
+
+  function closeMoreMenu() { document.getElementById('moreDropdown').style.display = 'none'; }
+
+  function toggleQuestionMenu() {
+    var menu = document.getElementById('questionMenu');
+    menu.classList.toggle('show');
+    if (menu.classList.contains('show')) updateQuestionMenu();
+  }
+
+  function updateQuestionMenu() {
+    var questions = getQuestions();
+    if (!questions || questions.length === 0) return;
+    qmTitle.textContent = SATTestEngine.currentSection === 'english'
+      ? 'Quick Score Estimator: English Questions'
+      : 'Quick Score Estimator: Math Questions';
+
+    qmGrid.innerHTML = '';
+    questions.forEach(function(q, i) {
+      var div = document.createElement('div');
+      div.className = 'qm-item';
+      div.textContent = i + 1;
+      var state = SATTestEngine.getQuestionState(q.id);
+      if (i === currentQ) div.classList.add('current');
+      if (state.answered) div.classList.add('answered');
+      if (state.marked) div.classList.add('marked');
+      div.onclick = function() {
+        SATTestEngine.goToQuestion(i);
+        currentQ = i;
+        updateUI();
+        toggleQuestionMenu();
+      };
+      qmGrid.appendChild(div);
+    });
+  }
+
+  function setupResizeHandle() {
+    var handle = document.getElementById('resizeHandle');
+    var body = document.getElementById('testBody');
+    var left = document.getElementById('stimulusPanel');
+    var right = document.getElementById('questionPanel');
+    var startX, startLeft;
+
+    handle.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      startX = e.clientX;
+      startLeft = left.getBoundingClientRect().width;
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
+
+    function onMouseMove(e) {
+      var dx = e.clientX - startX;
+      var total = body.getBoundingClientRect().width;
+      var pct = ((startLeft + dx) / total) * 100;
+      if (pct > 20 && pct < 80) {
+        left.style.flex = 'none';
+        right.style.flex = 'none';
+        left.style.width = pct + '%';
+        right.style.width = (100 - pct) + '%';
+      }
+    }
+
+    function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+  }
+
+  // Draggable panels (calculator & reference)
+  function setupDragPanel(panelId, handleId) {
+    var panel = document.getElementById(panelId);
+    var handle = document.getElementById(handleId);
+    var startX, startY, startLeft, startTop, isDragging = false;
+
+    function startDrag(clientX, clientY) {
+      isDragging = true;
+      var rect = panel.getBoundingClientRect();
+      startX = clientX;
+      startY = clientY;
+      startLeft = rect.left;
+      startTop = rect.top;
+      panel.style.position = 'fixed';
+      panel.style.left = startLeft + 'px';
+      panel.style.top = startTop + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    }
+
+    function moveDrag(clientX, clientY) {
+      if (!isDragging) return;
+      panel.style.left = Math.max(0, startLeft + clientX - startX) + 'px';
+      panel.style.top = Math.max(60, startTop + clientY - startY) + 'px';
+    }
+
+    function endDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onTouchEnd);
+    }
+
+    function onMouseDown(e) {
+      if (e.target.tagName === 'BUTTON') return;
+      e.preventDefault();
+      startDrag(e.clientX, e.clientY);
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function onMouseMove(e) { moveDrag(e.clientX, e.clientY); }
+    function onMouseUp() { endDrag(); }
+
+    function onTouchStart(e) {
+      if (e.target.tagName === 'BUTTON') return;
+      var touch = e.touches[0];
+      startDrag(touch.clientX, touch.clientY);
+      document.addEventListener('touchmove', onTouchMove, { passive: false });
+      document.addEventListener('touchend', onTouchEnd);
+    }
+
+    function onTouchMove(e) { e.preventDefault(); var touch = e.touches[0]; moveDrag(touch.clientX, touch.clientY); }
+    function onTouchEnd() { endDrag(); }
+
+    handle.addEventListener('mousedown', onMouseDown);
+    handle.addEventListener('touchstart', onTouchStart, { passive: false });
+  }
+
+  function handleKeydown(e) {
+    var q = getCurrentQuestion();
+    if (!q) return;
+
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevQuestion(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); nextQuestion(); }
+    else if (e.key >= '1' && e.key <= '4' && q.type === 'multiple_choice') {
+      e.preventDefault();
+      var letters = ['A', 'B', 'C', 'D'];
+      var idx = parseInt(e.key) - 1;
+      if (idx < Object.keys(q.choices).length) {
+        selectChoice(letters[idx]);
+      }
+    }
+    else if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleMarkReview(); }
+    else if (e.key === 'Escape') { closeAllPanels(); }
+  }
+
+  function closeAllPanels() {
+    document.getElementById('moreDropdown').style.display = 'none';
+    document.getElementById('questionMenu').classList.remove('show');
+    document.getElementById('infoOverlay').classList.remove('show');
+    document.getElementById('helpOverlay').classList.remove('show');
+    document.getElementById('shortcutsOverlay').classList.remove('show');
+  }
+
+  document.addEventListener('click', function(e) {
+    var dd = document.getElementById('moreDropdown');
+    if (dd.style.display === 'block' && !e.target.closest('.more-menu-container')) {
+      dd.style.display = 'none';
+    }
+  });
+
+  window.selectChoice = selectChoice;
+  window.toggleMarkReview = toggleMarkReview;
+  window.toggleEliminator = toggleEliminator;
+  window.toggleEliminatorMode = toggleEliminatorMode;
+  window.frKeyPress = frKeyPress;
+  window.frBackspace = frBackspace;
+  window.frClear = frClear;
+  window.prevQuestion = prevQuestion;
+  window.nextQuestion = nextQuestion;
+  window.toggleTimerVisibility = toggleTimerVisibility;
+  window.showInfo = showInfo;
+  window.closeInfo = closeInfo;
+  window.toggleCalculator = toggleCalculator;
+  window.toggleReference = toggleReference;
+  window.toggleRefMinimize = toggleRefMinimize;
+  window.switchCalcTab = switchCalcTab;
+  window.toggleMoreMenu = toggleMoreMenu;
+  window.showHelp = showHelp;
+  window.closeHelp = closeHelp;
+  window.showShortcuts = showShortcuts;
+  window.closeShortcuts = closeShortcuts;
+  window.toggleLineReader = toggleLineReader;
+  window.saveAndExit = saveAndExit;
+  window.toggleQuestionMenu = toggleQuestionMenu;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTest);
+  } else {
+    initTest();
+  }
+})();
+</script>
+</body>
+</html>
