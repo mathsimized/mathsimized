@@ -13,8 +13,8 @@ CORS(app)
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-@app.route('/')
-@app.route('/<path:filename>')
+@app.route('/', methods=['GET'])
+@app.route('/<path:filename>', methods=['GET'])
 def serve_static(filename='index.html'):
     if not filename:
         filename = 'index.html'
