@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof auth !== 'undefined') {
     auth.onAuthStateChanged(user => {
       if (!user) {
-        document.getElementById('chatContainer').innerHTML = `
+        document.getElementById('chatMessages').innerHTML = `
           <div class="empty-state">
             <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
             <h3>Please Login</h3>
