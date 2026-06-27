@@ -8,26 +8,27 @@ let lastUserMessage = '';
 let uploadedDocContext = '';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof auth !== 'undefined') {
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        document.getElementById('chatMessages').innerHTML = `
-          <div class="empty-state">
-            <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
-            <h3>Please Login</h3>
-            <p>Login to use the AI Study Assistant.</p>
-            <a href="./login.html" class="btn btn-primary" style="margin-top:16px;">Login</a>
-          </div>
-        `;
-        document.getElementById('chatInputArea').style.display = 'none';
-      } else {
-        document.getElementById('chatInputArea').style.display = '';
-        initChat();
-      }
-    });
-  } else {
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isLocal || typeof auth === 'undefined') {
     initChat();
+    return;
   }
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      document.getElementById('chatMessages').innerHTML = `
+        <div class="empty-state">
+          <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+          <h3>Please Login</h3>
+          <p>Login to use the AI Study Assistant.</p>
+          <a href="./login.html" class="btn btn-primary" style="margin-top:16px;">Login</a>
+        </div>
+      `;
+      document.getElementById('chatInputArea').style.display = 'none';
+    } else {
+      document.getElementById('chatInputArea').style.display = '';
+      initChat();
+    }
+  });
 });
 
 async function initChat() {
