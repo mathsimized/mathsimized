@@ -3,6 +3,7 @@ from flask_cors import CORS
 import requests
 import json
 import os
+import base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,7 +26,9 @@ def serve_static(filename='index.html'):
 
 OLLAMA_BASE = os.getenv('OLLAMA_BASE', 'http://localhost:11434')
 
-SYSTEM_PROMPT = """You are StudyPal, an AI math tutor for MATHSIMIZED. You help students understand mathematics concepts — from O Level to Further Maths. Be clear, step-by-step, and encouraging. Use simple language. When explaining, break problems into small steps. You can read images, documents, and generate graphs when needed."""
+SYSTEM_PROMPT = """You are StudyPal, an AI math tutor for MATHSIMIZED. You help students understand mathematics concepts — from O Level to Further Maths. Be clear, step-by-step, and encouraging. Use simple language. When explaining, break problems into small steps. You can read images and documents.
+
+When the user asks you to DRAW or SHOW a graph, respond with the expression wrapped in [GRAPH] tags like this: [GRAPH]x^2+2x+3[/GRAPH]. The system will automatically render the graph image. Only use [GRAPH] when explicitly asked for a visual graph — do not use it when explaining graph theory or steps."""
 
 
 @app.route('/api/health')
@@ -197,17 +200,65 @@ def generate_graph():
     if not expression:
         return jsonify({'error': 'Expression is required'}), 400
 
-    import urllib.parse
-    import requests as http
-
-    quickchart_url = f'https://quickchart.io/function?equation={urllib.parse.quote(expression)}&width=600&height=400&color=3b82f6'
-
     try:
-        r = http.get(quickchart_url, timeout=10)
+        import urllib.parse
+
+        import re
+        sanitized = expression.replace('^', '**')
+        sanitized = re.sub(r'(\d)([a-zA-Z(])', r'\1*\2', sanitized)
+        sanitized = re.sub(r'([a-zA-Z)])(\d)', r'\1*\2', sanitized)
+
+        xs = [i * 0.1 for i in range(-50, 51)]
+        pts = []
+        for x in xs:
+            try:
+                y = eval(sanitized, {'__builtins__': {}}, {'x': x, 'sin': __import__('math').sin, 'cos': __import__('math').cos, 'tan': __import__('math').tan, 'sqrt': __import__('math').sqrt, 'log': __import__('math').log, 'abs': abs, 'pi': __import__('math').pi, 'e': __import__('math').e})
+                if y is not None and abs(y) < 1e6:
+                    pts.append({'x': round(x, 2), 'y': round(y, 4)})
+            except:
+                continue
+
+        if not pts:
+            return jsonify({'error': 'Could not evaluate expression'}), 400
+
+        chart = {
+            'type': 'scatter',
+            'data': {
+                'datasets': [{
+                    'label': expression,
+                    'data': pts,
+                    'showLine': True,
+                    'borderColor': '#3b82f6',
+                    'backgroundColor': 'rgba(59,130,246,0.1)',
+                    'pointRadius': 1,
+                    'borderWidth': 2,
+                    'fill': True,
+                    'tension': 0.1
+                }]
+            },
+            'options': {
+                'title': {'display': True, 'text': f'y = {expression}', 'fontColor': '#f1f5f9', 'fontSize': 16},
+                'legend': {'labels': {'fontColor': '#f1f5f9'}},
+                'scales': {
+                    'xAxes': [{'gridLines': {'color': 'rgba(255,255,255,0.05)'}, 'ticks': {'fontColor': '#94a3b8'}}],
+                    'yAxes': [{'gridLines': {'color': 'rgba(255,255,255,0.05)'}, 'ticks': {'fontColor': '#94a3b8'}}]
+                },
+                'plugins': {
+                    'colors': {'enabled': False}
+                },
+                'backgroundColor': '#1a2236',
+                'width': 600,
+                'height': 400
+            }
+        }
+
+        chart_json = json.dumps(chart)
+        url = f'https://quickchart.io/chart?c={urllib.parse.quote(chart_json)}&width=600&height=400&backgroundColor=1a2236'
+        r = requests.get(url, timeout=15)
         if r.status_code == 200:
             img_b64 = base64.b64encode(r.content).decode('utf-8')
-            return jsonify({'image': f'data:image/png;base64,{img_b64}', 'url': quickchart_url})
-        return jsonify({'error': 'Failed to generate graph'}), 500
+            return jsonify({'image': f'data:image/png;base64,{img_b64}', 'url': url})
+        return jsonify({'error': f'QuickChart returned {r.status_code}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
