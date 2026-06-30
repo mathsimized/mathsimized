@@ -17,6 +17,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="./firebase.js"></script>
+<script src="./dashboard-data.js"></script>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <style>
@@ -28,6 +29,38 @@
     .modal-content h3 { margin-bottom:16px; }
     .modal-close { float:right; background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
     .modal-close:hover { color:var(--text); }
+    .cont-scroll { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; }
+    .cont-scroll::-webkit-scrollbar { height:4px; }
+    .cont-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+    .cont-card { flex-shrink:0; width:200px; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; text-decoration:none; transition:border-color 0.2s; }
+    .cont-card:hover { border-color:var(--primary); }
+    .cont-card .cont-icon { font-size:1.3rem; margin-bottom:6px; }
+    .cont-card .cont-title { font-size:0.85rem; font-weight:600; color:var(--text); }
+    .cont-card .cont-type { font-size:0.72rem; color:var(--muted2); margin-top:2px; }
+    .badge-row { display:flex; flex-wrap:wrap; gap:8px; }
+    .badge-item { display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:20px; font-size:0.78rem; background:var(--surface2); border:1px solid var(--border); }
+    .badge-item.earned { background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.3); color:var(--primary); }
+    .badge-item.locked { opacity:0.4; }
+    .notif-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); align-items:flex-start; }
+    .notif-item:last-child { border-bottom:none; }
+    .notif-item .notif-dot { width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0; }
+    .notif-item .notif-dot.unread { background:var(--primary); }
+    .notif-item .notif-dot.read { background:var(--muted2); }
+    .notif-item .notif-title { font-weight:600;font-size:0.85rem;color:var(--text); }
+    .notif-item .notif-msg { font-size:0.8rem;color:var(--muted);margin-top:2px; }
+    .notif-item .notif-date { font-size:0.72rem;color:var(--muted2);margin-top:2px; }
+    .timeline { position:relative; padding-left:20px; }
+    .timeline::before { content:''; position:absolute; left:6px; top:4px; bottom:4px; width:2px; background:var(--border); }
+    .tl-item { position:relative; padding:8px 0 8px 16px; }
+    .tl-item::before { content:''; position:absolute; left:-17px; top:12px; width:10px;height:10px;border-radius:50%;background:var(--primary);border:2px solid var(--surface); }
+    .tl-item .tl-text { font-size:0.85rem;color:var(--text); }
+    .tl-item .tl-time { font-size:0.72rem;color:var(--muted2);margin-top:1px; }
+    .stat-ext { font-size:0.72rem;color:var(--muted2);margin-top:2px; }
+    .dashboard-section-title { font-size:1rem;font-weight:600;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px; }
+    .profile-field { margin-bottom:12px; }
+    .profile-field label { display:block;font-size:0.78rem;color:var(--muted2);margin-bottom:3px; }
+    .profile-field input, .profile-field select { width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.85rem;box-sizing:border-box; }
+    .profile-field select option { background:var(--surface); }
   </style>
 </head>
 <body>
@@ -275,6 +308,34 @@ async function renderDashboard(user) {
     let recentNews = [];
     newsSnap.forEach(doc => recentNews.push({ id: doc.id, ...doc.data() }));
 
+    // Fetch new section data in parallel
+    var clPromise = getContinueLearning(uid, 6);
+    var bmPromise = getBookmarks(uid, 6);
+    var dlPromise = getDownloads(uid, 6);
+    var notifPromise = getNotifications(10);
+    var achPromise = getUserAchievements(uid);
+    var actPromise = getActivity(uid, 10);
+    var rvPromise = getRecentlyViewed(uid, 6);
+    var bmCountPromise = getBookmarkCount(uid);
+    var dlCountPromise = getDownloadCount(uid);
+
+    var cl = await clPromise;
+    var bookmarks = await bmPromise;
+    var downloads = await dlPromise;
+    var notifications = await notifPromise;
+    var achievements = await achPromise;
+    var activities = await actPromise;
+    var recentViewed = await rvPromise;
+    var bmCount = await bmCountPromise;
+    var dlCount = await dlCountPromise;
+
+    var preparingFor = userData.preparingFor || '';
+    var displayName = userData.displayName || '';
+    var country = userData.country || '';
+    var dreamUni = userData.dreamUniversity || '';
+    var targetScore = userData.targetSatScore || '';
+    var hasProfile2 = fullName || grade || school || displayName || country || dreamUni || targetScore || preparingFor;
+
     container.innerHTML = `
       ${!user.emailVerified ? `
       <div style="background:#664b00;color:#ffd700;padding:12px 20px;border-radius:8px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -284,12 +345,12 @@ async function renderDashboard(user) {
       </div>
       ` : ''}
 
-      <div class="section-title animate-on-scroll visible" style="margin-bottom:32px;">
+      <div class="section-title animate-on-scroll visible" style="margin-bottom:24px;">
         <h2>Welcome, ${escapeHtml(username)}</h2>
         <p>Your learning hub — quick access to everything MATHSIMIZED.</p>
       </div>
 
-      <div class="grid-4" style="margin-bottom:40px;">
+      <div class="grid-4" style="margin-bottom:32px;">
         <div class="card animate-on-scroll" style="text-align:center;">
           <div style="font-size:2rem;margin-bottom:8px;">📺</div>
           <h3 style="font-size:1.8rem;color:var(--primary);">${lectureCount}</h3>
@@ -312,102 +373,139 @@ async function renderDashboard(user) {
         </div>
       </div>
 
-      <div class="card animate-on-scroll" style="text-align:center;margin-bottom:40px;">
-        <div style="font-size:2rem;margin-bottom:8px;">📊</div>
-        <h3 id="satEstScore" style="font-size:1.8rem;color:var(--accent);">${satResults.length > 0 ? formatSatScore(satResults[0]) : '—'}</h3>
-        <p style="color:var(--muted2);font-size:0.9rem;">${satResults.length > 0 ? formatSatLabel(satResults[0]) : 'Est. SAT Score'}</p>
-        ${satResults.length === 0 ? '<a href="./sat-prep/study-guide.html" class="btn btn-sm btn-accent" style="margin-top:8px;">Study Guide</a>' : ''}
-      </div>
-
-      <div class="grid-2" style="margin-bottom:40px;">
-        <div class="card animate-on-scroll">
-          <h3 style="margin-bottom:16px;">Personal Details</h3>
-          <div style="display:flex;flex-direction:column;gap:12px;">
-            <input type="text" id="fullNameInput" placeholder="Full Name (optional)" value="${escapeHtml(fullName)}" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.95rem;width:100%;box-sizing:border-box;">
-            <input type="text" id="gradeInput" placeholder="Grade / Class (optional)" value="${escapeHtml(grade)}" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.95rem;width:100%;box-sizing:border-box;">
-            <input type="text" id="schoolInput" placeholder="School / Institution (optional)" value="${escapeHtml(school)}" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.95rem;width:100%;box-sizing:border-box;">
-            ${hasDetails
-              ? `<button id="profileBtn" onclick="toggleEdit()" class="btn btn-outline" style="align-self:flex-start;font-size:0.85rem;padding:8px 20px;">Edit</button>`
-              : `<button id="profileBtn" onclick="saveProfile()" class="btn btn-primary" style="align-self:flex-start;">Save</button>`
-            }
-            <span id="profileSaved" style="color:var(--success);font-size:0.85rem;display:none;">✓ Saved</span>
-          </div>
+      <div class="grid-4" style="margin-bottom:32px;">
+        <div class="card animate-on-scroll" style="text-align:center;padding:16px;">
+          <div style="font-size:1.5rem;margin-bottom:4px;">🔖</div>
+          <h3 style="font-size:1.4rem;color:var(--primary);">${bmCount}</h3>
+          <p style="color:var(--muted2);font-size:0.8rem;">Bookmarks</p>
         </div>
-        <div class="card animate-on-scroll">
-          <h3 style="margin-bottom:16px;">Recent News</h3>
-          ${recentNews.length === 0 ? '<p style="color:var(--muted);">No recent news.</p>' :
-            recentNews.map(n => `
-              <div style="padding:12px 0;border-bottom:1px solid var(--border);">
-                <div style="font-weight:600;margin-bottom:4px;">${escapeHtml(n.title)}</div>
-                <div style="color:var(--muted);font-size:0.85rem;">${formatDate(n.createdAt)}</div>
-              </div>
-            `).join('')}
-          <a href="./news.html" class="btn btn-outline" style="margin-top:12px;font-size:0.85rem;padding:8px 20px;">View All News</a>
+        <div class="card animate-on-scroll" style="text-align:center;padding:16px;">
+          <div style="font-size:1.5rem;margin-bottom:4px;">⬇️</div>
+          <h3 style="font-size:1.4rem;color:var(--accent);">${dlCount}</h3>
+          <p style="color:var(--muted2);font-size:0.8rem;">Downloads</p>
+        </div>
+        <div class="card animate-on-scroll" style="text-align:center;padding:16px;">
+          <div style="font-size:1.5rem;margin-bottom:4px;">📊</div>
+          <h3 id="satEstScore" style="font-size:1.4rem;color:var(--success);">${satResults.length > 0 ? formatSatScore(satResults[0]) : '—'}</h3>
+          <p style="color:var(--muted2);font-size:0.8rem;">${satResults.length > 0 ? formatSatLabel(satResults[0]) : 'Est. SAT Score'}</p>
+        </div>
+        <div class="card animate-on-scroll" style="text-align:center;padding:16px;">
+          <div style="font-size:1.5rem;margin-bottom:4px;">📋</div>
+          <h3 style="font-size:1.4rem;color:var(--warning);">${activities.length}</h3>
+          <p style="color:var(--muted2);font-size:0.8rem;">Recent Activity</p>
         </div>
       </div>
 
-      <div class="card animate-on-scroll" style="margin-bottom:40px;">
+      ${cl.length > 0 ? `
+      <div class="card animate-on-scroll" style="margin-bottom:24px;">
+        <div class="dashboard-section-title">Continue Learning</div>
+        <div class="cont-scroll">
+          ${cl.map(function(item) {
+            var d = item.data;
+            var icons = { 'sat_test': '📝', 'study_guide': '📖', 'note': '📄', 'lecture': '📺', 'practice_test': '📊' };
+            var icon = icons[d.resourceType] || '📌';
+            var link = d.resourceType === 'sat_test' ? './sat-prep/practice-test-' + d.resourceId + '.html' : d.resourceType === 'study_guide' ? './sat-prep/study-guide.html' : d.resourceType === 'note' || d.resourceType === 'notes' ? './notes.html' : d.resourceType === 'lecture' || d.resourceType === 'lectures' ? './lectures.html' : '#';
+            return '<a href="' + link + '" class="cont-card"><div class="cont-icon">' + icon + '</div><div class="cont-title">' + escapeHtml(d.title || d.resourceId) + '</div><div class="cont-type">' + d.resourceType.replace(/_/g,' ') + '</div></a>';
+          }).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      <div class="grid-2" style="margin-bottom:24px;gap:20px;">
+        <div class="card animate-on-scroll">
+          <div class="dashboard-section-title">🔖 Saved Resources</div>
+          ${bookmarks.length === 0 ? '<p style="color:var(--muted);font-size:0.85rem;">No saved resources yet. Bookmark notes, lectures, and tests to find them quickly.</p>' :
+            bookmarks.slice(0,4).map(function(item) {
+              var d = item.data;
+              var icons = { 'sat_test': '📝', 'study_guide': '📖', 'note': '📄', 'lecture': '📺', 'practice_test': '📊' };
+              return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;"><span>' + (icons[d.resourceType] || '📌') + '</span><span style="flex:1;color:var(--text);font-weight:500;">' + escapeHtml(d.title || d.resourceId) + '</span><span style="color:var(--muted);font-size:0.72rem;">' + d.resourceType.replace(/_/g,' ') + '</span></div>';
+            }).join('')}
+          ${bookmarks.length > 4 ? '<a href="javascript:void(0)" onclick="alert(\'All bookmarks will be shown here\')" style="font-size:0.8rem;color:var(--primary);margin-top:8px;display:inline-block;">View all ' + bookmarks.length + ' bookmarks →</a>' : ''}
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="dashboard-section-title">⬇️ Recent Downloads</div>
+          ${downloads.length === 0 ? '<p style="color:var(--muted);font-size:0.85rem;">No downloads yet. Download notes, practice tests, and study guides to see them here.</p>' :
+            downloads.slice(0,4).map(function(item) {
+              var d = item.data;
+              return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;"><span style="flex:1;color:var(--text);font-weight:500;">' + escapeHtml(d.title || d.resourceId) + '</span><span style="color:var(--muted);font-size:0.72rem;">' + formatTimestamp(d.timestamp) + '</span></div>';
+            }).join('')}
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:24px;gap:20px;">
+        <div class="card animate-on-scroll">
+          <div class="dashboard-section-title">🔔 Notifications <span id="notifBadge" style="margin-left:auto;font-size:0.72rem;color:var(--muted2);font-weight:400;"></span></div>
+          ${notifications.length === 0 ? '<p style="color:var(--muted);font-size:0.85rem;">No notifications yet.</p>' :
+            notifications.slice(0,5).map(function(item) {
+              var d = item.data;
+              var isRead = d.readBy && d.readBy.indexOf(uid) !== -1;
+              return '<div class="notif-item"><div class="notif-dot ' + (isRead ? 'read' : 'unread') + '"></div><div style="flex:1;"><div class="notif-title">' + escapeHtml(d.title) + '</div><div class="notif-msg">' + escapeHtml(d.message) + '</div><div class="notif-date">' + formatTimestamp(d.createdAt) + '</div></div></div>';
+            }).join('')}
+          ${notifications.length > 0 ? '<button onclick="markAllNotificationsRead(\'' + uid + '\').then(function(){document.getElementById(\'notifBadge\').textContent=\'All read\';})" style="background:none;border:none;color:var(--primary);font-size:0.78rem;cursor:pointer;margin-top:4px;padding:0;">Mark all as read</button>' : ''}
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="dashboard-section-title">📋 Recent Activity</div>
+          ${activities.length === 0 ? '<p style="color:var(--muted);font-size:0.85rem;">No recent activity. Start exploring resources to see your activity here.</p>' :
+            '<div class="timeline">' + activities.slice(0,7).map(function(item) {
+              var d = item.data;
+              return '<div class="tl-item"><div class="tl-text">' + escapeHtml(d.text) + '</div><div class="tl-time">' + (d.timestamp ? formatTimestamp(d.timestamp) : '') + '</div></div>';
+            }).join('') + '</div>'}
+        </div>
+      </div>
+
+      <div class="card animate-on-scroll" style="margin-bottom:24px;">
+        <div class="dashboard-section-title">🏆 Achievements</div>
+        <div class="badge-row">
+          ${achievements.map(function(a) {
+            return '<div class="badge-item ' + (a.earned ? 'earned' : 'locked') + '"><span>' + a.icon + '</span>' + a.title + '</div>';
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="card animate-on-scroll" style="margin-bottom:24px;">
+        <div class="dashboard-section-title">👤 Profile</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="profile-field"><label>Display Name</label><input type="text" id="dispNameInput" placeholder="Optional" value="${escapeHtml(displayName)}"></div>
+          <div class="profile-field"><label>Full Name</label><input type="text" id="fullNameInput" placeholder="Optional" value="${escapeHtml(fullName)}"></div>
+          <div class="profile-field"><label>Grade / Class</label><input type="text" id="gradeInput" placeholder="Optional" value="${escapeHtml(grade)}"></div>
+          <div class="profile-field"><label>School / Institution</label><input type="text" id="schoolInput" placeholder="Optional" value="${escapeHtml(school)}"></div>
+          <div class="profile-field"><label>Country</label><input type="text" id="countryInput" placeholder="Optional" value="${escapeHtml(country)}"></div>
+          <div class="profile-field"><label>Dream University</label><input type="text" id="uniInput" placeholder="Optional" value="${escapeHtml(dreamUni)}"></div>
+          <div class="profile-field"><label>Target SAT Score</label><input type="text" id="targetInput" placeholder="Optional" value="${escapeHtml(targetScore)}"></div>
+          <div class="profile-field"><label>Preparing For</label><select id="prepInput"><option value="">Select...</option><option value="SAT" ${preparingFor === 'SAT' ? 'selected' : ''}>SAT</option><option value="IGCSE" ${preparingFor === 'IGCSE' ? 'selected' : ''}>IGCSE</option><option value="GCSE" ${preparingFor === 'GCSE' ? 'selected' : ''}>GCSE</option><option value="AS Level" ${preparingFor === 'AS Level' ? 'selected' : ''}>AS Level</option><option value="A Level" ${preparingFor === 'A Level' ? 'selected' : ''}>A Level</option><option value="Other" ${preparingFor === 'Other' ? 'selected' : ''}>Other</option></select></div>
+        </div>
+        <button id="profileBtn2" onclick="saveProfileV2(\'${uid}\')" class="btn btn-primary" style="margin-top:16px;font-size:0.85rem;padding:8px 24px;">Save Profile</button>
+        <span id="profileSaved2" style="color:var(--success);font-size:0.85rem;display:none;margin-left:12px;">✓ Saved</span>
+      </div>
+
+      <div class="card animate-on-scroll" style="margin-bottom:24px;">
         <h3 style="margin-bottom:16px;">Game Scores</h3>
         ${userScores.length === 0
           ? '<p style="color:var(--muted);">No games played yet. <a href="./games.html">Play a game</a> to see your scores here.</p>'
-          : `
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Game</th>
-                  <th>Best Score</th>
-                  <th>Last Played</th>
-                </tr>
-              </thead>
-              <tbody id="gameScoresBody">
-                ${userScores.sort((a, b) => (b.bestScore || 0) - (a.bestScore || 0)).map(s => `
-                  <tr>
-                    <td style="font-weight:600;">${escapeHtml(s.gameName || s.gameId)}</td>
-                    <td style="color:var(--success);font-weight:700;">${(s.bestScore || 0).toLocaleString()}</td>
-                    <td style="color:var(--muted);font-size:0.85rem;">${s.lastPlayed ? formatDate(s.lastPlayed) : 'N/A'}</td>
-                  </tr>
-                `).join('')}
-                <tr style="font-weight:700;background:var(--surface2);">
-                  <td>Total</td>
-                  <td style="color:var(--primary);">${totalScore.toLocaleString()}</td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          `}
+          : '<div class="table-wrapper"><table><thead><tr><th>Game</th><th>Best Score</th><th>Last Played</th></tr></thead><tbody id="gameScoresBody">' +
+            userScores.sort(function(a,b) { return (b.bestScore || 0) - (a.bestScore || 0); }).map(function(s) {
+              return '<tr><td style="font-weight:600;">' + escapeHtml(s.gameName || s.gameId) + '</td><td style="color:var(--success);font-weight:700;">' + (s.bestScore || 0).toLocaleString() + '</td><td style="color:var(--muted);font-size:0.85rem;">' + (s.lastPlayed ? formatDate(s.lastPlayed) : 'N/A') + '</td></tr>';
+            }).join('') +
+            '<tr style="font-weight:700;background:var(--surface2);"><td>Total</td><td style="color:var(--primary);">' + totalScore.toLocaleString() + '</td><td></td></tr>' +
+          '</tbody></table></div>'}
       </div>
 
-      <div class="card animate-on-scroll">
+      <div class="card animate-on-scroll" style="margin-bottom:24px;">
         <h3 style="margin-bottom:16px;">Quick Links</h3>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <a href="./lectures.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>📺</span> Watch Lectures
-          </a>
-          <a href="./notes.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>📄</span> Download Notes
-          </a>
-          <a href="./games.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>🎮</span> Play Games
-          </a>
-          <a href="./pastpapers.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>📝</span> Past Papers
-          </a>
-          <a href="./news.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>📰</span> Latest News
-          </a>
-          <a href="./about.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>ℹ️</span> About
-          </a>
-          <a href="./sat-prep/practice-tests.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
-            <span>📊</span> SAT Prep
-          </a>
+          <a href="./lectures.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>📺</span> Watch Lectures</a>
+          <a href="./notes.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>📄</span> Download Notes</a>
+          <a href="./games.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>🎮</span> Play Games</a>
+          <a href="./pastpapers.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>📝</span> Past Papers</a>
+          <a href="./news.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>📰</span> Latest News</a>
+          <a href="./about.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>ℹ️</span> About</a>
+          <a href="./sat-prep/practice-tests.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>📊</span> SAT Prep</a>
+          <a href="javascript:void(0)" onclick="showFeedbackForm()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;"><span>💬</span> Send Feedback</a>
         </div>
       </div>
 
       ${satResults.length > 0 ? `
-      <div class="card animate-on-scroll" style="margin-bottom:40px;">
+      <div class="card animate-on-scroll" style="margin-bottom:24px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
           <h3 style="margin:0;">SAT Practice History</h3>
           <select id="satSortSelect" onchange="renderSATHistory()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;">
@@ -418,52 +516,10 @@ async function renderDashboard(user) {
             <option value="time-asc">Time Taken (Fastest First)</option>
           </select>
         </div>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Score</th>
-                <th>Raw Score</th>
-                <th>Time</th>
-                <th>Adaptive</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="satHistoryBody">
-              (function() {
-                const sorted = [...satResults].sort((a, b) => {
-                  const tA = a.timestamp ? (a.timestamp.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime()) : 0;
-                  const tB = b.timestamp ? (b.timestamp.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime()) : 0;
-                  return tB - tA;
-                });
-                window.__satResultsData = sorted;
-                return sorted.map(r => {
-                  const isQuick = isQuickTest(r);
-                  const date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
-                  const dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                  const scoreDisplay = formatTableScore(r);
-                  const raw = formatRawScore(r);
-                  const time = r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—');
-                  const adaptive = isQuick ? '' : (r.adaptivePath === 'hard' ? '<span class="adaptive-badge adaptive-hard">Hard</span>' : (r.adaptivePath === 'easy' ? '<span class="adaptive-badge adaptive-easy">Easy</span>' : '—'));
-                  return '<tr data-sat-result-idx="' + sorted.indexOf(r) + '">' +
-                    '<td style="font-size:0.9rem;">' + dateStr + '</td>' +
-                    '<td><span class="score-badge ' + (isQuick ? 'badge-quick' : 'badge-full') + '" style="font-size:0.75rem;">' + formatTestType(r) + '</span></td>' +
-                    '<td style="font-weight:700;color:var(--accent);">' + scoreDisplay + '</td>' +
-                    '<td>' + raw + '</td>' +
-                    '<td style="color:var(--muted);font-size:0.85rem;">' + time + '</td>' +
-                    '<td>' + adaptive + '</td>' +
-                    '<td><button class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:4px 12px;" onclick="viewSATDetails(' + sorted.indexOf(r) + ')">View Details</button></td>' +
-                  '</tr>';
-                }).join('');
-              })()}
-            </tbody>
-          </table>
-        </div>
+        <div class="table-wrapper"><table><thead><tr><th>Date</th><th>Type</th><th>Score</th><th>Raw Score</th><th>Time</th><th>Adaptive</th><th></th></tr></thead><tbody id="satHistoryBody">(function(){var sorted=[...satResults].sort(function(a,b){var tA=a.timestamp?(a.timestamp.toMillis?a.timestamp.toMillis():new Date(a.timestamp).getTime()):0;var tB=b.timestamp?(b.timestamp.toMillis?b.timestamp.toMillis():new Date(b.timestamp).getTime()):0;return tB-tA});window.__satResultsData=sorted;return sorted.map(function(r){var iq=isQuickTest(r);var d=r.timestamp?(r.timestamp.toDate?r.timestamp.toDate():new Date(r.timestamp)):new Date();return '<tr data-sat-result-idx="'+sorted.indexOf(r)+'"><td style="font-size:0.9rem;">'+d.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})+'</td><td><span class="score-badge '+(iq?'badge-quick':'badge-full')+'" style="font-size:0.75rem;">'+formatTestType(r)+'</span></td><td style="font-weight:700;color:var(--accent);">'+formatTableScore(r)+'</td><td>'+formatRawScore(r)+'</td><td style="color:var(--muted);font-size:0.85rem;">'+(r.timeTakenSeconds?formatTime(r.timeTakenSeconds):r.timeTaken?formatTime(r.timeTaken):'—')+'</td><td>'+(iq?'':r.adaptivePath==='hard'?'<span class="adaptive-badge adaptive-hard">Hard</span>':r.adaptivePath==='easy'?'<span class="adaptive-badge adaptive-easy">Easy</span>':'—')+'</td><td><button class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:4px 12px;" onclick="viewSATDetails('+sorted.indexOf(r)+')">View Details</button></td></tr>'}).join('')})()</tbody></table></div>
       </div>
       ` : `
-      <div class="card animate-on-scroll" style="text-align:center;padding:40px;margin-bottom:40px;">
+      <div class="card animate-on-scroll" style="text-align:center;padding:40px;margin-bottom:24px;">
         <div style="font-size:3rem;margin-bottom:16px;">📊</div>
         <h3 style="margin-bottom:8px;">No SAT Practice Tests Taken Yet</h3>
         <p style="color:var(--muted);margin-bottom:16px;">Start practicing for the SAT Math section with a full-length test or quick score estimator.</p>
@@ -515,32 +571,6 @@ window.addEventListener('authStateChanged', function(event) {
   if (window.__testUserMode) return;
   renderDashboard(event.detail.user);
 });
-
-async function saveProfile() {
-  const uid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
-  if (!uid) return alert('Not logged in');
-
-  const fullName = document.getElementById('fullNameInput').value.trim();
-  const grade = document.getElementById('gradeInput').value.trim();
-  const school = document.getElementById('schoolInput').value.trim();
-  try {
-    await db.collection('users').doc(uid).update({ fullName, grade, school });
-    const el = document.getElementById('profileSaved');
-    el.style.display = 'inline';
-    setTimeout(() => { el.style.display = 'none'; }, 1500);
-  } catch (e) {
-    console.error('Error saving profile:', e);
-    alert('Failed to save profile.');
-  }
-}
-
-function toggleEdit() {
-  const btn = document.getElementById('profileBtn');
-  btn.textContent = 'Save';
-  btn.className = 'btn btn-primary';
-  btn.style.alignSelf = 'flex-start';
-  btn.onclick = saveProfile;
-}
 
 function formatTime(seconds) {
   if (!seconds || seconds <= 0) return '—';
@@ -643,6 +673,66 @@ function formatRawScore(r) {
   var combined = r.rwScaled !== undefined || r.englishScaled !== undefined;
   var total = r.totalQuestions || (isQuick ? 10 : (combined ? 98 : 44));
   return (r.totalCorrect || 0) + '/' + total;
+}
+
+function formatTimestamp(ts) {
+  if (!ts) return '';
+  var d = ts.toDate ? ts.toDate() : new Date(ts);
+  var now = new Date();
+  var diff = (now - d) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function saveProfileV2(uid) {
+  var data = {
+    displayName: document.getElementById('dispNameInput').value.trim(),
+    fullName: document.getElementById('fullNameInput').value.trim(),
+    grade: document.getElementById('gradeInput').value.trim(),
+    school: document.getElementById('schoolInput').value.trim(),
+    country: document.getElementById('countryInput').value.trim(),
+    dreamUniversity: document.getElementById('uniInput').value.trim(),
+    targetSatScore: document.getElementById('targetInput').value.trim(),
+    preparingFor: document.getElementById('prepInput').value
+  };
+  updateProfile(uid, data).then(function() {
+    var el = document.getElementById('profileSaved2');
+    if (el) { el.style.display = 'inline'; setTimeout(function(){ el.style.display = 'none'; }, 2000); }
+  }).catch(function(e) {
+    alert('Failed to save profile: ' + (e.message || e));
+  });
+}
+
+function showFeedbackForm() {
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML =
+    '<div class="modal-content"><button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">✕</button>' +
+    '<h3>Send Feedback</h3><p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">Help us improve — report issues, suggest features, or share your thoughts.</p>' +
+    '<select id="fbCategory" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.9rem;margin-bottom:12px;">' +
+    '<option value="">Select category...</option><option value="broken_link">Broken Link</option><option value="incorrect_answer">Incorrect Answer</option><option value="typo">Typo</option><option value="suggestion">Suggestion</option><option value="general">General Feedback</option></select>' +
+    '<textarea id="fbMessage" placeholder="Describe your feedback..." style="width:100%;min-height:100px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.9rem;box-sizing:border-box;resize:vertical;"></textarea>' +
+    '<div id="fbStatus" style="margin-top:8px;font-size:0.85rem;"></div>' +
+    '<button onclick="submitFeedbackNow()" class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center;">Submit Feedback</button></div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+function submitFeedbackNow() {
+  var uid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+  if (!uid) { document.getElementById('fbStatus').textContent = 'Please login first.'; return; }
+  var cat = document.getElementById('fbCategory').value;
+  var msg = document.getElementById('fbMessage').value.trim();
+  if (!cat) { document.getElementById('fbStatus').textContent = 'Please select a category.'; return; }
+  if (!msg) { document.getElementById('fbStatus').textContent = 'Please enter a message.'; return; }
+  document.getElementById('fbStatus').textContent = 'Submitting...';
+  submitFeedback(uid, cat, msg).then(function(success) {
+    document.getElementById('fbStatus').textContent = success ? '✓ Thank you for your feedback!' : 'Failed to submit. Please try again.';
+    if (success) setTimeout(function() { document.querySelector('.modal-overlay').remove(); }, 1500);
+  });
 }
 
 function renderSATHistory() {

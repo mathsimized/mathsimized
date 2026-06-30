@@ -225,9 +225,14 @@ function renderNotes(subject) {
       console.error('Download error:', err);
       alert('Failed to download. Please try again.');
     }
-    btn.disabled = false;
-    btn.textContent = 'Download';
-  };
+      btn.disabled = false;
+      btn.textContent = 'Download';
+      // Track download
+      if (typeof trackActivity === 'function') {
+        var noteTitleEl = btn.closest('.card').querySelector('h3');
+        trackActivity('download_note', 'Downloaded note: ' + (noteTitleEl ? noteTitleEl.textContent : 'unknown'), noteId, 'note');
+      }
+    };
 
   setTimeout(() => {
     document.querySelectorAll('#notesContent .animate-on-scroll').forEach(el => {
@@ -264,7 +269,10 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
   observer.observe(el);
 });
 
-document.addEventListener('DOMContentLoaded', loadNotes);
+document.addEventListener('DOMContentLoaded', function() {
+  loadNotes();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed notes page'); }, 1000);
+});
 </script>
 </body>
 </html>

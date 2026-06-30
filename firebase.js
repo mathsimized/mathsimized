@@ -159,19 +159,21 @@ function updateNavbarUI() {
   }
 }
 
-async function signupUser(email, password, username) {
+async function signupUser(email, password, username, preparingFor) {
   const normalizedEmail = email.toLowerCase().trim();
   const normalizedUsername = username.toLowerCase().trim();
 
   const cred = await auth.createUserWithEmailAndPassword(normalizedEmail, password);
   const uid = cred.user.uid;
 
-  await db.collection('users').doc(uid).set({
+  var userData = {
     uid,
     username: normalizedUsername,
     email: normalizedEmail,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  };
+  if (preparingFor) userData.preparingFor = preparingFor;
+  await db.collection('users').doc(uid).set(userData);
 
   try {
     await cred.user.sendEmailVerification();
@@ -399,3 +401,17 @@ if (typeof firebase !== 'undefined') {
   window.getUserScores = getUserScores;
   window.rebuildLeaderboard = rebuildLeaderboard;
 }
+
+function trackActivity(type, text, refId, refType) {
+  var user = auth.currentUser;
+  if (!user) return Promise.resolve();
+  return db.collection('activity').add({
+    userId: user.uid,
+    type: type,
+    text: text,
+    refId: refId || null,
+    refType: refType || null,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(function(e) { console.error('Error tracking activity:', e); });
+}
+window.trackActivity = trackActivity;

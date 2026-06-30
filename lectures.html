@@ -234,7 +234,19 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
   observer.observe(el);
 });
 
-document.addEventListener('DOMContentLoaded', loadLectures);
+document.addEventListener('DOMContentLoaded', function() {
+  loadLectures();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed lectures page'); }, 1000);
+});
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn-primary');
+  if (btn && btn.textContent.trim() === 'Watch Now' && typeof trackActivity === 'function') {
+    var card = btn.closest('.card');
+    var topic = card ? card.querySelector('h3').textContent : 'unknown';
+    trackActivity('lecture_watch', 'Clicked Watch Now: ' + topic);
+  }
+});
 </script>
 </body>
 </html>

@@ -251,7 +251,19 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
   observer.observe(el);
 });
 
-document.addEventListener('DOMContentLoaded', loadGames);
+document.addEventListener('DOMContentLoaded', function() {
+  loadGames();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed games page'); }, 1000);
+});
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn-primary');
+  if (btn && btn.textContent.trim() === 'Play Now' && typeof trackActivity === 'function') {
+    var card = btn.closest('.card');
+    var name = card ? card.querySelector('h3').textContent : 'unknown';
+    trackActivity('play_game', 'Played game: ' + name, name, 'game');
+  }
+});
 </script>
 </body>
 </html>

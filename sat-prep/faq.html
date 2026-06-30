@@ -352,9 +352,10 @@ function toggleFaq(el) {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderFaq);
+  document.addEventListener('DOMContentLoaded', function() { renderFaq(); setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed SAT FAQ'); }, 1000); });
 } else {
   renderFaq();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed SAT FAQ'); }, 1000);
 }
 </script>
 </body>

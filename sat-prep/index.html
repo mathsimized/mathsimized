@@ -297,10 +297,11 @@ function renderCards() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() { renderStats(); renderCards(); });
+  document.addEventListener('DOMContentLoaded', function() { renderStats(); renderCards(); setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed SAT prep homepage'); }, 1000); });
 } else {
   renderStats();
   renderCards();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed SAT prep homepage'); }, 1000);
 }
 </script>
 </body>

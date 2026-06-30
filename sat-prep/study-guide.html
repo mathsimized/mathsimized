@@ -710,6 +710,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', renderPage);
 } else {
   renderPage();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed SAT study guide'); }, 1000);
 }
 </script>
 </body>

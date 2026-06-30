@@ -491,6 +491,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', renderTests);
 } else {
   renderTests();
+  setTimeout(function() { if (typeof trackActivity === 'function') trackActivity('view', 'Viewed SAT practice tests'); }, 1000);
 }
 </script>
 </body>

@@ -326,6 +326,7 @@ function toggleMobileMenu() {
   document.getElementById('navLinks').classList.toggle('open');
   document.getElementById("navAuth").classList.toggle("open");
 }
+if (typeof trackActivity === "function") setTimeout(function() { trackActivity("view", "Viewed SAT practice test 11"); }, 1000);
 
 function sharePage() {
   if (navigator.share) {
@@ -343,6 +344,7 @@ function sharePage() {
     alert('Link copied to clipboard!');
   }
 }
+if (typeof trackActivity === "function") setTimeout(function() { trackActivity("view", "Viewed SAT practice test 11"); }, 1000);
 </script>
 </body>
 </html>
