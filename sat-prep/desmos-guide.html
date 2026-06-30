@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desmos Guide for SAT Math — MATHSIMIZED</title>
+  <meta name="description" content="Learn how to use the Desmos graphing calculator for the digital SAT Math section. Covers graphing, tables, regression, sliders, intersections, and SAT-specific tips.">
+  <meta property="og:title" content="Desmos Guide for SAT Math — MATHSIMIZED">
+  <meta property="og:description" content="Master the Desmos graphing calculator for the digital SAT. Step-by-step guide with tips for SAT Math success.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/desmos-guide.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .dg-hero {
+      min-height: 30vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dg-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .dg-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .dg-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+    .dg-hero .dg-actions { margin-top: 20px; position: relative; z-index: 1; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .dg-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+    .dg-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--accent);
+    }
+    .dg-section h3 {
+      font-size: 1.05rem;
+      margin: 18px 0 8px;
+      color: var(--accent);
+    }
+    .dg-section p, .dg-section li { color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
+    .dg-section ul, .dg-section ol { padding-left: 20px; }
+    .dg-section li { margin-bottom: 6px; }
+    .dg-section code {
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    .dg-section .tip-box {
+      background: rgba(255, 193, 7, 0.08);
+      border-left: 3px solid #ffc107;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .dg-section .note-box {
+      background: rgba(100, 200, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .dg-layout {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+    .dg-layout .dg-text { flex: 1; min-width: 0; }
+    .dg-layout .dg-embed-wrapper {
+      flex-shrink: 0;
+      margin: 0;
+      position: sticky;
+      top: 100px;
+    }
+    .dg-embed-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 16px 0;
+    }
+    @media (max-width: 900px) {
+      .dg-layout { flex-direction: column; }
+      .dg-layout .dg-embed-wrapper {
+        width: 100%;
+        position: static;
+      }
+      .dg-layout .dg-embed-wrapper .dg-embed {
+        width: 100%;
+      }
+    }
+    .dg-embed {
+      width: 400px;
+      max-width: 100%;
+      height: 540px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .dg-embed iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    @media (max-width: 768px) {
+      .dg-hero h1 { font-size: 1.8rem; }
+      .dg-section { padding: 20px; }
+      .dg-embed { height: 460px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="dg-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>Desmos Graphing Calculator Guide</h1>
+    <p>Master the built-in Desmos calculator on the digital SAT. Learn to graph, create tables, find intersections, and more — all optimized for the SAT Math section.</p>
+    <div class="dg-actions">
+      <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener" class="btn btn-primary">Open Desmos Calculator ↗</a>
+      <a href="practice-tests.html" class="btn btn-outline">Practice Tests</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+
+    <div class="dg-section">
+      <h2>Basic Interface</h2>
+      <div class="dg-layout">
+        <div class="dg-text">
+          <p>The Desmos graphing calculator is built into the Bluebook testing application and is available for all 44 questions in the SAT Math section. Here is an overview of the key interface elements:</p>
+          <ul>
+            <li><strong>Expression List</strong> — The left panel where you type equations, functions, and expressions. Each expression gets a colored graph.</li>
+            <li><strong>Graphing Grid</strong> — The main area where your functions are plotted. You can zoom with the scroll wheel or pinch-to-zoom on a touchscreen.</li>
+            <li><strong>Tools Menu</strong> — Located in the top-right corner. Access settings, help, and keyboard shortcuts.</li>
+            <li><strong>Zoom Controls</strong> — Use the + and − buttons or pinch gestures to zoom in and out.</li>
+          </ul>
+          <p>On the SAT, you can also use the built-in scratch paper tool alongside Desmos. Practice using both together so you can switch between them quickly on test day.</p>
+        </div>
+        <div class="dg-embed-wrapper">
+          <div class="dg-embed">
+          <iframe src="https://www.desmos.com/calculator" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dg-section">
+      <h2>Graphing Functions</h2>
+      <p>Entering equations in Desmos is straightforward. Type an expression in the expression list and it will be graphed immediately.</p>
+      <h3>Entering Equations</h3>
+      <ul>
+        <li>Type <code>y = 2x + 3</code> to graph a linear function.</li>
+        <li>Type <code>y = x^2 − 4</code> to graph a quadratic (use <code>^</code> for exponents).</li>
+        <li>Type <code>y = 2^x</code> for exponential functions.</li>
+        <li>Type <code>y = sin(x)</code> for trigonometric functions.</li>
+        <li>Use <code>sqrt(x)</code> for square roots and <code>abs(x)</code> for absolute value.</li>
+      </ul>
+      <h3>Implicit Equations</h3>
+      <p>You can also graph equations that are not solved for y, such as <code>x^2 + y^2 = 25</code> (a circle). This is especially useful for geometry questions.</p>
+      <div class="tip-box"><strong>SAT Tip:</strong> When given an equation in standard form (Ax + By = C), type it directly as-is into Desmos. The calculator will graph it correctly even without solving for y.</div>
+    </div>
+
+    <div class="dg-section">
+      <h2>Tables</h2>
+      <p>Tables let you input data points and visualize them on the graph. Click the "Add Table" button (or type a table header like <code>x₁ =</code>) to create one.</p>
+      <ul>
+        <li>Enter x-values in the first column and y-values in the second column.</li>
+        <li>Points will be plotted automatically on the graph.</li>
+        <li>You can toggle the visibility of the table points on the graph.</li>
+      </ul>
+      <p>Tables are useful for questions that give you sets of coordinate pairs and ask you to identify patterns or find the equation of the line or curve passing through them.</p>
+      <div class="tip-box"><strong>SAT Tip:</strong> Use tables when a question provides multiple data points. Plot them quickly and look for linear, quadratic, or exponential patterns visually.</div>
+    </div>
+
+    <div class="dg-section">
+      <h2>Regression (Line of Best Fit)</h2>
+      <p>Desmos can perform regression to find the equation that best fits your data points. This is a powerful tool for data analysis questions on the SAT.</p>
+      <h3>How to Perform Regression</h3>
+      <ol>
+        <li>Create a table with your x and y values.</li>
+        <li>Type <code>y₁ ~ mx₁ + b</code> for linear regression.</li>
+        <li>Type <code>y₁ ~ ax₁² + bx₁ + c</code> for quadratic regression.</li>
+        <li>Type <code>y₁ ~ a · bˣ¹</code> for exponential regression.</li>
+        <li>Desmos will display the best-fit values and the correlation coefficient (R²).</li>
+      </ol>
+      <div class="note-box"><strong>Note:</strong> The "~" symbol tells Desmos to perform regression instead of plotting an exact equation. The closer R² is to 1, the better the fit.</div>
+    </div>
+
+    <div class="dg-section">
+      <h2>Finding Intersections</h2>
+      <p>To find where two graphs intersect (a common SAT question type):</p>
+      <ul>
+        <li>Graph both equations in the expression list.</li>
+        <li>Click on a point where the graphs intersect — a dot will appear with the coordinates.</li>
+        <li>If there are multiple intersections, click each one to see its coordinates.</li>
+      </ul>
+      <p>This is especially useful for solving systems of equations, finding roots of functions, and determining where two functions have the same value.</p>
+      <div class="tip-box"><strong>SAT Tip:</strong> Many SAT Math questions ask "How many solutions does this system have?" Graph both equations and count the intersection points visually — this is often faster than solving algebraically.</div>
+    </div>
+
+    <div class="dg-section">
+      <h2>Sliders</h2>
+      <p>Sliders let you explore how changing a variable affects a graph. When you type a variable (like <code>a</code>, <code>b</code>, or <code>m</code>) instead of a number, Desmos automatically creates a slider for it.</p>
+      <ul>
+        <li>Enter <code>y = mx + b</code> — sliders for m and b will appear.</li>
+        <li>Drag the slider or use the play button to animate the change.</li>
+        <li>Adjust the range and step size of the slider by clicking on its values.</li>
+      </ul>
+      <p>Sliders help you understand how parameters transform a function — for example, how changing the leading coefficient affects the width of a parabola.</p>
+      <div class="tip-box"><strong>SAT Tip:</strong> If a question asks about the effect of changing a constant on a graph, use sliders to see the transformation in real-time. This builds intuition for the relationship.</div>
+    </div>
+
+    <div class="dg-section">
+      <h2>SAT Tips &amp; Shortcuts</h2>
+      <ul>
+        <li><strong>Check your work:</strong> After solving an equation, type your solution into Desmos to verify. For example, if you solve 2x + 5 = 13 and get x = 4, type <code>2(4) + 5</code> to confirm it equals 13.</li>
+        <li><strong>Graph inequalities:</strong> Type <code>y > 2x + 1</code> to see the shaded region. Use <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, and <code>&lt;=</code>.</li>
+        <li><strong>Evaluate functions:</strong> Type <code>f(x) = x^2 − 3x + 2</code> then type <code>f(5)</code> to evaluate at x = 5.</li>
+        <li><strong>Keyboard shortcuts:</strong> Use <code>/</code> for fractions, <code>^</code> for exponents, and <code>Enter</code> to add a new expression.</li>
+        <li><strong>Zoom to fit:</strong> Double-click the graphing area or press the zoom-fit button to automatically adjust the view to show all your graphs.</li>
+        <li><strong>Toggle visibility:</strong> Click the colored icon next to an expression to show/hide its graph. This helps when you have multiple functions plotted.</li>
+      </ul>
+    </div>
+
+    <div class="dg-section">
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Forgetting parentheses:</strong> <code>1/2x</code> is interpreted as (1/2)x, not 1/(2x). Use parentheses to be explicit: <code>1/(2x)</code>.</li>
+        <li><strong>Entering data incorrectly:</strong> Double-check that your table values match the problem. A single typo can give a completely wrong regression model.</li>
+        <li><strong>Over-relying on Desmos:</strong> Desmos is a tool, not a crutch. Practice solving problems algebraically too — sometimes Desmos can slow you down on straightforward questions.</li>
+        <li><strong>Not reading window bounds:</strong> If a graph looks empty, you might need to zoom out. Check the axes to see the scale of the graph.</li>
+        <li><strong>Mistaking the regression tilde (~) for minus (−):</strong> The tilde key is used specifically for regression. Using a minus sign will give you an error or the wrong result.</li>
+      </ul>
+      <div class="tip-box"><strong>Final SAT Tip:</strong> Practice with Desmos during your SAT prep, not just on test day. The more familiar you are with the interface, the more confidently you will use it under timed conditions. Take practice tests using the Bluebook app to get comfortable with the built-in Desmos calculator.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+</script>
+</body>
+</html>

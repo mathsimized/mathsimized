@@ -49,13 +49,7 @@
           <a href="./pastpapers.html">Past Papers</a>
         </div>
       </li>
-      <li class="dropdown">
-        <a href="#">SAT Prep ▾</a>
-        <div class="dropdown-menu">
-          <a href="./sat-prep/math-hub.html">Math</a>
-          <a href="./sat-prep/english-hub.html">English</a>
-        </div>
-      </li>
+      <li><a href="sat-prep/index.html">SAT Prep</a></li>
       <li><a href="./news.html">News</a></li>
       <li class="dropdown">
         <a href="#">Games ▾</a>
@@ -147,8 +141,8 @@
       </div>
       <div class="footer-col">
         <h4>SAT Prep</h4>
-        <a href="./sat-prep/math-hub.html">SAT Math</a>
-        <a href="./sat-prep/english-hub.html">SAT English</a>
+        <a href="./sat-prep/practice-tests.html">Practice Tests</a>
+        <a href="./sat-prep/study-guide.html">Study Guide</a>
       </div>
       <div class="footer-col">
         <h4>Games</h4>
@@ -321,9 +315,9 @@ async function renderDashboard(user) {
 
       <div class="card animate-on-scroll" style="text-align:center;margin-bottom:40px;">
         <div style="font-size:2rem;margin-bottom:8px;">📊</div>
-        <h3 id="satEstScore" style="font-size:1.8rem;color:var(--accent);">${satResults.length > 0 ? (satResults[0].subject === 'combined' ? (satResults[0].estimatedScore || satResults[0].scaledScore || '—') : (satResults[0].scaledScore || satResults[0].estimatedScore || '—')) : '—'}</h3>
-        <p style="color:var(--muted2);font-size:0.9rem;">${satResults.length > 0 ? ('Est. SAT Score · ' + (satResults[0].testType === 'quick_test' ? 'Quick Test' : 'Full-Length') + (satResults[0].subject === 'combined' ? ' /1600' : ' /800')) : 'Est. SAT Score'}</p>
-        ${satResults.length === 0 ? '<a href="./sat-prep/math-hub.html" class="btn btn-sm btn-accent" style="margin-top:8px;">Take Quick Test</a>' : ''}
+        <h3 id="satEstScore" style="font-size:1.8rem;color:var(--accent);">${satResults.length > 0 ? formatSatScore(satResults[0]) : '—'}</h3>
+        <p style="color:var(--muted2);font-size:0.9rem;">${satResults.length > 0 ? formatSatLabel(satResults[0]) : 'Est. SAT Score'}</p>
+        ${satResults.length === 0 ? '<a href="./sat-prep/study-guide.html" class="btn btn-sm btn-accent" style="margin-top:8px;">Study Guide</a>' : ''}
       </div>
 
       <div class="grid-2" style="margin-bottom:40px;">
@@ -407,7 +401,7 @@ async function renderDashboard(user) {
           <a href="./about.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
             <span>ℹ️</span> About
           </a>
-          <a href="./sat-prep/math-hub.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
+          <a href="./sat-prep/practice-tests.html" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:10px;color:var(--muted2);text-decoration:none;transition:all 0.3s;">
             <span>📊</span> SAT Prep
           </a>
         </div>
@@ -447,17 +441,16 @@ async function renderDashboard(user) {
                 });
                 window.__satResultsData = sorted;
                 return sorted.map(r => {
-                  const isQuick = r.testType === 'quick_test';
+                  const isQuick = isQuickTest(r);
                   const date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
                   const dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                  const score = isQuick ? (r.estimatedScore || '—') : (r.scaledScore || '—');
-                  const scoreDisplay = isQuick ? '~' + score + '/800 est.' : score + '/800';
-                  const raw = (r.totalCorrect || 0) + '/' + (r.totalQuestions || (isQuick ? 10 : 44));
+                  const scoreDisplay = formatTableScore(r);
+                  const raw = formatRawScore(r);
                   const time = r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—');
                   const adaptive = isQuick ? '' : (r.adaptivePath === 'hard' ? '<span class="adaptive-badge adaptive-hard">Hard</span>' : (r.adaptivePath === 'easy' ? '<span class="adaptive-badge adaptive-easy">Easy</span>' : '—'));
                   return '<tr data-sat-result-idx="' + sorted.indexOf(r) + '">' +
                     '<td style="font-size:0.9rem;">' + dateStr + '</td>' +
-                    '<td><span class="score-badge ' + (isQuick ? 'badge-quick' : 'badge-full') + '" style="font-size:0.75rem;">' + (isQuick ? 'Quick Test' : 'Full-Length') + '</span></td>' +
+                    '<td><span class="score-badge ' + (isQuick ? 'badge-quick' : 'badge-full') + '" style="font-size:0.75rem;">' + formatTestType(r) + '</span></td>' +
                     '<td style="font-weight:700;color:var(--accent);">' + scoreDisplay + '</td>' +
                     '<td>' + raw + '</td>' +
                     '<td style="color:var(--muted);font-size:0.85rem;">' + time + '</td>' +
@@ -475,7 +468,7 @@ async function renderDashboard(user) {
         <div style="font-size:3rem;margin-bottom:16px;">📊</div>
         <h3 style="margin-bottom:8px;">No SAT Practice Tests Taken Yet</h3>
         <p style="color:var(--muted);margin-bottom:16px;">Start practicing for the SAT Math section with a full-length test or quick score estimator.</p>
-        <a href="./sat-prep/math-hub.html" class="btn btn-primary">Start Practicing</a>
+        <a href="./sat-prep/practice-tests.html" class="btn btn-primary">Start Practicing</a>
       </div>
       `}
     `;
@@ -564,37 +557,93 @@ function viewSATDetails(idx) {
   var data = window.__satResultsData;
   if (!data || !data[idx]) return;
   var r = data[idx];
-  var isQuick = r.testType === 'quick_test';
+  var isQuick = isQuickTest(r);
+  var isCombined = r.rwScaled !== undefined || r.englishScaled !== undefined;
   var date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
   var dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  var score = isQuick ? (r.estimatedScore || '—') : (r.scaledScore || '—');
+  var score = isCombined ? (r.scaledScore + '/1600') : ((r.scaledScore || r.estimatedScore || '—') + '/800');
   var raw = (r.totalCorrect || 0) + '/' + (r.totalQuestions || (isQuick ? 10 : 44));
-  var module1 = r.module1Correct !== undefined ? r.module1Correct : '—';
-  var module2 = r.module2Correct !== undefined ? r.module2Correct : '—';
   var adaptive = r.adaptivePath || (isQuick ? 'N/A' : '—');
 
   var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
+  var detailsHtml =
+    '<div><strong>Date:</strong> ' + dateStr + '</div>' +
+    '<div><strong>Type:</strong> ' + formatTestType(r) + '</div>' +
+    '<div><strong>Score:</strong> <span style="color:var(--accent);font-weight:700;">' + score + '</span></div>' +
+    '<div><strong>Raw Score:</strong> ' + raw + '</div>' +
+    '<div><strong>Adaptive Path:</strong> ' + adaptive + '</div>' +
+    '<div><strong>Time Taken:</strong> ' + (r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—')) + '</div>';
+
+  if (isCombined && !isQuick) {
+    detailsHtml += '<div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;"><strong>Section Breakdown</strong></div>' +
+      '<div><strong>Reading & Writing:</strong> ' + (r.rwScaled || '—') + '/800 (' + (r.rwCorrect || 0) + '/' + (r.rwTotal || 0) + ')</div>' +
+      '<div><strong>Math:</strong> ' + (r.mathScaled || '—') + '/800 (' + (r.mathCorrect || 0) + '/' + (r.mathTotal || 0) + ')</div>';
+    if (r.rwModule1Correct !== undefined) {
+      detailsHtml += '<div><strong>RW Module 1:</strong> ' + r.rwModule1Correct + '/27</div>' +
+        '<div><strong>RW Module 2:</strong> ' + r.rwModule2Correct + '/27</div>';
+    }
+    if (r.mathModule1Correct !== undefined) {
+      detailsHtml += '<div><strong>Math Module 1:</strong> ' + r.mathModule1Correct + '/22</div>' +
+        '<div><strong>Math Module 2:</strong> ' + r.mathModule2Correct + '/22</div>';
+    }
+  } else if (isQuick && isCombined) {
+    detailsHtml += '<div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;"><strong>Section Breakdown</strong></div>' +
+      '<div><strong>English:</strong> ' + (r.englishScaled || '—') + '/800 (' + (r.englishCorrect || 0) + '/' + (r.englishTotal || 5) + ')</div>' +
+      '<div><strong>Math:</strong> ' + (r.mathScaled || '—') + '/800 (' + (r.mathCorrect || 0) + '/' + (r.mathTotal || 5) + ')</div>';
+  } else {
+    detailsHtml += '<div><strong>Module 1:</strong> ' + (r.module1Correct !== undefined ? r.module1Correct + '/22' : '—') + '</div>' +
+      '<div><strong>Module 2:</strong> ' + (r.module2Correct !== undefined ? r.module2Correct + '/22' : '—') + '</div>';
+  }
+
   overlay.innerHTML =
     '<div class="modal-content">' +
     '<button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">✕</button>' +
-    '<h3>SAT Practice Test Details</h3>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">' +
-    '<div><strong>Date:</strong> ' + dateStr + '</div>' +
-    '<div><strong>Type:</strong> ' + (isQuick ? 'Quick Score Estimator' : 'Full-Length Practice Test') + '</div>' +
-    '<div><strong>Score:</strong> <span style="color:var(--accent);font-weight:700;">' + score + '/800' + (isQuick ? ' (estimated)' : '') + '</span></div>' +
-    '<div><strong>Raw Score:</strong> ' + raw + '</div>' +
-    (!isQuick ? '<div><strong>Module 1:</strong> ' + module1 + '/22</div>' : '') +
-    (!isQuick ? '<div><strong>Module 2:</strong> ' + module2 + '/22</div>' : '') +
-    '<div><strong>Adaptive Path:</strong> ' + adaptive + '</div>' +
-    '<div><strong>Time Taken:</strong> ' + (r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—')) + '</div>' +
-    '</div>' +
+    '<h3>SAT Practice Test Details' + (r.testName ? ' — ' + r.testName.replace('_', '') : '') + '</h3>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">' + detailsHtml + '</div>' +
     '<button class="btn btn-outline" onclick="this.closest(\'.modal-overlay\').remove()">Close</button>' +
     '</div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e) {
     if (e.target === overlay) overlay.remove();
   });
+}
+
+function isQuickTest(r) {
+  return r.testType === 'quick_test' || r.testType === 'quick';
+}
+
+function formatTestType(r) {
+  if (isQuickTest(r)) return 'Study Guide';
+  if (r.testName) return 'Full-Length ' + r.testName.replace('_', '');
+  return 'Full-Length Practice Test';
+}
+
+function formatSatScore(r) {
+  if (r.rwScaled !== undefined || r.englishScaled !== undefined) return r.scaledScore || '—';
+  if (isQuickTest(r)) return r.estimatedScore || r.scaledScore || '—';
+  return r.scaledScore || '—';
+}
+
+function formatSatLabel(r) {
+  var combined = r.rwScaled !== undefined || r.englishScaled !== undefined;
+  var type = isQuickTest(r) ? 'Study Guide' : 'Full-Length Test';
+  var range = combined ? ' /1600' : ' /800';
+  return 'Est. SAT Score · ' + type + range;
+}
+
+function formatTableScore(r) {
+  var combined = r.rwScaled !== undefined || r.englishScaled !== undefined;
+  if (combined) return (r.scaledScore || '—') + '/1600';
+  if (isQuickTest(r)) return '~' + (r.estimatedScore || r.scaledScore || '—') + '/800 est.';
+  return (r.scaledScore || '—') + '/800';
+}
+
+function formatRawScore(r) {
+  var isQuick = isQuickTest(r);
+  var combined = r.rwScaled !== undefined || r.englishScaled !== undefined;
+  var total = r.totalQuestions || (isQuick ? 10 : (combined ? 98 : 44));
+  return (r.totalCorrect || 0) + '/' + total;
 }
 
 function renderSATHistory() {
@@ -616,15 +665,14 @@ function renderSATHistory() {
 
   tbody.innerHTML = sorted.map(function(r) {
     var i = data.indexOf(r);
-    var isQuick = r.testType === 'quick_test';
+    var isQuick = isQuickTest(r);
     var date = r.timestamp ? (r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp)) : new Date();
     var dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    var score = isQuick ? (r.estimatedScore || '—') : (r.scaledScore || '—');
-    var scoreDisplay = isQuick ? '~' + score + '/800 est.' : score + '/800';
-    var raw = (r.totalCorrect || 0) + '/' + (r.totalQuestions || (isQuick ? 10 : 44));
+    var scoreDisplay = formatTableScore(r);
+    var raw = formatRawScore(r);
     var time = r.timeTakenSeconds ? formatTime(r.timeTakenSeconds) : (r.timeTaken ? formatTime(r.timeTaken) : '—');
     var adaptive = isQuick ? '' : (r.adaptivePath === 'hard' ? '<span class="adaptive-badge adaptive-hard">Hard</span>' : (r.adaptivePath === 'easy' ? '<span class="adaptive-badge adaptive-easy">Easy</span>' : '—'));
-    var typeLabel = isQuick ? 'Quick Test' : 'Full-Length';
+    var typeLabel = formatTestType(r);
     var typeClass = isQuick ? 'badge-quick' : 'badge-full';
     return '<tr>' +
       '<td style="font-size:0.9rem;">' + dateStr + '</td>' +

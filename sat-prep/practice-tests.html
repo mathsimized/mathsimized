@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT Practice Tests — MATHSIMIZED</title>
+  <meta name="description" content="Download full-length SAT practice tests from College Board. Free PDFs for SAT practice tests 1 through 11 with answer keys and scoring guides.">
+  <meta property="og:title" content="SAT Practice Tests — MATHSIMIZED">
+  <meta property="og:description" content="Download full-length SAT practice tests from College Board. Free PDFs for SAT practice tests 1 through 11 with answer keys and scoring guides.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/practice-tests.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <script src="practice-tests-data.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .pt-hero {
+      min-height: 30vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pt-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .pt-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .pt-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+    .pt-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .pt-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .pt-card h3 { margin: 0 0 6px; font-size: 1.15rem; }
+    .pt-card .pt-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+    .pt-files { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pt-files a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 8px;
+      background: var(--surface2); color: var(--text);
+      text-decoration: none; font-size: 0.85rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pt-files a:hover { background: var(--accent); color: #fff; }
+    .disclaimer {
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .disclaimer strong { color: var(--text); }
+    .estimator-card {
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(99,102,241,0.08) 100%);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .estimator-card h2 { margin: 0 0 6px; font-size: 1.3rem; }
+    .estimator-card .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
+    .estimator-grid { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; }
+    .estimator-field { flex: 1; min-width: 160px; }
+    .estimator-field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+    .estimator-field input {
+      width: 100%; padding: 10px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); font-size: 1rem; box-sizing: border-box;
+    }
+    .estimator-field input:focus { outline: none; border-color: var(--accent); }
+    .estimator-btn {
+      padding: 10px 24px; border-radius: 8px; border: none;
+      background: var(--accent); color: #fff; font-size: 0.95rem;
+      cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
+    }
+    .estimator-btn:hover { opacity: 0.85; }
+    .estimator-result {
+      margin-top: 16px; padding: 14px 18px; border-radius: 8px;
+      background: rgba(99,102,241,0.1); display: none;
+    }
+    .estimator-result .score-big { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .estimator-result .score-sub { color: var(--muted); font-size: 0.85rem; }
+    .qt-card { margin-bottom: 28px; }
+    .qt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .qt-header h2 { margin: 0; font-size: 1.3rem; }
+    .qt-timer { font-size: 1.1rem; font-weight: 600; color: var(--accent); }
+    .qt-progress { color: var(--muted); font-size: 0.85rem; }
+    .qt-question { margin-bottom: 20px; }
+    .qt-question .q-text { font-size: 1rem; margin-bottom: 14px; line-height: 1.6; }
+    .qt-question .q-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted2); margin-bottom: 4px; }
+    .qt-options { display: flex; flex-direction: column; gap: 8px; }
+    .qt-options label {
+      display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      border-radius: 8px; border: 1px solid var(--border); cursor: pointer;
+      transition: border-color 0.2s, background 0.2s; font-size: 0.95rem;
+    }
+    .qt-options label:hover { border-color: var(--accent); background: rgba(99,102,241,0.04); }
+    .qt-options input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+    .qt-options label.selected { border-color: var(--accent); background: rgba(99,102,241,0.1); }
+    .qt-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .qt-nav button { padding: 10px 24px; border-radius: 8px; border: none; font-size: 0.9rem; cursor: pointer; font-weight: 500; }
+    .qt-nav .btn-prev { background: var(--surface2); color: var(--text); }
+    .qt-nav .btn-next { background: var(--accent); color: #fff; }
+    .qt-nav .btn-submit { background: #22c55e; color: #fff; }
+    .qt-nav button:disabled { opacity: 0.4; cursor: default; }
+    .qt-result { display: none; padding: 20px; border-radius: 8px; background: rgba(99,102,241,0.1); text-align: center; margin-top: 16px; }
+    .qt-result .score-big { font-size: 2.4rem; font-weight: 700; color: var(--accent); }
+    .qt-result .score-sub { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+    .qt-result .score-detail { color: var(--muted2); font-size: 0.85rem; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="pt-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>SAT Practice Tests</h1>
+    <p>Download full-length SAT practice tests from College Board. All include answer keys and scoring guides.</p>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> These practice tests are unmodified PDF copies of the practice tests published by College Board. They are provided here for personal study purposes only. SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board, which is not affiliated with and does not endorse this website.
+    </div>
+
+    <div class="estimator-card" id="estimatorCard">
+      <h2>Quick Score Estimator</h2>
+      <div class="sub">Get a rough estimate of your SAT score based on how many questions you think you'd get right.</div>
+      <div class="estimator-grid">
+        <div class="estimator-field">
+          <label for="estMath">Math correct (out of 44)</label>
+          <input type="number" id="estMath" min="0" max="44" placeholder="0–44">
+        </div>
+        <div class="estimator-field">
+          <label for="estRW">Reading &amp; Writing correct (out of 54)</label>
+          <input type="number" id="estRW" min="0" max="54" placeholder="0–54">
+        </div>
+        <button class="estimator-btn" onclick="estimateScore()">Estimate Score</button>
+      </div>
+        <div class="estimator-result" id="estimatorResult">
+        <div class="score-big" id="estTotal">—</div>
+        <div class="score-sub" id="estBreakdown">Math: — &nbsp;|&nbsp; Reading &amp; Writing: —</div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+        <p style="color:var(--muted2);font-size:0.85rem;margin-bottom:10px;">Want a more accurate estimate? Take our 15-minute quiz with real SAT-style questions.</p>
+        <button class="estimator-btn" onclick="startQuiz()">Start 15-Minute Quick Score Test</button>
+      </div>
+    </div>
+
+    <div class="estimator-card qt-card" id="quizCard" style="display:none;">
+      <div class="qt-header">
+        <div>
+          <h2>Quick Score Test</h2>
+          <div class="qt-progress" id="qtProgress">Question 1 of 10</div>
+        </div>
+        <div class="qt-timer" id="qtTimer">15:00</div>
+      </div>
+      <div id="qtArea"></div>
+      <div class="qt-result" id="qtResult">
+        <div class="score-big" id="qtScore">—</div>
+        <div class="score-sub" id="qtScoreLabel">Estimated SAT Score</div>
+        <div class="score-detail" id="qtScoreDetail"></div>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-bottom:24px;">
+      <strong>Format Note:</strong> Tests 1–3 are in the original paper SAT format (147 pages each, test + answer key). Tests 4–11 are in the digital SAT format (56 pages each, test + answer explanations + scoring guide). Both formats contain the same questions.
+    </div>
+
+    <div id="testList"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+
+function estimateScore() {
+  var mathRaw = parseInt(document.getElementById('estMath').value) || 0;
+  var rwRaw = parseInt(document.getElementById('estRW').value) || 0;
+  mathRaw = Math.max(0, Math.min(44, mathRaw));
+  rwRaw = Math.max(0, Math.min(54, rwRaw));
+  var mathScaled = Math.round((200 + (mathRaw / 44) * 600) / 10) * 10;
+  var rwScaled = Math.round((200 + (rwRaw / 54) * 600) / 10) * 10;
+  var total = mathScaled + rwScaled;
+
+  var percentile = 'N/A';
+  if (total >= 1500) percentile = '99th';
+  else if (total >= 1400) percentile = '94th';
+  else if (total >= 1300) percentile = '86th';
+  else if (total >= 1200) percentile = '74th';
+  else if (total >= 1100) percentile = '59th';
+  else if (total >= 1000) percentile = '43rd';
+  else if (total >= 900) percentile = '29th';
+  else if (total >= 800) percentile = '17th';
+  else percentile = 'Below 10th';
+
+  var perfSummary = total >= 1200 ? 'You are on track for competitive colleges.' : total >= 1000 ? 'You have a solid foundation. Focus on weak areas.' : 'Keep practicing. Focus on building core skills first.';
+
+  var recTest = total >= 1400 ? 'SAT Practice Test 5' : total >= 1100 ? 'SAT Practice Test 3' : 'SAT Practice Test 1';
+
+  var result = document.getElementById('estimatorResult');
+  result.innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">' +
+      '<div style="text-align:center;padding:16px;background:rgba(99,102,241,0.1);border-radius:10px;">' +
+        '<div style="font-size:2.2rem;font-weight:700;color:var(--accent);">' + total + '</div>' +
+        '<div style="font-size:0.8rem;color:var(--muted);">Estimated Score</div>' +
+      '</div>' +
+      '<div style="text-align:center;padding:16px;background:rgba(16,185,129,0.1);border-radius:10px;">' +
+        '<div style="font-size:1.6rem;font-weight:700;color:var(--success);">' + percentile + '</div>' +
+        '<div style="font-size:0.8rem;color:var(--muted);">Estimated Percentile</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-bottom:12px;"><strong style="font-size:0.85rem;">Section Scores</strong><br><span style="font-size:0.85rem;color:var(--muted);">Math: ' + mathScaled + ' &nbsp;|&nbsp; Reading &amp; Writing: ' + rwScaled + '</span></div>' +
+    '<div style="margin-bottom:12px;padding:12px 14px;background:rgba(255,193,7,0.08);border-radius:8px;font-size:0.85rem;color:var(--muted);">' +
+      '<strong style="color:var(--text);">Performance Summary:</strong> ' + perfSummary +
+    '</div>' +
+    '<div style="margin-bottom:16px;font-size:0.85rem;color:var(--muted);">' +
+      '<strong style="color:var(--text);">Recommended Next Step:</strong> Try <a href="practice-test-' + recTest.replace('SAT Practice Test ', '') + '.html" style="color:var(--primary);">' + recTest + '</a> for a more accurate assessment.' +
+    '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;">' +
+      '<a href="study-guide.html" class="estimator-btn" style="font-size:0.8rem;padding:8px 16px;">SAT Study Guide</a>' +
+      '<a href="formula-sheet.html" class="estimator-btn" style="font-size:0.8rem;padding:8px 16px;background:var(--surface2);color:var(--text);">Formula Sheet</a>' +
+      '<a href="desmos-guide.html" class="estimator-btn" style="font-size:0.8rem;padding:8px 16px;background:var(--surface2);color:var(--text);">Desmos Guide</a>' +
+    '</div>';
+  result.style.display = 'block';
+}
+
+function renderTests() {
+  var container = document.getElementById('testList');
+  practiceTestsData.forEach(function(test) {
+    var num = test.id.replace('sat-', '');
+    var card = document.createElement('a');
+    card.href = 'practice-test-' + num + '.html';
+    card.className = 'pt-card';
+    card.style.textDecoration = 'none';
+    card.style.display = 'block';
+
+    var formatBadge = parseInt(num) <= 3
+      ? '<span style="font-size:0.7rem;font-weight:600;padding:2px 10px;border-radius:12px;background:rgba(59,130,246,0.15);color:var(--primary);margin-left:8px;">Paper Format</span>'
+      : '<span style="font-size:0.7rem;font-weight:600;padding:2px 10px;border-radius:12px;background:rgba(16,185,129,0.15);color:var(--success);margin-left:8px;">Digital Format</span>';
+
+    var title = document.createElement('h3');
+    title.innerHTML = test.label + formatBadge;
+    card.appendChild(title);
+
+    var desc = document.createElement('div');
+    desc.className = 'pt-desc';
+    desc.textContent = test.description;
+    card.appendChild(desc);
+
+    var meta = document.createElement('div');
+    meta.style.cssText = 'font-size:0.8rem;color:var(--muted);margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap;';
+    meta.innerHTML = '<span>&#9200; 2 hr 14 min</span><span>&#128196; 98 questions</span><span>' + (parseInt(num) <= 3 ? '&#128196; Test + Answer Key' : '&#128196; Test + Explanations + Scoring') + '</span>';
+    card.appendChild(meta);
+
+    var btnDiv = document.createElement('div');
+    btnDiv.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
+    btnDiv.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:var(--surface2);color:var(--text);font-size:0.82rem;">&#8594; View Test Page</span>';
+    card.appendChild(btnDiv);
+
+    container.appendChild(card);
+  });
+}
+
+var quizQuestions = [
+  { subject:'Math', question:'If 3x + 7 = 22, what is the value of x?', options:['3','5','7','9'], answer:1 },
+  { subject:'Math', question:'A store sells a shirt for \$40 after a 20% discount. What was the original price?', options:['\$48','\$50','\$52','\$60'], answer:1 },
+  { subject:'Math', question:'What is the value of (2³ + 4²) ÷ 4?', options:['4','6','8','10'], answer:1 },
+  { subject:'Math', question:'In the xy-plane, line l has slope 3 and passes through (0, −4). What is its equation?', options:['y = 3x − 4','y = −4x + 3','y = 3x + 4','y = −4x − 3'], answer:0 },
+  { subject:'Math', question:'The average of 6, 10, x, and 12 is 9. What is x?', options:['6','7','8','9'], answer:2 },
+  { subject:'Reading & Writing', question:'The _____ of the research findings was unexpected, as the data contradicted the initial hypothesis. Which choice completes the text most logically?', options:['significance','ambiguity','confirmation','irrelevance'], answer:1 },
+  { subject:'Reading & Writing', question:'Many historians argue that the Industrial Revolution _____ economic growth but also led to significant social upheaval. Which choice completes the text so that it conforms to the conventions of Standard English?', options:['spurred','was spurring','has been spurring','spurs'], answer:0 },
+  { subject:'Reading & Writing', question:'The author\'s use of the phrase "a sea of faces" primarily serves to:',
+    options:['emphasize the vast number of people','describe a literal ocean','suggest calmness','indicate isolation'], answer:0 },
+  { subject:'Reading & Writing', question:'City planner: "Adding more bike lanes will reduce traffic congestion by encouraging alternative transportation." Which finding, if true, would most directly support the planner\'s claim?', options:['Bike lanes increase property values','Cities with more bike lanes have lower commute times','Bike lanes cost less than road repairs','Most residents own bicycles'], answer:1 },
+  { subject:'Reading & Writing', question:'The artist\'s later work departed significantly from her earlier style; _____, her early paintings were representational while her later pieces were abstract. Which transition best fits?', options:['for example','nevertheless','in contrast','similarly'], answer:0 }
+];
+
+var quizState = { current:0, answers:[], started:false, timer:null, timeLeft:900 };
+
+function startQuiz() {
+  quizState.current = 0;
+  quizState.answers = [];
+  quizState.started = true;
+  quizState.timeLeft = 900;
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('estimatorCard').scrollIntoView({ behavior:'smooth', block:'start' });
+  if (quizState.timer) clearInterval(quizState.timer);
+  quizState.timer = setInterval(tickTimer, 1000);
+  renderQuestion();
+}
+
+function tickTimer() {
+  quizState.timeLeft--;
+  var m = Math.floor(quizState.timeLeft / 60);
+  var s = quizState.timeLeft % 60;
+  document.getElementById('qtTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  if (quizState.timeLeft <= 0) finishQuiz();
+}
+
+function renderQuestion() {
+  var q = quizQuestions[quizState.current];
+  var html = '<div class="qt-question"><div class="q-label">' + q.subject + ' — Question ' + (quizState.current + 1) + ' of 10</div><div class="q-text">' + q.question + '</div><div class="qt-options">';
+  for (var i = 0; i < q.options.length; i++) {
+    var checked = quizState.answers[quizState.current] === i ? ' checked' : '';
+    html += '<label class="' + (checked ? 'selected' : '') + '"><input type="radio" name="q' + quizState.current + '" value="' + i + '"' + checked + ' onchange="selectAnswer(' + quizState.current + ', ' + i + ')">' + String.fromCharCode(65 + i) + '. ' + q.options[i] + '</label>';
+  }
+  html += '</div></div>';
+  var nav = '<div class="qt-nav">';
+  if (quizState.current > 0) nav += '<button class="btn-prev" onclick="prevQuestion()">← Previous</button>';
+  if (quizState.current < quizQuestions.length - 1) {
+    nav += '<button class="btn-next" onclick="nextQuestion()" id="qtNextBtn">Next →</button>';
+  } else {
+    nav += '<button class="btn-submit" onclick="finishQuiz()" id="qtSubmitBtn">Submit</button>';
+  }
+  nav += '</div>';
+  document.getElementById('qtArea').innerHTML = html + nav;
+  document.getElementById('qtProgress').textContent = 'Question ' + (quizState.current + 1) + ' of 10';
+  updateNavButtons();
+}
+
+function selectAnswer(qIdx, val) {
+  quizState.answers[qIdx] = val;
+  var labels = document.querySelectorAll('.qt-options label');
+  labels.forEach(function(l) { l.classList.remove('selected'); });
+  var radios = document.querySelectorAll('.qt-options input[type="radio"]');
+  radios.forEach(function(r, i) { if (r.checked) labels[i].classList.add('selected'); });
+  updateNavButtons();
+}
+
+function updateNavButtons() {
+  var nextBtn = document.getElementById('qtNextBtn');
+  var submitBtn = document.getElementById('qtSubmitBtn');
+  if (nextBtn) nextBtn.disabled = quizState.answers[quizState.current] === undefined;
+  if (submitBtn) submitBtn.disabled = quizState.answers[quizState.current] === undefined;
+}
+
+function nextQuestion() {
+  if (quizState.answers[quizState.current] === undefined) return;
+  if (quizState.current < quizQuestions.length - 1) {
+    quizState.current++;
+    renderQuestion();
+  }
+}
+
+function prevQuestion() {
+  if (quizState.current > 0) {
+    quizState.current--;
+    renderQuestion();
+  }
+}
+
+function finishQuiz() {
+  if (quizState.answers[quizState.current] === undefined) return;
+  if (quizState.timer) clearInterval(quizState.timer);
+  var correct = 0;
+  for (var i = 0; i < quizQuestions.length; i++) {
+    if (quizState.answers[i] === quizQuestions[i].answer) correct++;
+  }
+  var mathCorrect = 0, rwCorrect = 0;
+  for (var i = 0; i < quizQuestions.length; i++) {
+    var isCorrect = quizState.answers[i] === quizQuestions[i].answer;
+    if (quizQuestions[i].subject === 'Math') { if (isCorrect) mathCorrect++; }
+    else { if (isCorrect) rwCorrect++; }
+  }
+  var mathScore = Math.round((200 + (mathCorrect / 5) * 600) / 10) * 10;
+  var rwScore = Math.round((200 + (rwCorrect / 5) * 600) / 10) * 10;
+  var total = mathScore + rwScore;
+  document.getElementById('qtArea').innerHTML = '';
+  var result = document.getElementById('qtResult');
+  result.style.display = 'block';
+  document.getElementById('qtScore').textContent = total;
+  document.getElementById('qtScoreLabel').textContent = 'Estimated SAT Score (based on ' + correct + '/10 correct)';
+  document.getElementById('qtScoreDetail').innerHTML = 'Math: ' + mathScore + ' (' + mathCorrect + '/5) &nbsp;|&nbsp; Reading &amp; Writing: ' + rwScore + ' (' + rwCorrect + '/5)';
+  document.getElementById('qtProgress').textContent = 'Test Complete';
+  document.getElementById('qtTimer').textContent = '';
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderTests);
+} else {
+  renderTests();
+}
+</script>
+</body>
+</html>

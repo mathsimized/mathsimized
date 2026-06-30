@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT Math Formula Sheet — MATHSIMIZED</title>
+  <meta name="description" content="Complete SAT Math formula sheet covering algebra, advanced math, geometry, statistics, and coordinate geometry. Free PDF and print-friendly reference for SAT prep.">
+  <meta property="og:title" content="SAT Math Formula Sheet — MATHSIMIZED">
+  <meta property="og:description" content="Complete SAT Math formula sheet covering algebra, advanced math, geometry, statistics, and coordinate geometry. Free PDF reference.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/formula-sheet.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .fs-hero {
+      min-height: 30vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fs-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .fs-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .fs-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+    .fs-hero .fs-actions { margin-top: 20px; position: relative; z-index: 1; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .fs-section {
+      margin-bottom: 32px;
+    }
+    .fs-section h2 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--accent);
+      color: var(--text);
+    }
+    .fs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .fs-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .fs-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .fs-card .formula-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .fs-card .formula {
+      font-family: 'DM Sans', monospace;
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 2px;
+      word-break: break-word;
+    }
+    .fs-card .formula-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .fs-updated {
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+    }
+    @media (max-width: 768px) {
+      .fs-hero h1 { font-size: 1.8rem; }
+      .fs-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .navbar, .footer, .fs-hero .fs-actions .btn { display: none; }
+      .fs-hero { min-height: auto; padding: 40px 24px 20px; }
+      .fs-hero::before { display: none; }
+      .fs-hero h1 { color: #000; }
+      .fs-hero p { color: #555; }
+      .fs-section h2 { border-bottom-color: #000; color: #000; }
+      .fs-card { background: #f5f5f5; border-color: #ccc; }
+      .fs-card .formula-name { color: #000; }
+      .fs-card .formula { color: #1a56db; }
+      .fs-card .formula-desc { color: #555; }
+      .fs-card:hover { transform: none; border-color: #ccc; }
+      .section-padding { padding: 20px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="fs-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>SAT Math Formula Sheet</h1>
+    <p>All the formulas you need for the digital SAT Math section, organized by topic. Use this as a quick reference while you practice.</p>
+    <div class="fs-actions">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print Formula Sheet</button>
+      <a href="practice-tests.html" class="btn btn-outline">Practice Tests</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+
+    <div class="fs-section">
+      <h2>Algebra</h2>
+      <div class="fs-grid">
+        <div class="fs-card"><div class="formula-name">Slope of a Line</div><div class="formula">m = (y₂ − y₁) / (x₂ − x₁)</div><div class="formula-desc">Slope between two points (x₁, y₁) and (x₂, y₂)</div></div>
+        <div class="fs-card"><div class="formula-name">Slope-Intercept Form</div><div class="formula">y = mx + b</div><div class="formula-desc">m = slope, b = y‑intercept</div></div>
+        <div class="fs-card"><div class="formula-name">Point-Slope Form</div><div class="formula">y − y₁ = m(x − x₁)</div><div class="formula-desc">Line through (x₁, y₁) with slope m</div></div>
+        <div class="fs-card"><div class="formula-name">Standard Form</div><div class="formula">Ax + By = C</div><div class="formula-desc">Linear equation in standard form</div></div>
+        <div class="fs-card"><div class="formula-name">Linear Equation (One Variable)</div><div class="formula">ax + b = c</div><div class="formula-desc">Solve for x: x = (c − b) / a</div></div>
+        <div class="fs-card"><div class="formula-name">System of Equations</div><div class="formula">a₁x + b₁y = c₁<br>a₂x + b₂y = c₂</div><div class="formula-desc">Solve by substitution or elimination</div></div>
+        <div class="fs-card"><div class="formula-name">Inequalities</div><div class="formula">ax + b &gt; c &nbsp;or&nbsp; ax + b &lt; c</div><div class="formula-desc">Flip inequality sign when multiplying/dividing by negative</div></div>
+        <div class="fs-card"><div class="formula-name">Average (Mean)</div><div class="formula">Average = sum / number of terms</div><div class="formula-desc">Also called arithmetic mean</div></div>
+      </div>
+    </div>
+
+    <div class="fs-section">
+      <h2>Advanced Math</h2>
+      <div class="fs-grid">
+        <div class="fs-card"><div class="formula-name">Quadratic Formula</div><div class="formula">x = [−b ± √(b² − 4ac)] / 2a</div><div class="formula-desc">For ax² + bx + c = 0</div></div>
+        <div class="fs-card"><div class="formula-name">Discriminant</div><div class="formula">Δ = b² − 4ac</div><div class="formula-desc">Δ &gt; 0: two real roots; Δ = 0: one root; Δ &lt; 0: no real roots</div></div>
+        <div class="fs-card"><div class="formula-name">Vertex Form (Parabola)</div><div class="formula">y = a(x − h)² + k</div><div class="formula-desc">Vertex at (h, k)</div></div>
+        <div class="fs-card"><div class="formula-name">Vertex (Standard Form)</div><div class="formula">h = −b / 2a, &nbsp;k = f(h)</div><div class="formula-desc">Vertex of y = ax² + bx + c</div></div>
+        <div class="fs-card"><div class="formula-name">Laws of Exponents</div><div class="formula">xᵐ · xⁿ = xᵐ⁺ⁿ<br>xᵐ / xⁿ = xᵐ⁻ⁿ<br>(xᵐ)ⁿ = xᵐⁿ</div><div class="formula-desc">Exponent rules for multiplication, division, and powers</div></div>
+        <div class="fs-card"><div class="formula-name">Negative / Zero Exponents</div><div class="formula">x⁻ⁿ = 1 / xⁿ<br>x⁰ = 1 (x ≠ 0)</div><div class="formula-desc">Definition of negative and zero exponents</div></div>
+        <div class="fs-card"><div class="formula-name">Rational Exponents</div><div class="formula">x^(m/n) = ⁿ√(xᵐ)</div><div class="formula-desc">Fractional exponents and radicals</div></div>
+        <div class="fs-card"><div class="formula-name">Polynomial Operations</div><div class="formula">(a + b)(c + d) = ac + ad + bc + bd</div><div class="formula-desc">FOIL method for binomials</div></div>
+        <div class="fs-card"><div class="formula-name">Difference of Squares</div><div class="formula">a² − b² = (a + b)(a − b)</div><div class="formula-desc">Factoring difference of squares</div></div>
+        <div class="fs-card"><div class="formula-name">Perfect Square Trinomial</div><div class="formula">a² + 2ab + b² = (a + b)²<br>a² − 2ab + b² = (a − b)²</div><div class="formula-desc">Factoring perfect squares</div></div>
+      </div>
+    </div>
+
+    <div class="fs-section">
+      <h2>Geometry</h2>
+      <div class="fs-grid">
+        <div class="fs-card"><div class="formula-name">Area of a Rectangle</div><div class="formula">A = l × w</div><div class="formula-desc">Length × width</div></div>
+        <div class="fs-card"><div class="formula-name">Area of a Triangle</div><div class="formula">A = ½ × b × h</div><div class="formula-desc">Base × height ÷ 2</div></div>
+        <div class="fs-card"><div class="formula-name">Area of a Circle</div><div class="formula">A = πr²</div><div class="formula-desc">r = radius</div></div>
+        <div class="fs-card"><div class="formula-name">Circumference</div><div class="formula">C = 2πr</div><div class="formula-desc">Distance around a circle</div></div>
+        <div class="fs-card"><div class="formula-name">Volume of a Rectangular Prism</div><div class="formula">V = l × w × h</div><div class="formula-desc">Length × width × height</div></div>
+        <div class="fs-card"><div class="formula-name">Volume of a Cylinder</div><div class="formula">V = πr²h</div><div class="formula-desc">Area of base × height</div></div>
+        <div class="fs-card"><div class="formula-name">Volume of a Sphere</div><div class="formula">V = (4/3)πr³</div><div class="formula-desc">Four-thirds π r cubed</div></div>
+        <div class="fs-card"><div class="formula-name">Volume of a Cone</div><div class="formula">V = (1/3)πr²h</div><div class="formula-desc">One-third π r² h</div></div>
+        <div class="fs-card"><div class="formula-name">Pythagorean Theorem</div><div class="formula">a² + b² = c²</div><div class="formula-desc">In a right triangle: c = hypotenuse</div></div>
+        <div class="fs-card"><div class="formula-name">Special Right Triangles</div><div class="formula">30‑60‑90: x, x√3, 2x<br>45‑45‑90: x, x, x√2</div><div class="formula-desc">Side ratios for special triangles</div></div>
+        <div class="fs-card"><div class="formula-name">Arc Length</div><div class="formula">s = rθ</div><div class="formula-desc">θ in radians; s = arc length</div></div>
+        <div class="fs-card"><div class="formula-name">Sector Area</div><div class="formula">A = ½r²θ</div><div class="formula-desc">θ in radians</div></div>
+      </div>
+    </div>
+
+    <div class="fs-section">
+      <h2>Statistics &amp; Probability</h2>
+      <div class="fs-grid">
+        <div class="fs-card"><div class="formula-name">Mean</div><div class="formula">x̄ = (∑xᵢ) / n</div><div class="formula-desc">Sum of values divided by number of values</div></div>
+        <div class="fs-card"><div class="formula-name">Median</div><div class="formula">Middle value (sorted)</div><div class="formula-desc">If n is odd: middle; if even: average of two middle</div></div>
+        <div class="fs-card"><div class="formula-name">Mode</div><div class="formula">Most frequent value</div><div class="formula-desc">A data set can have one, more than one, or no mode</div></div>
+        <div class="fs-card"><div class="formula-name">Range</div><div class="formula">Range = max − min</div><div class="formula-desc">Difference between largest and smallest values</div></div>
+        <div class="fs-card"><div class="formula-name">Probability</div><div class="formula">P(A) = favorable / total</div><div class="formula-desc">Number of favorable outcomes ÷ total outcomes</div></div>
+        <div class="fs-card"><div class="formula-name">Combinations</div><div class="formula">C(n, r) = n! / [r!(n−r)!]</div><div class="formula-desc">Number of ways to choose r from n (order doesn't matter)</div></div>
+        <div class="fs-card"><div class="formula-name">Permutations</div><div class="formula">P(n, r) = n! / (n−r)!</div><div class="formula-desc">Number of ways to arrange r from n (order matters)</div></div>
+        <div class="fs-card"><div class="formula-name">Standard Deviation (Concept)</div><div class="formula">σ = √[∑(xᵢ − x̄)² / n]</div><div class="formula-desc">Measure of data spread around the mean</div></div>
+      </div>
+    </div>
+
+    <div class="fs-section">
+      <h2>Coordinate Geometry</h2>
+      <div class="fs-grid">
+        <div class="fs-card"><div class="formula-name">Distance Formula</div><div class="formula">d = √[(x₂ − x₁)² + (y₂ − y₁)²]</div><div class="formula-desc">Distance between two points</div></div>
+        <div class="fs-card"><div class="formula-name">Midpoint Formula</div><div class="formula">M = ((x₁+x₂)/2, (y₁+y₂)/2)</div><div class="formula-desc">Midpoint between two points</div></div>
+        <div class="fs-card"><div class="formula-name">Parallel Lines</div><div class="formula">m₁ = m₂</div><div class="formula-desc">Parallel lines have equal slopes</div></div>
+        <div class="fs-card"><div class="formula-name">Perpendicular Lines</div><div class="formula">m₁ · m₂ = −1</div><div class="formula-desc">Product of slopes of perpendicular lines = −1</div></div>
+      </div>
+    </div>
+
+    <div class="fs-updated">Last updated: June 2026</div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+</script>
+</body>
+</html>

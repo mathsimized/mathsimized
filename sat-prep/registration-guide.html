@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT Registration Guide — MATHSIMIZED</title>
+  <meta name="description" content="Complete step-by-step guide to registering for the digital SAT. Covers domestic and international registration, required documents, test dates, and test day checklist.">
+  <meta property="og:title" content="SAT Registration Guide — MATHSIMIZED">
+  <meta property="og:description" content="Step-by-step SAT registration guide. Learn how to register, find test dates, prepare required documents, and follow the test day checklist.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/registration-guide.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .rg-hero {
+      min-height: 30vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .rg-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .rg-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .rg-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+    .rg-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+    .rg-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--accent);
+    }
+    .rg-section h3 {
+      font-size: 1.05rem;
+      margin: 18px 0 8px;
+      color: var(--accent);
+    }
+    .rg-section p, .rg-section li { color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
+    .rg-section ul, .rg-section ol { padding-left: 20px; }
+    .rg-section li { margin-bottom: 6px; }
+    .rg-section .tip-box {
+      background: rgba(255, 193, 7, 0.08);
+      border-left: 3px solid #ffc107;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .rg-section .note-box {
+      background: rgba(100, 200, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .rg-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .rg-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .rg-step-num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .rg-step-content { flex: 1; }
+    .rg-step-content h4 { font-size: 1rem; margin-bottom: 4px; color: var(--text); }
+    .rg-step-content p { font-size: 0.9rem; }
+    .rg-checklist { padding-left: 0; list-style: none; }
+    .rg-checklist li {
+      padding: 10px 14px 10px 36px;
+      position: relative;
+      margin-bottom: 6px;
+      background: var(--surface2);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .rg-checklist li::before {
+      content: '☐';
+      position: absolute;
+      left: 12px;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+    @media (max-width: 768px) {
+      .rg-hero h1 { font-size: 1.8rem; }
+      .rg-section { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="rg-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>SAT Registration Guide</h1>
+    <p>A complete step-by-step guide to registering for the digital SAT — including deadlines, fees, document requirements, and a test day checklist.</p>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+
+    <div class="rg-section">
+      <h2>How to Register</h2>
+      <p>Registering for the digital SAT is done entirely online through your College Board account. Follow these steps to complete your registration.</p>
+
+      <div class="rg-step">
+        <div class="rg-step-num">1</div>
+        <div class="rg-step-content">
+          <h4>Create a College Board Account</h4>
+          <p>Go to <a href="https://satsuite.collegeboard.org/sat/registration" target="_blank" rel="noopener">collegeboard.org</a> and create a free account. You will need your full legal name, date of birth, and a valid email address. Make sure your name matches your government-issued ID exactly.</p>
+        </div>
+      </div>
+
+      <div class="rg-step">
+        <div class="rg-step-num">2</div>
+        <div class="rg-step-content">
+          <h4>Provide Personal Information</h4>
+          <p>Fill in your high school information, grade level, and demographic details. You will also need to upload a recognizable photo (passport-style) that will appear on your admission ticket.</p>
+        </div>
+      </div>
+
+      <div class="rg-step">
+        <div class="rg-step-num">3</div>
+        <div class="rg-step-content">
+          <h4>Select Your Test Date and Center</h4>
+          <p>Choose an available test date from the schedule and select a test center near you. Test centers fill up quickly, so register early to secure your preferred location. The search tool on the College Board website shows available seats in real time.</p>
+        </div>
+      </div>
+
+      <div class="rg-step">
+        <div class="rg-step-num">4</div>
+        <div class="rg-step-content">
+          <h4>Pay the Registration Fee</h4>
+          <p>Pay the SAT registration fee using a credit card, debit card, or PayPal. As of 2026, the standard fee is $60 for domestic test-takers, plus regional fees for international students. Fee waivers are available for qualifying low-income students.</p>
+        </div>
+      </div>
+
+      <div class="rg-step">
+        <div class="rg-step-num">5</div>
+        <div class="rg-step-content">
+          <h4>Download Bluebook and Complete Setup</h4>
+          <p>After registering, download the Bluebook testing app on your device. College Board will prompt you to complete a test preview and run a device check to ensure your equipment is compatible. Complete these steps at least a week before test day.</p>
+        </div>
+      </div>
+
+      <div class="tip-box"><strong>Tip:</strong> Register at least 4-6 weeks before your preferred test date to avoid late fees and ensure seat availability. Late registration carries an additional fee.</div>
+    </div>
+
+    <div class="rg-section">
+      <h2>For International Students</h2>
+      <p>Students outside the United States can take the digital SAT at international test centers. The test format is identical to the US version.</p>
+      <ul>
+        <li><strong>Find a test center:</strong> Use the SAT Test Center Search on the College Board website to find centers in your country.</li>
+        <li><strong>Fees vary by region:</strong> International registration fees include a regional fee on top of the base $60 fee. Check the <a href="https://satsuite.collegeboard.org/sat/registration/international-testing/fees" target="_blank" rel="noopener">fee schedule</a> for your country.</li>
+        <li><strong>Document requirements:</strong> International students must present a valid passport at the test center. Some countries may require additional identification.</li>
+        <li><strong>Device requirements:</strong> If you are testing at a center that does not provide devices, you must bring your own laptop or tablet with Bluebook installed.</li>
+        <li><strong>Fee waivers:</strong> Fee waivers are available for qualifying low-income international students, though the process varies by region. Contact your school counselor or local College Board representative for details.</li>
+      </ul>
+    </div>
+
+    <div class="rg-section">
+      <h2>Required Documents</h2>
+      <p>On test day, you must bring the following documents. Missing any of these may prevent you from testing.</p>
+      <ul>
+        <li><strong>Admission ticket:</strong> Print or show your admission ticket from your College Board account. It contains your test center details and personal information.</li>
+        <li><strong>Valid photo ID:</strong> A government-issued ID (passport, driver's license, or national ID card) that matches the name you used during registration. School IDs are not accepted.</li>
+        <li><strong>Testing device:</strong> Your laptop or tablet with Bluebook installed, fully charged. Bring your charging cable as well.</li>
+        <li><strong>Approved calculator (optional):</strong> If you plan to bring your own calculator, ensure it is on the <a href="calculator-policy.html">approved list</a>.</li>
+        <li><strong>Snacks and water:</strong> For the 10-minute break between sections.</li>
+      </ul>
+    </div>
+
+    <div class="rg-section">
+      <h2>Upcoming Test Dates</h2>
+      <p>The SAT is offered seven times per year in the United States: August, October, November, December, March, May, and June. International test dates may vary slightly.</p>
+      <p>Check the official <a href="https://satsuite.collegeboard.org/sat/dates-deadlines" target="_blank" rel="noopener">College Board SAT dates page</a> for the most up-to-date schedule, registration deadlines, and score release dates for your region. Registration typically opens about 6-8 weeks before each test date.</p>
+      <div class="note-box"><strong>Note:</strong> Test dates and deadlines are subject to change. Always verify on the official College Board website before making travel or study plans around a specific test date.</div>
+    </div>
+
+    <div class="rg-section">
+      <h2>Test Day Checklist</h2>
+      <p>Use this checklist to make sure you are fully prepared on the morning of the test.</p>
+      <ul class="rg-checklist">
+        <li>Fully charged device with Bluebook installed and updated</li>
+        <li>Charging cable and power bank (if available)</li>
+        <li>Admission ticket (printed or digital)</li>
+        <li>Valid government-issued photo ID</li>
+        <li>Approved calculator (with fresh batteries if battery-powered)</li>
+        <li>Snacks and water for the break</li>
+        <li>Watch (without internet connectivity) for pacing</li>
+        <li>A good night's sleep and a healthy breakfast</li>
+        <li>Arrive at the test center by 7:45 AM (doors close at 8 AM)</li>
+      </ul>
+      <div class="tip-box"><strong>Final Tip:</strong> The night before, confirm your test center address, set multiple alarms, and lay out everything you need. Being organized reduces stress and helps you focus on doing your best.</div>
+      <p style="margin-top:12px;">For full details, visit the <a href="https://satsuite.collegeboard.org/sat/what-to-bring-do" target="_blank" rel="noopener">College Board test day page</a>.</p>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+</script>
+</body>
+</html>

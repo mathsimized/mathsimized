@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT Study Guide — MATHSIMIZED</title>
+  <meta name="description" content="A complete guide to the digital SAT: test structure, scoring, content domains, study plans, test day tips, and FAQs for students, parents, and educators.">
+  <meta property="og:title" content="SAT Study Guide — MATHSIMIZED">
+  <meta property="og:description" content="A complete guide to the digital SAT: test structure, scoring, content domains, study plans, test day tips, and FAQs for students, parents, and educators.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/study-guide.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .sg-hero {
+      min-height: 35vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .sg-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .sg-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .sg-hero p { font-size: 1.1rem; color: var(--muted); max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+
+    .sg-toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 40px;
+    }
+    .sg-toc h2 { margin-bottom: 16px; font-size: 1.2rem; }
+    .sg-toc ol { padding-left: 20px; }
+    .sg-toc li { margin-bottom: 8px; }
+    .sg-toc a { color: var(--accent); text-decoration: none; }
+    .sg-toc a:hover { text-decoration: underline; }
+
+    .sg-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .sg-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--accent);
+    }
+    .sg-section h3 {
+      font-size: 1.15rem;
+      margin: 20px 0 10px;
+      color: var(--accent);
+    }
+    .sg-section h4 {
+      font-size: 1rem;
+      margin: 16px 0 8px;
+    }
+    .sg-section p, .sg-section li { color: var(--muted); line-height: 1.7; }
+    .sg-section ul, .sg-section ol { padding-left: 20px; }
+    .sg-section li { margin-bottom: 6px; }
+    .sg-section a { color: var(--accent); }
+    .sg-section .note-box {
+      background: rgba(100, 200, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .sg-section .tip-box {
+      background: rgba(255, 193, 7, 0.08);
+      border-left: 3px solid #ffc107;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .sg-section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .sg-section th, .sg-section td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .sg-section th {
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text);
+    }
+    .faq-q:hover { color: var(--accent); }
+    .faq-q .arrow { transition: transform 0.3s; }
+    .faq-q.open .arrow { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 16px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .faq-a.open {
+      max-height: 500px;
+      padding: 12px 16px 0;
+    }
+
+    .sg-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .sg-meta span { display: inline-flex; align-items: center; gap: 4px; }
+    .sg-progress {
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+      height: 3px;
+      background: var(--border);
+      margin-bottom: 0;
+    }
+    .sg-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.1s linear;
+    }
+    .sg-related {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 32px;
+    }
+    .sg-related a {
+      display: block;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .sg-related a:hover { border-color: var(--primary); transform: translateY(-1px); color: var(--text); }
+    .sg-related a small { display: block; font-weight: 400; color: var(--muted); margin-top: 4px; font-size: 0.78rem; }
+
+    .audience-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .audience-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .audience-btn:hover { border-color: var(--accent); }
+    .audience-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .sg-hero h1 { font-size: 1.8rem; }
+      .sg-section { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<div class="sg-progress"><div class="sg-progress-fill" id="sgProgressFill"></div></div>
+
+<section class="sg-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>SAT Study Guide</h1>
+    <p>Everything you need to know about the digital SAT — from understanding the test structure to building your study plan, preparing for test day, and interpreting your scores.</p>
+    <div class="sg-meta">
+      <span>&#9200; ~25 min read</span>
+      <span>&#128197; Last updated: June 2026</span>
+      <span><a href="#" onclick="window.print();return false;" style="color:var(--primary);">&#128424; Print</a></span>
+      <span><a href="index.html" style="color:var(--primary);">&#8592; SAT Home</a></span>
+    </div>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+
+    <div id="toc"></div>
+
+    <div id="content"></div>
+
+    <div style="margin-top:40px;text-align:center;">
+      <a href="index.html" style="color:var(--primary);font-size:0.9rem;">&larr; Back to SAT Homepage</a>
+    </div>
+
+    <div style="margin-top:24px;">
+      <h3 style="font-size:1rem;margin-bottom:14px;">Related Resources</h3>
+      <div class="sg-related">
+        <a href="practice-tests.html"><small>&#128196;</small> Practice Tests<small>Download official SAT practice tests</small></a>
+        <a href="formula-sheet.html"><small>&#128200;</small> Formula Sheet<small>Printable SAT Math formulas</small></a>
+        <a href="desmos-guide.html"><small>&#128187;</small> Desmos Guide<small>Master the built-in calculator</small></a>
+        <a href="faq.html"><small>&#10067;</small> FAQ<small>Common SAT questions answered</small></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+
+var sections = [
+  {
+    id: "what-is-sat",
+    title: "What Is the SAT?",
+    content: [
+      { type: "p", text: "The SAT is a standardized test widely used for college admissions in the United States. Developed and administered by College Board, the SAT measures the knowledge and skills students have acquired throughout their education and assesses how prepared they are for college-level work." },
+      { type: "p", text: "Since 2024, the SAT has been delivered in a digital format for all test-takers in the United States and internationally. The transition from paper to digital has made the test shorter, more accessible, and more secure than ever before." },
+      { type: "p", text: "Each year, over 1.9 million students take the SAT as part of their college application process. Most colleges and universities in the United States accept SAT scores, and many use them alongside high school grades, extracurricular activities, and application essays to evaluate applicants." },
+      { type: "h3", text: "Who Should Take the SAT?" },
+      { type: "p", text: "The SAT is typically taken by high school juniors and seniors who plan to apply to colleges or universities. However, students can take the SAT as early as freshman year if they want to gauge their readiness. Many students take the SAT more than once — usually in the spring of junior year and again in the fall of senior year — to improve their scores." },
+      { type: "p", text: "If you are considering college, taking the SAT is a step that can open doors to scholarships, admission to competitive programs, and placement into advanced coursework." },
+      { type: "h3", text: "SAT vs. ACT: What Is the Difference?" },
+      { type: "p", text: "Both the SAT and ACT are accepted by most colleges in the United States, and no preference is given to either test. Here are some of the major differences:" },
+      { type: "ul", items: [
+        "The SAT is given digitally everywhere, while the ACT is still offered on paper in most places.",
+        "The SAT is shorter: 2 hours and 14 minutes for the SAT versus 2 hours and 55 minutes for the ACT.",
+        "The SAT Math section includes a built-in Desmos graphing calculator. The ACT does not provide a built-in calculator.",
+        "SAT Reading and Writing passages are shorter with only one question per passage. ACT reading passages are longer with multiple questions each.",
+        "The SAT offers free practice through Bluebook and Khan Academy directly from the test makers."
+      ]},
+      { type: "p", text: "For more details, visit the <a href='https://satsuite.collegeboard.org/help-center/how-sat-different-act' target='_blank' rel='noopener'>College Board comparison page</a>." }
+    ]
+  },
+  {
+    id: "sat-suite",
+    title: "The SAT Suite of Assessments",
+    content: [
+      { type: "p", text: "The SAT is part of a larger family of assessments called the SAT Suite, which includes the PSAT 8/9, PSAT 10, and PSAT/NMSQT. These tests are designed to measure the same core skills and provide students with early feedback on their college readiness." },
+      { type: "h3", text: "PSAT 8/9" },
+      { type: "p", text: "The PSAT 8/9 is designed for 8th and 9th graders. It introduces students to the types of questions they will encounter on the SAT and helps identify areas for improvement early in their high school career." },
+      { type: "h3", text: "PSAT 10" },
+      { type: "p", text: "The PSAT 10 is taken by 10th graders and serves as a checkpoint for college readiness. Its structure mirrors the SAT, so students can become familiar with the format before taking the actual test." },
+      { type: "h3", text: "PSAT/NMSQT" },
+      { type: "p", text: "The PSAT/NMSQT (National Merit Scholarship Qualifying Test) is taken by 11th graders. In addition to measuring college readiness, it serves as the qualifying test for the National Merit Scholarship Program, which awards scholarships to high-performing students." },
+      { type: "p", text: "For test dates and more information about each assessment, visit the <a href='https://satsuite.collegeboard.org' target='_blank' rel='noopener'>SAT Suite website</a>." },
+      { type: "p", text: "The practice tests on this page work for SAT, PSAT/NMSQT, and PSAT 10 preparation since all three tests share the same format." }
+    ]
+  },
+  {
+    id: "structure",
+    title: "Test Structure",
+    content: [
+      { type: "p", text: "The digital SAT is divided into two sections: Reading and Writing, and Math. The total testing time is 2 hours and 14 minutes." },
+      { type: "table", headers: ["Component", "Time Allotted", "Number of Questions"], rows: [
+        ["Reading and Writing", "64 minutes (2 x 32-minute modules)", "54"],
+        ["Math", "70 minutes (2 x 35-minute modules)", "44"],
+        ["Total", "2 hours 14 minutes", "98"]
+      ]},
+      { type: "p", text: "There is a 10-minute break between the Reading and Writing section and the Math section." },
+      { type: "h3", text: "Adaptive Testing Format" },
+      { type: "p", text: "Each section of the digital SAT uses a two-stage adaptive testing model:" },
+      { type: "ul", items: [
+        "Module 1 contains a broad mix of easy, medium, and hard questions.",
+        "Based on your performance in Module 1, Module 2 will be either more difficult or less difficult.",
+        "The test adapts to your ability level, allowing a more precise measurement of your skills in a shorter time."
+      ]},
+      { type: "div", class: "tip-box", text: "Since Module 2 adapts based on Module 1 performance, doing well on the first module of each section is crucial. Focus on accuracy early — you cannot change your Module 2 difficulty once it is assigned." },
+      { type: "p", text: "Learn more about adaptive testing on the <a href='https://satsuite.collegeboard.org/sat/whats-on-the-test/structure' target='_blank' rel='noopener'>College Board structure page</a>." },
+      { type: "h3", text: "Reading and Writing Section" },
+      { type: "p", text: "The Reading and Writing section measures your ability to comprehend, analyze, and reason using texts and informational graphics. Each question is based on a short passage of 25-150 words, and each passage has only one question. Passages cover literature, history, social studies, humanities, and science." },
+      { type: "h3", text: "Math Section" },
+      { type: "p", text: "The Math section covers four content areas: Algebra, Advanced Math, Problem-Solving and Data Analysis, and Geometry and Trigonometry. About 85% of math questions are multiple-choice, and about 15% are student-produced responses (grid-ins) where you enter your answer. A built-in Desmos graphing calculator is available for all math questions." }
+    ]
+  },
+  {
+    id: "scoring",
+    title: "Scoring",
+    content: [
+      { type: "p", text: "The SAT is scored on a scale of 400 to 1600, combining two section scores:" },
+      { type: "ul", items: [
+        "Reading and Writing: 200–800",
+        "Math: 200–800"
+      ]},
+      { type: "h3", text: "How Scoring Works" },
+      { type: "p", text: "Your raw score is the number of questions you answer correctly. There is no penalty for wrong answers, so you should answer every question even if you are unsure. Your raw score is converted to a scaled score through a process called equating, which ensures that scores are comparable across different test dates." },
+      { type: "h3", text: "Understanding Your Score Report" },
+      { type: "p", text: "Your score report includes:" },
+      { type: "ul", items: [
+        "Total score (400-1600)",
+        "Section scores for Reading and Writing and Math (200-800 each)",
+        "Test scores for Reading, Writing, and Math (10-40 each)",
+        "Cross-test scores for Analysis in History/Social Studies and Analysis in Science (10-40 each)",
+        "Subscores for Command of Evidence, Words in Context, Expression of Ideas, Standard English Conventions, Heart of Algebra, Problem Solving and Data Analysis, and Passport to Advanced Math (1-15 each)"
+      ]},
+      { type: "h3", text: "Superscoring" },
+      { type: "p", text: "Many colleges practice superscoring, which means they take your highest Reading and Writing section score and your highest Math section score from any test date and combine them into a new total score. This encourages students to retake the test if they want to improve a specific section." },
+      { type: "h3", text: "What Is a Good Score?" },
+      { type: "p", text: "What counts as a good SAT score depends on the colleges you are targeting. The national average SAT score is around 1050. Competitive colleges typically look for scores above 1350, while top-tier universities often expect scores of 1500 or higher. Research the score ranges of colleges you are interested in to set a target." },
+      { type: "p", text: "Learn more about SAT scores on the <a href='https://satsuite.collegeboard.org/scores' target='_blank' rel='noopener'>College Board scores page</a>." }
+    ]
+  },
+  {
+    id: "content-domains",
+    title: "Content Domains",
+    content: [
+      { type: "p", text: "The SAT measures specific content domains — areas of knowledge and skill that are tested across the Reading and Writing and Math sections. Understanding these domains helps you focus your study efforts on the areas that matter most." },
+      { type: "h3", text: "Reading and Writing Domains" },
+      { type: "table", headers: ["Domain", "Description", "Skills Tested"], rows: [
+        ["Information and Ideas", "Comprehension, analysis, and reasoning using texts and graphics", "Central Ideas and Details, Inferences, Command of Evidence"],
+        ["Craft and Structure", "Understanding vocabulary, text structure, and rhetorical purpose", "Words in Context, Text Structure and Purpose, Cross-Text Connections"],
+        ["Expression of Ideas", "Revising text for effective written expression", "Rhetorical Synthesis, Transitions"],
+        ["Standard English Conventions", "Editing text to follow standard grammar and punctuation rules", "Boundaries, Form Structure and Sense"]
+      ]},
+      { type: "h3", text: "Math Domains" },
+      { type: "table", headers: ["Domain", "Description", "Skills Tested"], rows: [
+        ["Algebra", "Linear equations, inequalities, and functions", "Linear equations in one and two variables, linear functions, systems of equations"],
+        ["Advanced Math", "Nonlinear equations and functions", "Quadratic, exponential, polynomial, radical, and rational equations"],
+        ["Problem-Solving and Data Analysis", "Quantitative reasoning using ratios, rates, and data", "Ratios, percentages, data distributions, probability, statistics"],
+        ["Geometry and Trigonometry", "Shape properties, right triangles, and circles", "Area and volume, lines and angles, right triangles, circles"]
+      ]},
+      { type: "p", text: "For a detailed breakdown of each domain, visit the <a href='https://satsuite.collegeboard.org/practice/content-domains' target='_blank' rel='noopener'>College Board content domains page</a>." }
+    ]
+  },
+  {
+    id: "bluebook",
+    title: "Bluebook: The Digital Testing Platform",
+    content: [
+      { type: "p", text: "The digital SAT is administered through Bluebook, College Board's custom testing application. Bluebook is installed on student devices or school-managed devices before test day." },
+      { type: "h3", text: "Key Features of Bluebook" },
+      { type: "ul", items: [
+        "Annotation tools: highlight and underline text within passages",
+        "Line reader: focus on smaller sections of text",
+        "Answer eliminator: cross out options you have ruled out",
+        "Flag for review: mark questions to revisit later",
+        "Built-in Desmos graphing calculator: available throughout the Math section",
+        "Countdown timer: shows remaining time for the current module",
+        "Built-in scratch paper: digital notepad for working out problems"
+      ]},
+      { type: "p", text: "You can take full-length practice tests in Bluebook to familiarize yourself with the interface and tools before test day. Download Bluebook at the <a href='https://bluebook.collegeboard.org/students' target='_blank' rel='noopener'>Bluebook website</a>." },
+      { type: "div", class: "tip-box", text: "Take at least one full-length practice test in Bluebook before test day to get comfortable with the tools, timing, and adaptive format. The practice tests in Bluebook are the same official tests available here as PDFs." }
+    ]
+  },
+  {
+    id: "study-plans",
+    title: "Building Your Study Plan",
+    content: [
+      { type: "p", text: "How you prepare for the SAT depends on how much time you have before test day. Below are suggested study plans for different timeframes." },
+      { type: "h3", text: "8-Week Study Plan (Recommended)" },
+      { type: "ul", items: [
+        "Weeks 1-2: Take a diagnostic practice test to establish a baseline. Review your score report to identify strengths and weaknesses.",
+        "Weeks 3-4: Focus on your weakest content domains. Use Khan Academy for skill-building and targeted practice.",
+        "Weeks 5-6: Take a second practice test. Review incorrect answers carefully and study the explanations.",
+        "Weeks 7-8: Take a third practice test under timed conditions. Review strategies for pacing and stress management. Rest the day before the test."
+      ]},
+      { type: "h3", text: "4-Week Study Plan" },
+      { type: "ul", items: [
+        "Week 1: Take a diagnostic practice test and identify target areas.",
+        "Week 2: Focus on skill-building in weaker domains. Practice 30-45 minutes daily.",
+        "Week 3: Take a second practice test. Review all mistakes thoroughly.",
+        "Week 4: Review strategies and take a final practice test. Focus on pacing and confidence."
+      ]},
+      { type: "h3", text: "2-Week Study Plan" },
+      { type: "ul", items: [
+        "Week 1: Take a practice test to identify weak areas. Spend 1-2 hours daily reviewing those topics on Khan Academy.",
+        "Week 2: Take a second practice test. Review answer explanations for every missed question. Focus on test-taking strategies."
+      ]},
+      { type: "h3", text: "For Retakers" },
+      { type: "p", text: "If you have already taken the SAT and are planning to retake it, start by reviewing your score report. Identify which section needs the most improvement. Focus your study time on that section. Take at least one full-length practice test before your next attempt to track progress. Many students see improvement on their second attempt simply from familiarity with the test format and reduced anxiety." },
+      { type: "p", text: "Use the <a href='https://www.khanacademy.org/digital-sat' target='_blank' rel='noopener'>Official SAT Practice on Khan Academy</a> for personalized study plans based on your performance. Research from College Board shows that 6-8 hours of practice on Khan Academy is associated with a 90-point score increase." }
+    ]
+  },
+  {
+    id: "test-day",
+    title: "Test Day",
+    content: [
+      { type: "h3", text: "What to Bring" },
+      { type: "p", text: "On test day, make sure you have the following:" },
+      { type: "ul", items: [
+        "A fully charged device (laptop or tablet) with the Bluebook app installed",
+        "Your charging cable",
+        "Your College Board account login credentials",
+        "An approved calculator (optional, since Bluebook has a built-in calculator)",
+        "Snacks and water for the break",
+        "A watch (without internet access) to help with pacing"
+      ]},
+      { type: "h3", text: "What NOT to Bring" },
+      { type: "ul", items: [
+        "Smartphones, smartwatches, or any internet-connected devices (other than your testing device)",
+        "Books, notes, or dictionaries",
+        "Headphones or earbuds (unless approved for accommodations)",
+        "Food or drink (except during the break)"
+      ]},
+      { type: "h3", text: "Checklist Before Test Day" },
+      { type: "ol", items: [
+        "Install Bluebook on your device and complete the test preview.",
+        "Verify your device meets the technical requirements.",
+        "Confirm your registration details (test date, center, time).",
+        "Charge your device fully the night before.",
+        "Get a good night's sleep and eat a healthy breakfast."
+      ]},
+      { type: "p", text: "For a complete list of what to bring and rules on test day, visit the <a href='https://satsuite.collegeboard.org/sat/what-to-bring-do' target='_blank' rel='noopener'>College Board test day page</a>." }
+    ]
+  },
+  {
+    id: "accommodations",
+    title: "Testing Accommodations",
+    content: [
+      { type: "p", text: "College Board offers a range of testing accommodations for students with documented disabilities. These accommodations must be approved before test day through the Services for Students with Disabilities (SSD) process." },
+      { type: "h3", text: "Available Accommodations" },
+      { type: "ul", items: [
+        "Extended time (usually 50% or 100% additional time)",
+        "Extra breaks",
+        "Large-print or braille test formats",
+        "Screen reader or text-to-speech",
+        "Use of a four-function calculator on the Math section",
+        "Separate testing room",
+        "Sign language interpreter for oral instructions"
+      ]},
+      { type: "h3", text: "How to Request Accommodations" },
+      { type: "p", text: "Accommodation requests are submitted through your school's SSD coordinator. The process should begin well before test day — ideally 7 weeks before your desired test date. College Board must approve your accommodations before you test. Practicing with accommodations in Bluebook does not mean you are approved for accommodations on test day." },
+      { type: "p", text: "Learn more at the <a href='https://accommodations.collegeboard.org/' target='_blank' rel='noopener'>College Board accommodations page</a>." }
+    ]
+  },
+  {
+    id: "for-parents",
+    title: "For Parents & Guardians",
+    content: [
+      { type: "p", text: "Supporting your child through the SAT process can make a significant difference in their confidence and performance. Here is how you can help." },
+      { type: "h3", text: "When Should Preparation Start?" },
+      { type: "p", text: "We recommend students start practicing for the SAT at least 2-3 months before their test date. Students who take the PSAT/NMSQT in their junior year can use those scores to get personalized practice recommendations on Khan Academy." },
+      { type: "h3", text: "How Much Practice Is Needed?" },
+      { type: "p", text: "Practicing 15-30 minutes a few days each week in the months leading up to the test is an effective approach. Research shows that 6-8 hours of practice with Official SAT Practice on Khan Academy is associated with a 90-point score increase, and 20 hours is associated with 115 points." },
+      { type: "h3", text: "Do You Need to Pay for Test Prep?" },
+      { type: "p", text: "No. All the essential preparation tools are available for free through College Board and Khan Academy. Free resources include full-length practice tests, thousands of practice questions, instructional videos, and personalized study plans. There is no need to pay for expensive test prep courses or tutors." },
+      { type: "h3", text: "How Many Times Can Your Child Take the SAT?" },
+      { type: "p", text: "Students can take the SAT as many times as they want. Most students take it at least twice — once in the spring of junior year and once in the fall of senior year. Most colleges consider a student's highest SAT score, and many use superscoring (combining the highest section scores from different test dates)." },
+      { type: "p", text: "For more information, visit the <a href='https://satsuite.collegeboard.org/sat-suite-benefits-students-parents/faq' target='_blank' rel='noopener'>College Board parent FAQs</a>." }
+    ]
+  },
+  {
+    id: "for-educators",
+    title: "For Educators",
+    content: [
+      { type: "p", text: "Educators play a vital role in helping students prepare for the SAT Suite of Assessments. Below are resources and strategies to support your students." },
+      { type: "h3", text: "Integrating SAT Prep into the Classroom" },
+      { type: "p", text: "The skills measured by the SAT align with what students are already learning in their high school courses. By incorporating SAT-style questions and practice into your curriculum, you can help students build familiarity with the test format without sacrificing instructional time." },
+      { type: "h3", text: "Free Resources for Educators" },
+      { type: "ul", items: [
+        "<a href='https://www.khanacademy.org/digital-sat' target='_blank' rel='noopener'>Official SAT Practice on Khan Academy</a>: Free personalized practice for every student.",
+        "<a href='https://satsuite.collegeboard.org/practice/student-question-bank' target='_blank' rel='noopener'>Student Question Bank</a>: Thousands of official SAT questions searchable by domain, skill, and difficulty.",
+        "Full-length practice tests (available on this page and on the College Board website).",
+        "Score reporting tools through College Board's K-12 reporting portal."
+      ]},
+      { type: "h3", text: "Using Practice Tests Effectively" },
+      { type: "p", text: "Encourage students to take at least one full-length practice test under timed conditions. After the test, have them review every incorrect answer to understand their mistakes. Use the results to identify which content domains need the most attention." },
+      { type: "p", text: "For more resources, visit the <a href='https://satsuite.collegeboard.org/k12-educators' target='_blank' rel='noopener'>College Board educator page</a>." }
+    ]
+  },
+  {
+    id: "international",
+    title: "International Testing",
+    content: [
+      { type: "p", text: "Students outside the United States can take the SAT at international test centers. The digital SAT is available at centers worldwide, and the format is the same as in the United States." },
+      { type: "h3", text: "Registration for International Students" },
+      { type: "p", text: "International students register through their College Board account, just like domestic students. You can find test centers in your country by using the SAT Test Center Search." },
+      { type: "h3", text: "Fees and Fee Waivers" },
+      { type: "p", text: "International test fees vary by country. Fee waivers are available for qualifying low-income students. International students may also qualify for fee waivers for sending scores to colleges." },
+      { type: "p", text: "For more information, visit the <a href='https://satsuite.collegeboard.org/sat/registration/international-testing' target='_blank' rel='noopener'>College Board international testing page</a>." }
+    ]
+  },
+  {
+    id: "faq",
+    title: "Frequently Asked Questions",
+    content: [
+      { type: "faq", items: [
+        { q: "How much does the SAT cost?", a: "As of 2026, the SAT costs $60 for domestic test-takers, plus regional fees for international students. Fee waivers are available for qualifying low-income students. For detailed fee information, visit <a href='https://satsuite.collegeboard.org/sat/registration/international-testing/fees' target='_blank' rel='noopener'>collegeboard.org</a>." },
+        { q: "How many times can I take the SAT?", a: "You can take the SAT as many times as you want. Most students take it 2-3 times. Colleges typically consider your highest score, and many use superscoring." },
+        { q: "Is the SAT required for college admission?", a: "Many colleges require SAT or ACT scores for admission, but an increasing number of schools are test-optional, meaning you can choose whether to submit scores. Check the requirements of each college you are applying to." },
+        { q: "Can I use my own calculator on the Math section?", a: "Yes, you can bring an approved calculator. However, Bluebook has a built-in <a href='https://www.desmos.com/calculator' target='_blank' rel='noopener'>Desmos</a> graphing calculator available for all math questions, so a personal calculator is optional." },
+        { q: "What happens if my device fails during the test?", a: "Bluebook automatically saves your progress. If your device fails, you can log back in on the same or another device and resume from where you left off. Inform your test center proctor immediately." },
+        { q: "Can I cancel my score?", a: "You can cancel your score at the test center before you leave, or within a few days after the test by contacting College Board customer service. Once scores are released, you cannot cancel them." },
+        { q: "When will I get my scores?", a: "SAT scores are typically released 2-3 weeks after the test date. You can access them through your <a href='https://prod.idp.collegeboard.org/oauth2/aus3koy55cz6p83gt5d7/v1/authorize?client_id=0oa3koxakyZGbffcq5d7&response_type=code&scope=openid%20email%20profile&redirect_uri=https://account.collegeboard.org/login/exchangeToken&state=cbAppDurl&nonce=CkFLrqORmOLGNT1UBhcqkw' target='_blank' rel='noopener'>College Board account</a>." },
+        { q: "Can I take the SAT if I am homeschooled?", a: "Yes. Homeschooled students register the same way as other students. When asked for a high school code, you can use the homeschool code." },
+        { q: "Do colleges see how many times I took the SAT?", a: "No. Most colleges only see the scores you choose to send. Score Choice allows you to select which test date scores to send to colleges." },
+        { q: "Are the paper practice tests the same as the digital practice tests?", a: "Yes. The paper (nonadaptive) practice tests contain the same questions as the digital adaptive practice tests. However, the paper versions do not adapt to your performance like the digital version does." }
+      ]}
+    ]
+  }
+];
+
+function renderPage() {
+  var tocContainer = document.getElementById('toc');
+  var contentContainer = document.getElementById('content');
+
+  var tocHtml = '<div class="sg-toc"><h2>Contents</h2><ol>';
+  var contentHtml = '';
+
+  sections.forEach(function(section) {
+    tocHtml += '<li><a href="#' + section.id + '">' + section.title + '</a></li>';
+
+    contentHtml += '<div class="sg-section" id="' + section.id + '">';
+    contentHtml += '<h2>' + section.title + '</h2>';
+
+    section.content.forEach(function(block) {
+      if (block.type === 'p') {
+        contentHtml += '<p>' + block.text + '</p>';
+      } else if (block.type === 'h3') {
+        contentHtml += '<h3>' + block.text + '</h3>';
+      } else if (block.type === 'h4') {
+        contentHtml += '<h4>' + block.text + '</h4>';
+      } else if (block.type === 'ul') {
+        contentHtml += '<ul>';
+        block.items.forEach(function(item) {
+          contentHtml += '<li>' + item + '</li>';
+        });
+        contentHtml += '</ul>';
+      } else if (block.type === 'ol') {
+        contentHtml += '<ol>';
+        block.items.forEach(function(item) {
+          contentHtml += '<li>' + item + '</li>';
+        });
+        contentHtml += '</ol>';
+      } else if (block.type === 'table') {
+        contentHtml += '<table><thead><tr>';
+        block.headers.forEach(function(h) {
+          contentHtml += '<th>' + h + '</th>';
+        });
+        contentHtml += '</tr></thead><tbody>';
+        block.rows.forEach(function(row) {
+          contentHtml += '<tr>';
+          row.forEach(function(cell) {
+            contentHtml += '<td>' + cell + '</td>';
+          });
+          contentHtml += '</tr>';
+        });
+        contentHtml += '</tbody></table>';
+      } else if (block.type === 'div') {
+        contentHtml += '<div class="' + block.class + '">' + block.text + '</div>';
+      } else if (block.type === 'faq') {
+        contentHtml += '<div class="faq-list">';
+        block.items.forEach(function(item, idx) {
+          contentHtml += '<div class="faq-item">';
+          contentHtml += '<div class="faq-q" onclick="toggleFaq(this)">' + item.q + '<span class="arrow">&#9660;</span></div>';
+          contentHtml += '<div class="faq-a">' + item.a + '</div>';
+          contentHtml += '</div>';
+        });
+        contentHtml += '</div>';
+      }
+    });
+
+    contentHtml += '</div>';
+  });
+
+  tocHtml += '</ol></div>';
+
+  tocContainer.innerHTML = tocHtml;
+  contentContainer.innerHTML = contentHtml;
+
+  // Scroll progress bar
+  var fill = document.getElementById('sgProgressFill');
+  window.addEventListener('scroll', function() {
+    var scrollTop = window.scrollY;
+    var guideTop = document.querySelector('.sg-section')?.offsetTop || 200;
+    var guideBottom = document.querySelector('.footer')?.offsetTop || document.body.scrollHeight;
+    var guideHeight = guideBottom - guideTop;
+    var scrolled = Math.max(0, Math.min(1, (scrollTop - guideTop + 100) / guideHeight));
+    fill.style.width = (scrolled * 100) + '%';
+  });
+}
+
+function toggleFaq(el) {
+  el.classList.toggle('open');
+  var answer = el.nextElementSibling;
+  answer.classList.toggle('open');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderPage);
+} else {
+  renderPage();
+}
+</script>
+</body>
+</html>

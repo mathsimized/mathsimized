@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT Calculator Policy — MATHSIMIZED</title>
+  <meta name="description" content="Official SAT calculator policy: which calculators are allowed, the built-in Desmos calculator, tips for SAT Math, and common mistakes to avoid.">
+  <meta property="og:title" content="SAT Calculator Policy — MATHSIMIZED">
+  <meta property="og:description" content="Complete guide to the SAT calculator policy including allowed calculators, Desmos tips, and SAT Math calculator strategies.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/calculator-policy.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <style>
+    .cp-hero {
+      min-height: 30vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cp-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .cp-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .cp-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+    .cp-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+    .cp-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--accent);
+    }
+    .cp-section h3 {
+      font-size: 1.05rem;
+      margin: 18px 0 8px;
+      color: var(--accent);
+    }
+    .cp-section p, .cp-section li { color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
+    .cp-section ul, .cp-section ol { padding-left: 20px; }
+    .cp-section li { margin-bottom: 6px; }
+    .cp-section .tip-box {
+      background: rgba(255, 193, 7, 0.08);
+      border-left: 3px solid #ffc107;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .cp-section .note-box {
+      background: rgba(100, 200, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .cp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .cp-grid .cat-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .cp-grid .cat-card h4 { font-size: 1rem; margin-bottom: 8px; color: var(--text); }
+    .cp-grid .cat-card p { font-size: 0.85rem; }
+    @media (max-width: 768px) {
+      .cp-hero h1 { font-size: 1.8rem; }
+      .cp-section { padding: 20px; }
+      .cp-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="cp-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>SAT Calculator Policy</h1>
+    <p>Everything you need to know about calculators on the digital SAT — which models are allowed, how Desmos works, and strategies to use them effectively.</p>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+
+    <div class="cp-section">
+      <h2>Allowed Calculators</h2>
+      <p>The digital SAT allows most graphing, scientific, and four-function calculators. However, calculators with certain features (like computer algebra systems or internet connectivity) are prohibited. Below is a breakdown of approved categories.</p>
+      <div class="cp-grid">
+        <div class="cat-card">
+          <h4>✅ Graphing Calculators</h4>
+          <p>Most popular graphing calculators are allowed, including the TI-84 series, TI-Nspire (non-CAS), Casio fx-9750/9860 series, and HP Prime (non-CAS). These are the most powerful option for SAT Math.</p>
+        </div>
+        <div class="cat-card">
+          <h4>✅ Scientific Calculators</h4>
+          <p>Any scientific calculator without graphing capabilities is allowed. Examples include the TI-30 series, Casio fx-260/300 series, and most standard scientific models. These are sufficient for most SAT Math questions.</p>
+        </div>
+        <div class="cat-card">
+          <h4>✅ Four-Function Calculators</h4>
+          <p>Basic four-function calculators (addition, subtraction, multiplication, division) are allowed. However, they are rarely sufficient and are not recommended for the digital SAT Math section.</p>
+        </div>
+        <div class="cat-card">
+          <h4>❌ Prohibited Calculators</h4>
+          <p>Calculators with computer algebra systems (CAS) like the TI-Nspire CAS, TI-89 series, TI-92 series, HP 50g, and any calculator with a QWERTY keyboard, internet access, or audio/video recording capability are not allowed.</p>
+        </div>
+      </div>
+      <p style="margin-top:12px;">For the complete list of approved and prohibited calculators, visit the <a href="https://satsuite.collegeboard.org/sat/what-to-bring-do/calculator-policy" target="_blank" rel="noopener">official College Board calculator policy page</a>.</p>
+    </div>
+
+    <div class="cp-section">
+      <h2>Desmos Built-in Calculator</h2>
+      <p>The digital SAT includes a built-in <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos graphing calculator</a> available for all 44 questions in the Math section. This is one of the biggest changes from the paper SAT.</p>
+      <ul>
+        <li>Available in both modules of the Math section.</li>
+        <li>No need to bring your own calculator — though you still can if you prefer.</li>
+        <li>Fully integrated into the Bluebook testing app — no switching between applications.</li>
+        <li>Can graph equations, create tables, perform regressions, and more.</li>
+        <li>Works the same as the free online Desmos calculator at desmos.com.</li>
+      </ul>
+      <div class="tip-box"><strong>Tip:</strong> Practice with Desmos during your SAT prep so you are comfortable with its features on test day. Take our <a href="desmos-guide.html">Desmos Guide</a> for a complete walkthrough.</div>
+    </div>
+
+    <div class="cp-section">
+      <h2>Calculator Tips for SAT Math</h2>
+      <ul>
+        <li><strong>Use Desmos for graphing questions:</strong> If a question involves a function or equation, graph it in Desmos to visualize the relationship immediately.</li>
+        <li><strong>Check solutions:</strong> After solving an equation algebraically, plug your answer into Desmos to verify it is correct.</li>
+        <li><strong>Know when not to use a calculator:</strong> Some questions are faster to solve by hand or through reasoning. Do not reach for the calculator automatically — assess each question first.</li>
+        <li><strong>Bring your own backup:</strong> Even though Desmos is built-in, bring an approved calculator as a backup in case of technical issues.</li>
+        <li><strong>Master regression:</strong> For data analysis questions, use Desmos's regression feature to find the line or curve of best fit quickly.</li>
+        <li><strong>Use sliders for parameter questions:</strong> When a question involves variable parameters, use Desmos sliders to explore how changes affect the graph.</li>
+      </ul>
+    </div>
+
+    <div class="cp-section">
+      <h2>Common Mistakes</h2>
+      <ul>
+        <li><strong>Assuming your personal calculator is identical to Desmos:</strong> Different calculators have different interfaces and capabilities. If you bring your own, make sure you know how to use it for the specific operations you will need.</li>
+        <li><strong>Forgetting to clear your calculator:</strong> On test day, ensure your personal calculator's memory is cleared if required by your test center.</li>
+        <li><strong>Over-relying on the calculator:</strong> The calculator is a tool for verification and visualization, not a substitute for understanding the underlying math.</li>
+        <li><strong>Not practicing with the built-in Desmos:</strong> Since Desmos is always available, practice using it in your prep. Trying to learn it on test day will cost you valuable time.</li>
+        <li><strong>Using an unapproved calculator:</strong> Show up with a prohibited model and you will not be allowed to use it. Check the College Board list before test day.</li>
+      </ul>
+    </div>
+
+    <div class="cp-section">
+      <h2>Official Rules</h2>
+      <ul>
+        <li>You may use a calculator only during the Math section. Calculators are not allowed during the Reading and Writing section.</li>
+        <li>You may bring up to two approved calculators to the test center.</li>
+        <li>Sharing calculators between students is not permitted.</li>
+        <li>Your calculator must not have internet access, Bluetooth, or any wireless communication capability.</li>
+        <li>If your calculator has a cover or case, you must remove it before the test begins.</li>
+        <li>You cannot use a calculator that makes noise (like a talking calculator).</li>
+        <li>The test proctor may inspect your calculator at any time during the test.</li>
+        <li>For the complete policy, visit <a href="https://satsuite.collegeboard.org/sat/what-to-bring-do/calculator-policy" target="_blank" rel="noopener">collegeboard.org</a>.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+</script>
+</body>
+</html>

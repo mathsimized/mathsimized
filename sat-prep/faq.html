@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT FAQ — MATHSIMIZED</title>
+  <meta name="description" content="Frequently asked questions about the digital SAT: cost, format, scoring, calculators, registration, accommodations, score sending, retakes, and test day tips.">
+  <meta property="og:title" content="SAT FAQ — MATHSIMIZED">
+  <meta property="og:description" content="Answers to common SAT questions covering cost, format, scoring, calculators, registration, accommodations, score sending, retakes, and test day.">
+  <meta property="og:image" content="https://mathsimized.com/logo-v2.png">
+  <meta property="og:url" content="https://mathsimized.com/sat-prep/faq.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MATHSIMIZED">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∑</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../firebase.js"></script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does the SAT cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The SAT costs $60 for domestic test-takers, plus regional fees for international students. Fee waivers are available for qualifying low-income students." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the format of the digital SAT?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The digital SAT is 2 hours and 14 minutes long. It has two sections: Reading and Writing (64 minutes, 54 questions) and Math (70 minutes, 44 questions). Each section has two adaptive modules." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the SAT scored?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The SAT is scored on a scale of 400–1600. Reading and Writing is scored 200–800, and Math is scored 200–800. There is no penalty for wrong answers." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use a calculator on the SAT?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The digital SAT has a built-in Desmos graphing calculator available for all Math questions. You may also bring an approved personal calculator." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I register for the SAT?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Register online through your College Board account. Create an account, fill in your details, select a test date and center, pay the fee, and download the Bluebook app." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I get testing accommodations?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. College Board offers accommodations such as extended time, extra breaks, and screen readers for students with documented disabilities. Requests must be approved before test day." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I send my SAT scores to colleges?",
+        "acceptedAnswer": { "@type": "Answer", "text": "You can send scores to colleges through your College Board account. You get four free score reports on test day; additional reports cost a fee. Score Choice lets you select which test date scores to send." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I retake the SAT?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, you can take the SAT as many times as you want. Most students take it 2–3 times. Many colleges use superscoring, combining your highest section scores across test dates." }
+      },
+      {
+        "@type": "Question",
+        "name": "What should I bring on test day?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Bring your fully charged device with Bluebook installed, charging cable, admission ticket, valid photo ID, approved calculator (optional), snacks, water, and a watch without internet access." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a penalty for guessing?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. There is no penalty for wrong answers on the SAT. You should answer every question, even if you are unsure." }
+      },
+      {
+        "@type": "Question",
+        "name": "When will I get my SAT scores?",
+        "acceptedAnswer": { "@type": "Answer", "text": "SAT scores are typically released 2–3 weeks after the test date. You can access them through your College Board account." }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if my device fails during the test?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Bluebook automatically saves your progress. If your device fails, you can log back in on the same or another device and resume where you left off. Inform your proctor immediately." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I take the SAT if I am homeschooled?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Homeschooled students register the same way as other students. Use the homeschool code when asked for a high school code." }
+      }
+    ]
+  }
+  </script>
+  <style>
+    .faq-hero {
+      min-height: 30vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .faq-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .faq-hero h1 { font-size: 2.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .faq-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-item:hover { border-color: var(--accent); }
+    .faq-question {
+      padding: 18px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+      user-select: none;
+      transition: color 0.2s;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question .faq-icon {
+      flex-shrink: 0;
+      font-size: 1.2rem;
+      color: var(--accent);
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-question .faq-icon {
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 24px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+    .faq-answer.open {
+      max-height: 400px;
+      padding: 0 24px 18px;
+    }
+    .faq-answer a { color: var(--accent); text-decoration: underline; }
+    @media (max-width: 768px) {
+      .faq-hero h1 { font-size: 1.8rem; }
+      .faq-question { padding: 14px 18px; font-size: 0.95rem; }
+      .faq-answer.open { padding: 0 18px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="../index.html" class="navbar-logo"><img src="../logo-v2.png" alt="MATHSIMIZED" height="32"></a>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li class="dropdown">
+        <a href="#">Resources ▾</a>
+        <div class="dropdown-menu">
+          <a href="../lectures.html">Lectures</a>
+          <a href="../notes.html">Notes</a>
+          <a href="../pastpapers.html">Past Papers</a>
+        </div>
+      </li>
+      <li><a href="index.html">SAT Prep</a></li>
+      <li><a href="../news.html">News</a></li>
+      <li class="dropdown">
+        <a href="#">Games ▾</a>
+        <div class="dropdown-menu">
+          <a href="../games.html">Play Games</a>
+          <a href="../leaderboard.html">Leaderboard</a>
+          <a href="../competitions.html">Competitions</a>
+        </div>
+      </li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-auth" id="navAuth"></div>
+  </div>
+</nav>
+
+<section class="faq-hero">
+  <div style="position:relative;z-index:1;">
+    <h1>Frequently Asked Questions</h1>
+    <p>Common questions about the digital SAT — from registration and scoring to test day tips and accommodations.</p>
+  </div>
+</section>
+
+<section class="section-padding" style="padding-top:0;">
+  <div class="container">
+    <div class="faq-container" id="faqContainer"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>MATH<span>SIMIZED</span></h3>
+        <p>Redefining the Limit — Master Mathematics with Expert Guidance</p>
+        <div class="footer-social">
+          <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="https://www.instagram.com/mathsimized" target="_blank" rel="noopener" aria-label="Instagram">◻</a>
+          <a href="mailto:mathsimized@gmail.com" aria-label="Email">✉</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="../about.html">About</a>
+        <a href="../lectures.html">Lectures</a>
+        <a href="../notes.html">Notes</a>
+        <a href="../pastpapers.html">Past Papers</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>SAT Prep</h4>
+        <a href="index.html">SAT Home</a>
+        <a href="practice-tests.html">Practice Tests</a>
+        <a href="study-guide.html">Study Guide</a>
+        <a href="formula-sheet.html">Formula Sheet</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <a href="../games.html">Play Games</a>
+        <a href="../leaderboard.html">Leaderboard</a>
+        <a href="../competitions.html">Competitions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy Policy</a>
+        <a href="../terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://youtube.com/@mathsimized_by_mrkk" target="_blank">YouTube</a>
+        <a href="https://www.instagram.com/mathsimized" target="_blank">Instagram</a>
+        <a href="mailto:mathsimized@gmail.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MATHSIMIZED. All rights reserved. Created by Khalilullah Khan.</p>
+      <p style="font-size:0.75rem;color:var(--muted2);margin-top:6px;">SAT<sup>&reg;</sup> and Bluebook<sup>&trade;</sup> are registered trademarks of College Board. This website is not affiliated with or endorsed by College Board.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById("navAuth").classList.toggle("open");
+}
+
+var faqData = [
+  {
+    q: 'How much does the SAT cost?',
+    a: 'The SAT costs $60 for domestic test-takers, plus regional fees for international students. Fee waivers are available for qualifying low-income students. For detailed fee information, visit the <a href="https://satsuite.collegeboard.org/sat/registration/fees" target="_blank" rel="noopener">College Board fees page</a>.'
+  },
+  {
+    q: 'What is the format of the digital SAT?',
+    a: 'The digital SAT is 2 hours and 14 minutes long. It has two sections: Reading and Writing (64 minutes, 2 x 32-minute modules, 54 questions) and Math (70 minutes, 2 x 35-minute modules, 44 questions). There is a 10-minute break between sections. Each section uses adaptive testing — your performance in Module 1 determines the difficulty of Module 2.'
+  },
+  {
+    q: 'How is the SAT scored?',
+    a: 'The SAT is scored on a scale of 400–1600. Reading and Writing is scored 200–800, and Math is scored 200–800. Your raw score (number of correct answers) is converted to a scaled score through equating. There is no penalty for wrong answers, so you should answer every question.'
+  },
+  {
+    q: 'Can I use a calculator on the SAT Math section?',
+    a: 'Yes. The digital SAT has a built-in <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos graphing calculator</a> available for all Math questions. You may also bring an approved personal calculator. See our <a href="calculator-policy.html">calculator policy page</a> for the full list of approved models.'
+  },
+  {
+    q: 'How do I register for the SAT?',
+    a: 'Create a College Board account at <a href="https://satsuite.collegeboard.org/sat/registration" target="_blank" rel="noopener">collegeboard.org</a>, fill in your personal information, select a test date and center, and pay the registration fee. After registering, download the Bluebook app and complete the test preview. See our <a href="registration-guide.html">registration guide</a> for step-by-step instructions.'
+  },
+  {
+    q: 'Can I get testing accommodations?',
+    a: 'Yes. College Board offers accommodations such as extended time (50% or 100% additional time), extra breaks, large-print formats, screen readers, and more for students with documented disabilities. You must apply through your school\'s SSD coordinator well before test day. Visit the <a href="https://accommodations.collegeboard.org/" target="_blank" rel="noopener">College Board accommodations page</a> for details.'
+  },
+  {
+    q: 'How do I send my SAT scores to colleges?',
+    a: 'You can send scores through your College Board account. You get four free score reports when you register for the SAT; you can designate recipients during registration or up to nine days after test day. Additional reports cost a fee. Score Choice allows you to select which test date\'s scores to send to each college.'
+  },
+  {
+    q: 'Can I retake the SAT?',
+    a: 'Yes, you can take the SAT as many times as you want. Most students take it 2–3 times. Many colleges practice superscoring, which combines your highest Reading and Writing section score and highest Math section score from different test dates into a new total score.'
+  },
+  {
+    q: 'What should I bring on test day?',
+    a: 'Bring your fully charged device with Bluebook installed, your charging cable, admission ticket, valid government-issued photo ID, an approved calculator (optional), snacks and water for the break, and a watch without internet access. Arrive by 7:45 AM. See our <a href="registration-guide.html">test day checklist</a> for more details.'
+  },
+  {
+    q: 'Is there a penalty for guessing?',
+    a: 'No. There is no penalty for wrong answers on the SAT. Your raw score is simply the number of questions you answer correctly. Always answer every question, even if you have to guess.'
+  },
+  {
+    q: 'When will I get my SAT scores?',
+    a: 'SAT scores are typically released 2–3 weeks after the test date. You can access them through your College Board account. You will receive an email notification when your scores are available.'
+  },
+  {
+    q: 'What happens if my device fails during the test?',
+    a: 'Bluebook automatically saves your progress continuously. If your device fails, inform your proctor immediately. You can log back in on the same device (after restarting) or on a different device with Bluebook installed and resume from where you left off.'
+  },
+  {
+    q: 'Can I take the SAT if I am homeschooled?',
+    a: 'Yes. Homeschooled students register the same way as other students through a College Board account. When asked for a high school code during registration, use the homeschool code provided by College Board.'
+  }
+];
+
+function renderFaq() {
+  var container = document.getElementById('faqContainer');
+  faqData.forEach(function(item, index) {
+    var div = document.createElement('div');
+    div.className = 'faq-item';
+    div.innerHTML = '<div class="faq-question" onclick="toggleFaq(this)">' + item.q + '<span class="faq-icon">+</span></div><div class="faq-answer">' + item.a + '</div>';
+    container.appendChild(div);
+  });
+}
+
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var answer = el.nextElementSibling;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i) {
+    i.classList.remove('open');
+    i.querySelector('.faq-answer').classList.remove('open');
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    answer.classList.add('open');
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderFaq);
+} else {
+  renderFaq();
+}
+</script>
+</body>
+</html>
